@@ -1,0 +1,36 @@
+{
+  "reproducer": "codex",
+  "date": "2026-08-31",
+  "host": "macOS 26.6.2 (25G83), Docker version 29.7.2, build a7dcaa6",
+  "results": [
+    {
+      "bug": "retry-original-error-wrapped",
+      "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/tx/control-02.test.ts' --module packages/tx --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected 'RetryExhaustedError' to be 'TypeError' // Object.is equality",
+      "signature_match": true
+    },
+    {
+      "bug": "max-attempts-zero-internal-error",
+      "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/tx/control-04.test.ts' --module packages/tx --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected 'Error' to be 'RetryExhaustedError' // Object.is equality",
+      "signature_match": true
+    },
+    {
+      "bug": "broadcast-after-close-throws",
+      "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/local-first/control-03.test.ts' --module packages/local-first --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected 'InvalidStateError' to be 'no-throw' // Object.is equality",
+      "signature_match": true
+    },
+    {
+      "bug": "set-history-skips-notify",
+      "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/local-first/control-06.test.ts' --module packages/local-first --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected 0 to be greater than or equal to 1",
+      "signature_match": true
+    }
+  ],
+  "all_match": true
+}
