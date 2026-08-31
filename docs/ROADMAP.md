@@ -24,6 +24,8 @@ A nightmare appears in the report only when:
 - the test fails
 - another person can reproduce the failure with the recorded command
 
+When more than one nightmare meets these rules, rank them by reachability and impact.
+
 Passing tests and tests that cannot run are excluded from the report. A human makes the final call on whether the behavior is a real bug and worth fixing.
 
 ### Status
