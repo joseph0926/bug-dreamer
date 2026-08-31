@@ -18,3 +18,5 @@ The execution gate is the trust boundary. A plausible story is not enough. Every
 ## Roadmap
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for version scope, validation rules, and project status.
+
+See [docs/V0.1-CONTRACT.md](docs/V0.1-CONTRACT.md) for the selected target, outcome semantics, evidence fields, reproduction rules, and report template.
