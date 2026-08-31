@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { classifyRun } from '../src/classify.mjs';
 import {
@@ -14,6 +16,8 @@ import {
 import { buildDockerRunArgs } from '../src/docker-command.mjs';
 import { runCommand } from '../src/process.mjs';
 import { inspectScenario, relativeScenarioPath } from '../src/scenario-file.mjs';
+
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function parseArgs(args) {
   let scenario;
@@ -78,7 +82,7 @@ async function main() {
     onTimeout: () => removeContainer(containerName),
   });
   const classified = classifyRun(result);
-  const commandScenario = relativeScenarioPath(process.cwd(), scenario.path);
+  const commandScenario = relativeScenarioPath(repositoryRoot, scenario.path);
   const scenarioMetadata = classified.scenario ?? {};
   const actual = classified.actual?.actual;
   const evidence = {
@@ -114,7 +118,7 @@ async function main() {
       control_ref: scenarioMetadata.control_ref,
     },
     reproduction: {
-      command: `asdf exec node scripts/run-scenario.mjs --scenario ${shellQuote(commandScenario)} --timeout-ms ${timeoutMs}`,
+      command: `node scripts/run-scenario.mjs --scenario ${shellQuote(commandScenario)} --timeout-ms ${timeoutMs}`,
       working_directory: '.',
     },
     inputs: scenarioMetadata.inputs,
@@ -144,6 +148,7 @@ async function main() {
     },
     logs: {
       excerpt: `${result.stdout}${result.stderr}`.slice(0, 8192),
+      truncated: result.truncated,
       full_ref: null,
     },
     human_verdict: 'unreviewed',

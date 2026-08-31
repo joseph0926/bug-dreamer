@@ -47,7 +47,8 @@
 - 격리 실행을 구현하면 네트워크 차단, 명령 허용 목록, 시간 제한과 자원 제한의 경계를 검증한다.
 - 보고된 실패는 기록된 격리 명령으로 다시 실행해 같은 실패 시그니처를 관측해야 한다.
 - 자동 검증이 통과해도 사용자가 악몽 하나 이상을 고칠 가치가 있다고 판정하기 전에는 v0.1 완료를 주장하지 않는다.
-- 단위 테스트는 `asdf exec node --test test/*.test.mjs`로 실행한다. `test/fixtures/`의 시나리오는 호스트에서 실행하지 않는다.
-- Docker 이미지 준비는 `asdf exec node scripts/prepare-image.mjs --target <firsttx 경로>`로 실행한다. 이 명령만 이미지와 락파일 의존성을 내려받기 위해 네트워크를 사용할 수 있다.
-- 시나리오는 `asdf exec node scripts/run-scenario.mjs --scenario <테스트 파일>`로 실행한다. 이 명령은 Docker 네트워크를 차단한다.
+- 호스트 명령은 Node.js 24로 실행한다. 특정 버전 관리자를 전제하지 않는다.
+- 단위 테스트는 `node --test test/*.test.mjs`로 실행한다. `test/fixtures/`의 시나리오는 호스트에서 실행하지 않는다.
+- Docker 이미지 준비는 `node scripts/prepare-image.mjs --target <firsttx 경로>`로 실행한다. 이 명령만 이미지와 락파일 의존성을 내려받기 위해 네트워크를 사용할 수 있다.
+- 시나리오는 `node scripts/run-scenario.mjs --scenario <테스트 파일>`로 저장소 루트에서 실행한다. 이 명령은 Docker 네트워크를 차단한다.
 - 현재 확정된 lint와 typecheck 명령은 없다.

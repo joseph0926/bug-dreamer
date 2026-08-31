@@ -2,9 +2,11 @@ import { spawn } from 'node:child_process';
 
 import { MAX_LOG_LENGTH } from './constants.mjs';
 
-function appendLog(current, chunk) {
-  if (current.length >= MAX_LOG_LENGTH) return current;
-  return current + chunk.toString().slice(0, MAX_LOG_LENGTH - current.length);
+function appendLog(log, chunk) {
+  const text = chunk.toString();
+  if (log.text.length + text.length > MAX_LOG_LENGTH) log.truncated = true;
+  if (log.text.length >= MAX_LOG_LENGTH) return;
+  log.text += text.slice(0, MAX_LOG_LENGTH - log.text.length);
 }
 
 export function runCommand(command, args, options = {}) {
@@ -17,26 +19,29 @@ export function runCommand(command, args, options = {}) {
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-    let stdout = '';
-    let stderr = '';
+    const stdout = { text: '', truncated: false };
+    const stderr = { text: '', truncated: false };
     let timedOut = false;
     let cleanupPromise = Promise.resolve();
     let timer;
 
     child.stdout.on('data', (chunk) => {
-      stdout = appendLog(stdout, chunk);
+      appendLog(stdout, chunk);
     });
     child.stderr.on('data', (chunk) => {
-      stderr = appendLog(stderr, chunk);
+      appendLog(stderr, chunk);
     });
-    child.once('error', reject);
+    child.once('error', (error) => {
+      if (timer !== undefined) clearTimeout(timer);
+      reject(error);
+    });
 
     if (timeoutMs !== undefined) {
       timer = setTimeout(() => {
         timedOut = true;
         child.kill('SIGTERM');
         cleanupPromise = Promise.resolve(onTimeout?.()).catch((error) => {
-          stderr = appendLog(stderr, `\nCleanup failed: ${error.message}`);
+          appendLog(stderr, `\nCleanup failed: ${error.message}`);
         });
       }, timeoutMs);
     }
@@ -47,8 +52,9 @@ export function runCommand(command, args, options = {}) {
       resolve({
         exitCode,
         signal,
-        stdout,
-        stderr,
+        stdout: stdout.text,
+        stderr: stderr.text,
+        truncated: stdout.truncated || stderr.truncated,
         timedOut,
         durationMs: Math.round(performance.now() - startedAt),
       });
