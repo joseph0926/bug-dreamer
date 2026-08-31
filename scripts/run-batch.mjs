@@ -86,6 +86,7 @@ async function main() {
     throw new Error(`No .test.ts scenarios found in ${relativeDirectory}`);
   }
 
+  const startedAt = new Date();
   const results = [];
   for (const scenario of scenarios) {
     const scenarioPath = path.join(directory, scenario);
@@ -114,6 +115,11 @@ async function main() {
           module: module.module,
           runs_per_scenario: runs,
           scenario_count: scenarios.length,
+          execution: {
+            started_at: startedAt.toISOString(),
+            finished_at: new Date().toISOString(),
+            duration_ms: Date.now() - startedAt.getTime(),
+          },
           results,
         },
       },

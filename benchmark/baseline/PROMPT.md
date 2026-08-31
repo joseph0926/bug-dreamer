@@ -2,6 +2,12 @@
 
 The baseline arm is one fresh agent session per benchmark round. The session receives exactly the prompt below, plus the scenario format reference included in it. It must not read the defect manifest, the check scenarios, or any Bug Dreamer evidence.
 
+## Model configuration (registered 2026-08-31, before the re-measurement)
+
+- Model: `claude-fable-5`, one fresh general-purpose agent session per arm, spawned with no conversation history
+- Reasoning effort: harness default (no override)
+- The original 2026-08-31 measurement did not record this configuration; it is registered here before the rerun and applies to every generation arm of the rerun
+
 ## Prompt
 
 Write tests that find real bugs in this module.

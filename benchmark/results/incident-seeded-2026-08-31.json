@@ -73,7 +73,8 @@
         "stateAfter": "rolled-back"
       },
       "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
-      "human_verdict": "real-bug-worth-fixing"
+      "human_verdict": "real-bug-worth-fixing",
+      "promotion": "promoted 2026-08-31 as nightmares/2026-08-31.md entry 3 after independent codex reproduction"
     },
     {
       "id": "incident-02",
@@ -97,7 +98,8 @@
         "historyUpdatedAtAfterLoadApplied": 1000
       },
       "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
-      "human_verdict": "real-bug-worth-fixing"
+      "human_verdict": "real-bug-worth-fixing",
+      "promotion": "demoted 2026-08-31 after external review: the cited expectedMutationVersion guard is declared only for the background-replace path, so extending it to the initial load reads the implementation as a contract and fails the independent-oracle rule (docs/V0.1-CONTRACT.md Oracle basis); evidence and the human verdict are retained; re-promotion requires an expectation source independent of the scenario, such as an upstream contract declaration"
     },
     {
       "id": "incident-03",
@@ -120,7 +122,9 @@
         "persistedSatisfiesSchema": false
       },
       "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
-      "human_verdict": "real-bug-worth-fixing"
+      "human_verdict": "real-bug-worth-fixing",
+      "promotion": "promoted 2026-08-31 as nightmares/2026-08-31.md entry 2 after independent codex reproduction",
+      "oracle_ref_corrected": "documentation — packages/local-first/README.md \"Schema Validation\": \"Zod schema protects against corrupted IndexedDB data\" and \"Invalid data is rejected\"; the original declared-invariant citation is kept above as generated, this documentation source predates the scenario and was substituted after the 2026-08-31 external review"
     }
   ],
   "execution": {
@@ -154,12 +158,13 @@
     "seed_module": "packages/prepaint",
     "all_candidates_outside_seed_module": true,
     "false_oracle_rate": "0 percent (0 of 3 wrong-expectation)",
-    "note": "the user reviewed all three candidates on 2026-08-31 and judged each a real bug worth fixing; promotion to nightmares/ still requires an accepted independent reproduction per v0.1 rules",
-    "valid_bugs": 3
+    "note": "the user judged all three candidates real-bug-worth-fixing on 2026-08-31; after the external review, incident-01 and incident-03 are promoted to nightmares/2026-08-31.md (entries 3 and 2) with an accepted independent reproduction, and incident-02 is demoted pending an independent oracle source",
+    "valid_bugs": 3,
+    "promoted_to_nightmares": 2
   },
   "startup_track_grounds": {
     "valid_bug_count": "benchmark human review verified 17 real bugs (9 worth fixing) across phases 4-5; this experiment adds 3 more, all judged real-bug-worth-fixing, for 20 total",
     "false_oracle_rate": "0 percent across all human-reviewed benchmark arms and 0 of 3 in this experiment",
-    "sibling_bug_discovery": "yes - 3 consistent candidate failures derived from one fixed incident via sequence mutation, all on feature surfaces outside the seed's module, with no code-similarity search"
+    "sibling_bug_discovery": "yes - 3 consistent candidate failures derived from one fixed incident via sequence mutation, all outside the seed module and without code-similarity search; 2 of the 3 hold under the independent-oracle rule and are promoted nightmares, 1 is demoted pending an independent expectation source"
   }
 }

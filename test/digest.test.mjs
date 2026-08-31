@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { renderDigest } from '../src/digest.mjs';
+import { assertDigestBudget, DIGEST_SCENARIO_BUDGET, renderDigest } from '../src/digest.mjs';
 
 function batchWith(results) {
   return {
@@ -72,4 +72,46 @@ test('renders an empty batch with no candidates', () => {
 
   assert.ok(digest.includes('None. No scenario produced a consistent candidate failure.'));
   assert.ok(digest.includes('pass: 0, unrunnable: 0, intermittent: 0, diverging signatures: 0'));
+});
+
+test('renders evidence reference, model calls, and execution time when provided', () => {
+  const batch = batchWith([
+    result('a.test.ts', 'candidate-failure', 'consistent-candidate-failure', true, signature),
+  ]);
+  batch.execution = { started_at: 't0', finished_at: 't1', duration_ms: 1234 };
+
+  const digest = renderDigest(batch, '2026-08-31', {
+    evidenceRef: 'evidence/2026-08-31/digest-batch.json',
+    modelCalls: 4,
+  });
+
+  assert.ok(digest.includes('Evidence: evidence/2026-08-31/digest-batch.json'));
+  assert.ok(digest.includes('Model calls: 4'));
+  assert.ok(digest.includes('Execution time: 1234 ms'));
+  assert.ok(
+    digest.includes('- Evidence: evidence/2026-08-31/digest-batch.json (results entry for a.test.ts)'),
+  );
+});
+
+test('records model calls as not-recorded when the count is not provided', () => {
+  const digest = renderDigest(batchWith([]), '2026-08-31');
+
+  assert.ok(digest.includes('Model calls: not-recorded'));
+});
+
+test('budget check accepts counts up to the budget including zero', () => {
+  assert.doesNotThrow(() => assertDigestBudget(0));
+  assert.doesNotThrow(() => assertDigestBudget(DIGEST_SCENARIO_BUDGET));
+});
+
+test('budget check rejects one scenario over the budget before any execution', () => {
+  assert.throws(
+    () => assertDigestBudget(DIGEST_SCENARIO_BUDGET + 1),
+    /exceeds the recorded budget of 20; nothing was executed/,
+  );
+});
+
+test('budget check rejects a negative or non-integer count', () => {
+  assert.throws(() => assertDigestBudget(-1), /non-negative integer/);
+  assert.throws(() => assertDigestBudget(1.5), /non-negative integer/);
 });

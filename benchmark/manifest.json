@@ -1,11 +1,12 @@
 {
   "target_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "control": {
-    "description": "The unmodified target revision. Every defect image differs from it by exactly the recorded edits."
+    "description": "The unmodified target revision. Every defect image differs from it by exactly the recorded edits.",
+    "clean_control_definition": "The clean control group is the three registered module images built from the unmodified target revision (packages/tx, packages/local-first, packages/prepaint). Corrected 2026-08-31: the original registration planned 5 clean controls, but every measured run used these 3 images; this correction pins the definition before the re-measurement."
   },
   "planned_size": {
     "defects": "20-30",
-    "clean_controls": 5
+    "clean_controls": 3
   },
   "defects": [
     {
