@@ -1,5 +1,66 @@
 # Roadmap
 
+## v0.2
+
+### Scope
+
+v0.2 expands from one module to the supported modules of the target repository and moves toward an unattended nightly batch. The target remains [`joseph0926/firsttx`](https://github.com/joseph0926/firsttx); "whole repository" means the union of modules with a registered execution contract, and a module without one is out of scope. Multi-repository support stays out of scope.
+
+Quality gates come before automation: report generation and scheduling are implemented only after the pre-registered criteria pass on the fixture benchmark.
+
+Work is ordered in seven phases. A later phase starts only when the earlier phase's exit condition holds.
+
+1. **Minimal batch executor** — one invocation runs a list of scenarios, executes each three consecutive times, and writes aggregated evidence with a per-scenario signature comparison. No report generation, no schedule.
+   - Exit: a batch of at least five scenarios produces one evidence record per run plus a per-scenario aggregate; unit tests cover aggregation of pass, candidate-failure, and unrunnable results and of matching versus diverging signatures.
+2. **Module execution contracts** — for each supported module, record archive paths, install and build steps, the test command, the scenario mount point, and harness aliases. Isolation properties (network block, read-only root, capability drop, resource limits) are identical for every module and cannot be widened per module.
+   - Exit: `packages/tx` and at least one more firsttx module run the same synthetic fixture set under their contracts; a scenario naming an unregistered module is rejected as invalid runner input (exit code 2).
+3. **Fixture benchmark and baseline** — pin, in this repository, before any measured run: the target revision, a fixture manifest of 20 to 30 planted cross-feature, timing, and concurrency defects plus a clean control group with its size, the baseline generator's prompt and model configuration, the model-call and execution budget values, and the metric formulas below.
+   - Exit: the manifest and configuration are committed and one baseline measurement (plain LLM test generation under the same budget) is recorded.
+4. **Oracle-source separation experiment** — compare the current design (the scenario author also defines the expectation) against a separated design (invariants extracted from existing tests and code first, scenarios generated to break them), on the benchmark with the shared budget.
+   - Exit: false-oracle rate and valid-bug yield recorded for both arms; the separated design is adopted only if the false-oracle rate drops without losing valid-bug yield, and the decision is recorded here.
+5. **Criteria verdict** — judge the pipeline against the pre-registered success criteria.
+   - Exit: an adopt, revise, or retire verdict is recorded. On failure, scenario generation and oracle design are reworked and re-measured before any later phase starts.
+6. **Morning digest and nightly schedule** — implemented only after phase 5 passes. The unattended batch writes a candidate digest to `digests/YYYY-MM-DD.md`, not a nightmare report. Promotion of a digest entry to `nightmares/` still requires the v0.1 rules: recorded consecutive same-signature runs, an accepted independent reproduction, and the human verdict. The schedule mechanism is an implementation detail; the contract is at most one batch per day within the recorded budget.
+   - Exit: one unattended run completes within budget and produces a digest, and nothing is auto-published to `nightmares/`.
+7. **Incident-seeded experiment** — one run starting from a fixed public OSS bugfix PR: abstract the cause into a state-transition sequence, mutate it (reorder, delay, swap actors), and search sibling feature surfaces. Stop and redesign if the search degenerates into code-similarity matching.
+   - Exit: the run's result and the similarity-degeneration check are recorded; this phase feeds the startup-track review and blocks nothing else.
+
+### Success criteria (pre-registered)
+
+Fixed at phase 3 before the first measured run; amusing scenario counts and agent counts are not metrics.
+
+- Five or more valid bugs the plain-LLM baseline missed, on the fixture benchmark
+- False-oracle rate at or below 10 percent
+- Reproduction rate at or above 80 percent
+- At least 70 percent of valid bugs preserved as minimized standalone tests
+- No overrun of the budget values recorded at phase 3
+
+Metric definitions:
+
+- A **valid bug** is a candidate failure whose human verdict is `real-bug-worth-fixing` or `real-bug-not-worth-fixing`.
+- **False-oracle rate** = candidate failures with the `wrong-expectation` verdict ÷ all human-reviewed candidate failures.
+- **Reproduction rate** = valid bugs that show the same failure signature in three out of three isolated re-runs ÷ all valid bugs.
+- A **minimized standalone test** is a single scenario file that fails with the same signature on the defect fixture and passes on the clean control.
+
+If the criteria fail, scenario generation and oracle design are reworked before any report or interface work.
+
+### Validation rules
+
+v0.1 validation rules apply unchanged to everything published under `nightmares/`. In addition:
+
+- A digest entry is a candidate, not a reported nightmare; it carries its evidence references but no bug claim.
+- A batch records its total model calls and execution time against the recorded budget.
+- The nightly job must not widen the isolation contract: the same network block, per-module command allow-list, and resource limits apply.
+- Experiment comparisons use the shared fixture benchmark and budget; a result observed outside the benchmark does not count toward the criteria.
+
+### Exclusions
+
+Multi-repository support, a web interface, automatic fixes, a scoring model, and any startup-track feature (shadow customers, bounty, underwriting) remain out of scope. The startup-track review happens only after the incident-seeded experiment, on the three pre-registered grounds: valid bug count, false-oracle rate, and sibling-bug discovery.
+
+### Status
+
+v0.2 is planned. The values pinned at phase 3 (fixture manifest, baseline configuration, budget) must be recorded in this document before the first measured run.
+
 ## v0.1
 
 ### Scope
