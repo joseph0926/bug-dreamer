@@ -1,0 +1,65 @@
+{
+  "module": "packages/prepaint",
+  "results": [
+    {
+      "file": "separated-01.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "pass",
+        "prepaint-expired-snapshot-kept": "pass",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    },
+    {
+      "file": "separated-02.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "candidate-failure",
+        "prepaint-expired-snapshot-kept": "pass",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    },
+    {
+      "file": "separated-03.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "pass",
+        "prepaint-expired-snapshot-kept": "candidate-failure",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    },
+    {
+      "file": "separated-04.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "pass",
+        "prepaint-expired-snapshot-kept": "pass",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    },
+    {
+      "file": "separated-05.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "pass",
+        "prepaint-expired-snapshot-kept": "pass",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    },
+    {
+      "file": "separated-06.test.ts",
+      "clean": "pass",
+      "defects": {
+        "prepaint-route-prefix-overcapture": "pass",
+        "prepaint-expired-snapshot-kept": "candidate-failure",
+        "prepaint-oversize-snapshot-kept": "pass",
+        "prepaint-relative-route-accepted": "pass"
+      }
+    }
+  ]
+}

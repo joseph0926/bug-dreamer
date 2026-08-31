@@ -1,10 +1,12 @@
+const moduleDir = process.env.BUG_DREAMER_MODULE_DIR;
+
 export default {
-  root: '/workspace/packages/tx',
+  root: moduleDir,
   cacheDir: '/tmp/vite',
   resolve: {
     alias: {
-      '@bug-dreamer/scenario': '/workspace/packages/tx/.bug-dreamer/scenario.mjs',
-      '@target': '/workspace/packages/tx/src',
+      '@bug-dreamer/scenario': `${moduleDir}/.bug-dreamer/scenario.mjs`,
+      '@target': `${moduleDir}/src`,
     },
   },
   server: {

@@ -1,19 +1,17 @@
 import { defineScenario } from '@bug-dreamer/scenario';
-import { executeWithRetry } from '@target/retry';
 
 defineScenario({
-  id: 'returns the first successful retry result',
+  id: 'synthetic passing oracle',
   oracle: {
-    basis: 'existing-test',
-    ref: 'packages/tx/tests/retry.test.ts:13',
+    basis: 'declared-invariant',
+    ref: 'test fixture only',
   },
   inputs: {
-    stepId: 'step-1',
-    maxAttempts: 1,
+    value: 'expected',
   },
-  expected: 'The first successful attempt returns its value.',
-  act: async () => executeWithRetry(async () => 'success', 'step-1', { maxAttempts: 1 }),
+  expected: 'The synthetic value matches its oracle.',
+  act: async () => 'expected',
   assert: (actual, expect) => {
-    expect(actual).toBe('success');
+    expect(actual).toBe('expected');
   },
 });

@@ -59,7 +59,17 @@ Multi-repository support, a web interface, automatic fixes, a scoring model, and
 
 ### Status
 
-v0.2 is planned. The values pinned at phase 3 (fixture manifest, baseline configuration, budget) must be recorded in this document before the first measured run.
+v0.2 is in progress. Phase 1 (batch executor) and phase 2 (module execution contracts for `packages/tx` and `packages/local-first`) are complete with their exit conditions verified. Phase 3 is complete pending commit: 20 defects are planted in `benchmark/manifest.json` with two-sided checks (10 in `packages/tx`, 6 in `packages/local-first`, 4 in `packages/prepaint`; 4 timing, 3 concurrency, 13 cross-feature), the three registered module images double as the clean control group, and one baseline measurement is recorded in `benchmark/results/baseline-2026-08-31.json`.
+
+Phase 4 is measured and recorded in `benchmark/results/oracle-separation-2026-08-31.json`. All generation ran in fresh contexts that never saw the defect manifest. Defects caught: baseline 5/20, control 11/20, separated 10/20; caught beyond the baseline: control 7, separated 6 (criterion is 5). Clean-revision failures pending human verdict: baseline 14, control 4, separated 2 — the separated arm's two both assert documented contracts that the implementation violates (INV-TX-15, INV-LF-10). Three-run reproduction of caught pairs: control 11/11, separated 12/12, baseline 4/5. Budget used: 4 of 30 generation sessions.
+
+The phase 4 adoption decision and the phase 5 verdict wait on one input: the human verdicts for the 20 clean-revision failures in `benchmark/results/VERDICT-SHEET.md`, which determine the false-oracle rate. Phase 6 stays unimplemented until the phase 5 verdict passes, and phase 7 requires a fresh uncontaminated generation session beyond the current session's agent budget.
+
+The following phase 3 values are fixed as of 2026-08-31, before any measured run, under the standing v0.2 directive. Generation contexts are separated from the defect manifest: whoever plants defects never generates scenarios for a measured arm, and generation sessions receive only clean module sources.
+
+- Budget: at most 20 scenarios per batch, at most 30 scenario-generation model sessions for the whole benchmark, and the existing 30-second isolated execution limit per run
+- Baseline: one fixed prompt — "write tests that find real bugs in this module", given the module source and the scenario format, with no Bug Dreamer methodology and no knowledge of planted defects — executed in a fresh agent session per benchmark round; the transcript of the prompt is stored under `benchmark/baseline/`
+- Baseline scoring: a defect counts as caught by the baseline when at least one baseline scenario is a candidate failure on that defect's image while passing on the clean module image
 
 ## v0.1
 

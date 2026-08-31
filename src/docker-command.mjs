@@ -1,6 +1,6 @@
-import { IMAGE_TAG, RUN_LIMITS } from './constants.mjs';
+import { RUN_LIMITS } from './constants.mjs';
 
-export function buildDockerRunArgs({ scenarioPath, containerName }) {
+export function buildDockerRunArgs({ scenarioPath, containerName, moduleDir, imageTag }) {
   if (scenarioPath.includes(',')) {
     throw new Error('Scenario paths containing commas are not supported');
   }
@@ -30,7 +30,7 @@ export function buildDockerRunArgs({ scenarioPath, containerName }) {
     '--tmpfs',
     `/tmp:rw,nosuid,nodev,noexec,size=${RUN_LIMITS.tmpfs},mode=1777`,
     '--tmpfs',
-    `/workspace/packages/tx/node_modules/.vite-temp:rw,nosuid,nodev,noexec,size=${RUN_LIMITS.viteTmpfs},mode=700,uid=1000,gid=1000`,
+    `/workspace/${moduleDir}/node_modules/.vite-temp:rw,nosuid,nodev,noexec,size=${RUN_LIMITS.viteTmpfs},mode=700,uid=1000,gid=1000`,
     '--user',
     '1000:1000',
     '--env',
@@ -40,7 +40,7 @@ export function buildDockerRunArgs({ scenarioPath, containerName }) {
     '--env',
     'NO_COLOR=1',
     '--mount',
-    `type=bind,source=${scenarioPath},target=/workspace/packages/tx/.bug-dreamer/generated.test.ts,readonly`,
-    IMAGE_TAG,
+    `type=bind,source=${scenarioPath},target=/workspace/${moduleDir}/.bug-dreamer/generated.test.ts,readonly`,
+    imageTag,
   ];
 }

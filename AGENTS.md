@@ -49,6 +49,9 @@
 - 자동 검증이 통과해도 사용자가 악몽 하나 이상을 고칠 가치가 있다고 판정하기 전에는 v0.1 완료를 주장하지 않는다.
 - 호스트 명령은 Node.js 24로 실행한다. 특정 버전 관리자를 전제하지 않는다.
 - 단위 테스트는 `node --test test/*.test.mjs`로 실행한다. `test/fixtures/`의 시나리오는 호스트에서 실행하지 않는다.
-- Docker 이미지 준비는 `node scripts/prepare-image.mjs --target <firsttx 경로>`로 실행한다. 이 명령만 이미지와 락파일 의존성을 내려받기 위해 네트워크를 사용할 수 있다.
-- 시나리오는 `node scripts/run-scenario.mjs --scenario <테스트 파일>`로 저장소 루트에서 실행한다. 이 명령은 Docker 네트워크를 차단한다.
+- Docker 이미지 준비는 `node scripts/prepare-image.mjs --target <firsttx 경로> [--module <모듈>]`로 실행한다. 이 명령만 이미지와 락파일 의존성을 내려받기 위해 네트워크를 사용할 수 있다.
+- 시나리오는 `node scripts/run-scenario.mjs --scenario <테스트 파일> [--module <모듈>]`로 저장소 루트에서 실행한다. 이 명령은 Docker 네트워크를 차단한다.
+- 배치는 `node scripts/run-batch.mjs --dir <시나리오 디렉터리> [--module <모듈>]`로 실행한다. 각 시나리오를 기본 3회 연속 실행해 시그니처 일치 여부를 집계하며, 리포트는 생성하지 않는다.
+- 모듈 실행 계약은 `src/modules.mjs`가 소유한다. 미등록 모듈 지정은 잘못된 실행기 입력(exit 2)이며, 격리 속성은 모듈별로 완화할 수 없다. 기본 모듈은 `packages/tx`다.
+- 벤치마크 결함은 `benchmark/manifest.json`이 소유한다. 결함 이미지는 `node scripts/prepare-image.mjs --target <경로> --defect <결함 id>`로 빌드하고, 실행은 `--defect <결함 id>`로 지정한다. 각 결함의 check 시나리오는 결함 이미지에서 candidate-failure, 정상 이미지에서 pass여야 한다.
 - 현재 확정된 lint와 typecheck 명령은 없다.

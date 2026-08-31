@@ -1,0 +1,77 @@
+{
+  "module": "packages/local-first",
+  "results": [
+    {
+      "file": "control-01.test.ts",
+      "clean": "pass",
+      "defects": {
+        "local-first-stale-flag-inverted": "pass",
+        "local-first-history-change-not-reflected": "pass",
+        "local-first-cache-unsubscribe-noop": "candidate-failure",
+        "local-first-error-not-notified": "pass",
+        "local-first-self-broadcast-not-filtered": "pass",
+        "local-first-unsubscribe-removes-all": "pass"
+      }
+    },
+    {
+      "file": "control-02.test.ts",
+      "clean": "candidate-failure",
+      "defects": {
+        "local-first-stale-flag-inverted": "candidate-failure",
+        "local-first-history-change-not-reflected": "candidate-failure",
+        "local-first-cache-unsubscribe-noop": "candidate-failure",
+        "local-first-error-not-notified": "candidate-failure",
+        "local-first-self-broadcast-not-filtered": "candidate-failure",
+        "local-first-unsubscribe-removes-all": "candidate-failure"
+      }
+    },
+    {
+      "file": "control-03.test.ts",
+      "clean": "pass",
+      "defects": {
+        "local-first-stale-flag-inverted": "candidate-failure",
+        "local-first-history-change-not-reflected": "pass",
+        "local-first-cache-unsubscribe-noop": "pass",
+        "local-first-error-not-notified": "pass",
+        "local-first-self-broadcast-not-filtered": "pass",
+        "local-first-unsubscribe-removes-all": "pass"
+      }
+    },
+    {
+      "file": "control-04.test.ts",
+      "clean": "pass",
+      "defects": {
+        "local-first-stale-flag-inverted": "pass",
+        "local-first-history-change-not-reflected": "pass",
+        "local-first-cache-unsubscribe-noop": "pass",
+        "local-first-error-not-notified": "pass",
+        "local-first-self-broadcast-not-filtered": "pass",
+        "local-first-unsubscribe-removes-all": "pass"
+      }
+    },
+    {
+      "file": "control-05.test.ts",
+      "clean": "pass",
+      "defects": {
+        "local-first-stale-flag-inverted": "pass",
+        "local-first-history-change-not-reflected": "pass",
+        "local-first-cache-unsubscribe-noop": "pass",
+        "local-first-error-not-notified": "pass",
+        "local-first-self-broadcast-not-filtered": "pass",
+        "local-first-unsubscribe-removes-all": "pass"
+      }
+    },
+    {
+      "file": "control-06.test.ts",
+      "clean": "pass",
+      "defects": {
+        "local-first-stale-flag-inverted": "pass",
+        "local-first-history-change-not-reflected": "pass",
+        "local-first-cache-unsubscribe-noop": "pass",
+        "local-first-error-not-notified": "pass",
+        "local-first-self-broadcast-not-filtered": "pass",
+        "local-first-unsubscribe-removes-all": "candidate-failure"
+      }
+    }
+  ]
+}

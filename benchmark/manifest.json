@@ -1,0 +1,312 @@
+{
+  "target_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "control": {
+    "description": "The unmodified target revision. Every defect image differs from it by exactly the recorded edits."
+  },
+  "planned_size": {
+    "defects": "20-30",
+    "clean_controls": 5
+  },
+  "defects": [
+    {
+      "id": "tx-rollback-forward-order",
+      "module": "packages/tx",
+      "category": "timing",
+      "description": "Rollback compensates completed steps in forward order instead of reverse order, so later side effects are undone before the earlier state they depend on is restored.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-rollback-forward-order.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "for (let i = this.completedSteps - 1; i >= 0; i--) {",
+          "replace": "for (let i = 0; i < this.completedSteps; i++) {"
+        }
+      ]
+    },
+    {
+      "id": "tx-total-timeout-resets-per-step",
+      "module": "packages/tx",
+      "category": "timing",
+      "description": "The transaction-wide timeout is measured from each step's start instead of the transaction start, so a transaction whose steps individually fit the budget never times out no matter how long it runs in total.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-total-timeout-resets-per-step.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "      const elapsed = this.startTime ? Date.now() - this.startTime : 0;\n      const remaining = this.options.timeout - elapsed;",
+          "replace": "      const elapsed = 0;\n      const remaining = this.options.timeout - elapsed;"
+        }
+      ]
+    },
+    {
+      "id": "tx-reuse-after-rollback-allowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "A rolled-back transaction accepts new steps instead of rejecting them, so callers can keep appending work to a transaction whose earlier effects were already compensated.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-reuse-after-rollback-allowed.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "    if (this.status !== 'pending' && this.status !== 'running') {\n      throw new TransactionStateError(this.status, 'add step', this.id);\n    }\n\n    if (this.isStepRunning) {",
+          "replace": "    if (this.status !== 'pending' && this.status !== 'running' && this.status !== 'rolled-back') {\n      throw new TransactionStateError(this.status, 'add step', this.id);\n    }\n\n    if (this.isStepRunning) {"
+        }
+      ]
+    },
+    {
+      "id": "tx-compensation-errors-swallowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "Errors thrown by compensation functions during rollback are silently discarded, so a partially failed rollback reports the original step error and never surfaces CompensationFailedError.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-compensation-errors-swallowed.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "        } catch (error) {\n          errors.push(error as Error);\n        }",
+          "replace": "        } catch (error) {\n          void error;\n        }"
+        }
+      ]
+    },
+    {
+      "id": "tx-preaborted-signal-ignored",
+      "module": "packages/tx",
+      "category": "concurrency",
+      "description": "A step given an already-aborted external signal still executes: the pre-abort check is replaced by a listener that never fires for signals aborted before registration.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-preaborted-signal-ignored.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "      if (externalSignal.aborted) {\n        onExternalAbort();\n      } else {\n        externalSignal.addEventListener('abort', onExternalAbort, { once: true });\n      }",
+          "replace": "      externalSignal.addEventListener('abort', onExternalAbort, { once: true });"
+        }
+      ]
+    },
+    {
+      "id": "tx-concurrent-step-guard-removed",
+      "module": "packages/tx",
+      "category": "concurrency",
+      "description": "Two steps can run concurrently in one transaction: the in-flight guard only triggers in a state that never coincides with a running step, so overlapping run calls share and clobber the abort controller.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-concurrent-step-guard-removed.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "    if (this.isStepRunning) {\n      throw new TransactionStateError(this.status, 'add step', this.id);\n    }",
+          "replace": "    if (this.isStepRunning && this.status === 'pending') {\n      throw new TransactionStateError(this.status, 'add step', this.id);\n    }"
+        }
+      ]
+    },
+    {
+      "id": "tx-commit-after-rollback-allowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "A rolled-back transaction can still be committed, so callers observe a transaction that both compensated its work and reports a successful commit.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-commit-after-rollback-allowed.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "    if (this.status !== 'pending' && this.status !== 'running') {\n      throw new TransactionStateError(this.status, 'commit', this.id);\n    }",
+          "replace": "    if (this.status !== 'pending' && this.status !== 'running' && this.status !== 'rolled-back') {\n      throw new TransactionStateError(this.status, 'commit', this.id);\n    }"
+        }
+      ]
+    },
+    {
+      "id": "tx-retry-exhausted-drops-error-history",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "RetryExhaustedError carries only the final attempt's error instead of the full per-attempt history, so debugging output and error consumers lose every earlier failure cause.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-retry-exhausted-drops-error-history.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/retry.ts",
+          "find": "        throw new RetryExhaustedError(stepId, maxAttempts, errors);",
+          "replace": "        throw new RetryExhaustedError(stepId, maxAttempts, errors.slice(-1));"
+        }
+      ]
+    },
+    {
+      "id": "tx-completed-steps-never-tracked",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "Successful steps are not counted as completed, so a later failure rolls back nothing and every completed side effect survives the reported rollback.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-completed-steps-never-tracked.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/transaction.ts",
+          "find": "      this.completedSteps++;",
+          "replace": "      void this.completedSteps;"
+        }
+      ]
+    },
+    {
+      "id": "prepaint-route-prefix-overcapture",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "description": "Route allow-listing matches by prefix instead of exact pathname, so a policy for /checkout also authorizes snapshot capture on unrelated routes like /checkout-admin.",
+      "status": "planted",
+      "check": "benchmark/checks/prepaint-route-prefix-overcapture.test.ts",
+      "edits": [
+        {
+          "file": "packages/prepaint/src/policy.ts",
+          "find": "  return policy?.routes.includes(route) ?? false;",
+          "replace": "  return policy?.routes.some((allowed) => route.startsWith(allowed)) ?? false;"
+        }
+      ]
+    },
+    {
+      "id": "prepaint-expired-snapshot-kept",
+      "module": "packages/prepaint",
+      "category": "timing",
+      "description": "The snapshot age comparison is inverted, so snapshots older than the TTL are kept forever and stale content keeps being prepainted.",
+      "status": "planted",
+      "check": "benchmark/checks/prepaint-expired-snapshot-kept.test.ts",
+      "edits": [
+        {
+          "file": "packages/prepaint/src/policy.ts",
+          "find": "  if (now - snapshot.timestamp > policy.ttlMs) return true;",
+          "replace": "  if (snapshot.timestamp - now > policy.ttlMs) return true;"
+        }
+      ]
+    },
+    {
+      "id": "prepaint-oversize-snapshot-kept",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "description": "The size limit compares UTF-16 string length instead of encoded UTF-8 bytes, so multibyte snapshots far above maxSnapshotBytes are kept.",
+      "status": "planted",
+      "check": "benchmark/checks/prepaint-oversize-snapshot-kept.test.ts",
+      "edits": [
+        {
+          "file": "packages/prepaint/src/policy.ts",
+          "find": "  if (getSnapshotPayloadBytes(snapshot as Snapshot) > policy.maxSnapshotBytes) return true;",
+          "replace": "  if (snapshot.body.length > policy.maxSnapshotBytes) return true;"
+        }
+      ]
+    },
+    {
+      "id": "local-first-stale-flag-inverted",
+      "module": "packages/local-first",
+      "category": "timing",
+      "description": "The staleness comparison is inverted: data older than the ttl reports fresh and freshly updated data reports stale, so revalidation runs at exactly the wrong times.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-stale-flag-inverted.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/cache-manager.ts",
+          "find": "      isStale: age >= this.ttl,",
+          "replace": "      isStale: age < this.ttl,"
+        }
+      ]
+    },
+    {
+      "id": "local-first-history-change-not-reflected",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "description": "The combined-snapshot memo check ignores history changes, so a history-only update (for example a conflict flag) returns the previous cached snapshot and consumers never see it.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-history-change-not-reflected.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/cache-manager.ts",
+          "find": "      this.cachedSnapshot.error === newError &&\n      this.cachedSnapshot.history === this.cachedHistory",
+          "replace": "      this.cachedSnapshot.error === newError"
+        }
+      ]
+    },
+    {
+      "id": "local-first-cache-unsubscribe-noop",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "description": "CacheManager.subscribe returns an unsubscribe that removes nothing, so detached consumers keep receiving updates and the subscriber set grows for the model's lifetime.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-cache-unsubscribe-noop.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/cache-manager.ts",
+          "find": "    this.subscribers.add(callback);\n    return () => {\n      this.subscribers.delete(callback);\n    };",
+          "replace": "    this.subscribers.add(callback);\n    return () => {\n      void callback;\n    };"
+        }
+      ]
+    },
+    {
+      "id": "local-first-error-not-notified",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "description": "Subscribers are not notified when the cache enters the error state, so consumers keep rendering the previous loading or success state after a failure.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-error-not-notified.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/cache-manager.ts",
+          "find": "  updateWithError(error: FirstTxError): void {\n    this.cacheState = { status: 'error', error };\n    this.updateSnapshot();\n    this.notifySubscribers();\n  }",
+          "replace": "  updateWithError(error: FirstTxError): void {\n    this.cacheState = { status: 'error', error };\n    this.updateSnapshot();\n  }"
+        }
+      ]
+    },
+    {
+      "id": "prepaint-relative-route-accepted",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "description": "Policy validation accepts relative route strings, so a policy like routes: ['home'] silently becomes active instead of being rejected, and capture decisions run against malformed route keys.",
+      "status": "planted",
+      "check": "benchmark/checks/prepaint-relative-route-accepted.test.ts",
+      "edits": [
+        {
+          "file": "packages/prepaint/src/policy.ts",
+          "find": "    if (typeof route !== 'string' || !route.startsWith('/')) {",
+          "replace": "    if (typeof route !== 'string') {"
+        }
+      ]
+    },
+    {
+      "id": "local-first-self-broadcast-not-filtered",
+      "module": "packages/local-first",
+      "category": "concurrency",
+      "description": "A tab reacts to its own broadcast messages: the sender-id filter is removed, so every local mutation also triggers the local refresh callbacks as if another tab had changed the model.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-self-broadcast-not-filtered.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/broadcast.ts",
+          "find": "      if (message.senderId === this.senderId) {\n        return;\n      }",
+          "replace": "      void message.senderId;"
+        }
+      ]
+    },
+    {
+      "id": "local-first-unsubscribe-removes-all",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "description": "Unsubscribing one listener silently removes every listener registered for the same model key, so remaining subscribers stop receiving cross-tab updates.",
+      "status": "planted",
+      "check": "benchmark/checks/local-first-unsubscribe-removes-all.test.ts",
+      "edits": [
+        {
+          "file": "packages/local-first/src/broadcast.ts",
+          "find": "    return () => {\n      this.listeners.get(key)?.delete(callback);\n      if (this.listeners.get(key)?.size === 0) {\n        this.listeners.delete(key);\n      }\n    };",
+          "replace": "    return () => {\n      this.listeners.delete(key);\n    };"
+        }
+      ]
+    },
+    {
+      "id": "tx-retry-skips-final-attempt",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "description": "Retry exhausts one attempt early: a step configured with maxAttempts N gives up after N-1 tries, so work that would succeed on the final attempt is reported as exhausted.",
+      "status": "planted",
+      "check": "benchmark/checks/tx-retry-skips-final-attempt.test.ts",
+      "edits": [
+        {
+          "file": "packages/tx/src/retry.ts",
+          "find": "      if (attempt === maxAttempts) {",
+          "replace": "      if (attempt >= maxAttempts - 1) {"
+        }
+      ]
+    }
+  ]
+}

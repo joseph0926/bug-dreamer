@@ -1,0 +1,101 @@
+{
+  "module": "packages/tx",
+  "results": [
+    {
+      "file": "separated-01.test.ts",
+      "clean": "pass",
+      "defects": {
+        "tx-rollback-forward-order": "candidate-failure",
+        "tx-total-timeout-resets-per-step": "pass",
+        "tx-reuse-after-rollback-allowed": "pass",
+        "tx-compensation-errors-swallowed": "pass",
+        "tx-preaborted-signal-ignored": "pass",
+        "tx-concurrent-step-guard-removed": "pass",
+        "tx-commit-after-rollback-allowed": "pass",
+        "tx-retry-exhausted-drops-error-history": "pass",
+        "tx-completed-steps-never-tracked": "candidate-failure",
+        "tx-retry-skips-final-attempt": "pass"
+      }
+    },
+    {
+      "file": "separated-02.test.ts",
+      "clean": "pass",
+      "defects": {
+        "tx-rollback-forward-order": "pass",
+        "tx-total-timeout-resets-per-step": "pass",
+        "tx-reuse-after-rollback-allowed": "candidate-failure",
+        "tx-compensation-errors-swallowed": "pass",
+        "tx-preaborted-signal-ignored": "pass",
+        "tx-concurrent-step-guard-removed": "pass",
+        "tx-commit-after-rollback-allowed": "candidate-failure",
+        "tx-retry-exhausted-drops-error-history": "pass",
+        "tx-completed-steps-never-tracked": "pass",
+        "tx-retry-skips-final-attempt": "pass"
+      }
+    },
+    {
+      "file": "separated-03.test.ts",
+      "clean": "candidate-failure",
+      "defects": {
+        "tx-rollback-forward-order": "candidate-failure",
+        "tx-total-timeout-resets-per-step": "candidate-failure",
+        "tx-reuse-after-rollback-allowed": "candidate-failure",
+        "tx-compensation-errors-swallowed": "candidate-failure",
+        "tx-preaborted-signal-ignored": "candidate-failure",
+        "tx-concurrent-step-guard-removed": "candidate-failure",
+        "tx-commit-after-rollback-allowed": "candidate-failure",
+        "tx-retry-exhausted-drops-error-history": "candidate-failure",
+        "tx-completed-steps-never-tracked": "candidate-failure",
+        "tx-retry-skips-final-attempt": "candidate-failure"
+      }
+    },
+    {
+      "file": "separated-04.test.ts",
+      "clean": "pass",
+      "defects": {
+        "tx-rollback-forward-order": "pass",
+        "tx-total-timeout-resets-per-step": "pass",
+        "tx-reuse-after-rollback-allowed": "pass",
+        "tx-compensation-errors-swallowed": "pass",
+        "tx-preaborted-signal-ignored": "pass",
+        "tx-concurrent-step-guard-removed": "pass",
+        "tx-commit-after-rollback-allowed": "pass",
+        "tx-retry-exhausted-drops-error-history": "pass",
+        "tx-completed-steps-never-tracked": "pass",
+        "tx-retry-skips-final-attempt": "candidate-failure"
+      }
+    },
+    {
+      "file": "separated-05.test.ts",
+      "clean": "pass",
+      "defects": {
+        "tx-rollback-forward-order": "pass",
+        "tx-total-timeout-resets-per-step": "pass",
+        "tx-reuse-after-rollback-allowed": "pass",
+        "tx-compensation-errors-swallowed": "pass",
+        "tx-preaborted-signal-ignored": "pass",
+        "tx-concurrent-step-guard-removed": "pass",
+        "tx-commit-after-rollback-allowed": "pass",
+        "tx-retry-exhausted-drops-error-history": "candidate-failure",
+        "tx-completed-steps-never-tracked": "pass",
+        "tx-retry-skips-final-attempt": "candidate-failure"
+      }
+    },
+    {
+      "file": "separated-06.test.ts",
+      "clean": "pass",
+      "defects": {
+        "tx-rollback-forward-order": "pass",
+        "tx-total-timeout-resets-per-step": "candidate-failure",
+        "tx-reuse-after-rollback-allowed": "pass",
+        "tx-compensation-errors-swallowed": "pass",
+        "tx-preaborted-signal-ignored": "pass",
+        "tx-concurrent-step-guard-removed": "pass",
+        "tx-commit-after-rollback-allowed": "pass",
+        "tx-retry-exhausted-drops-error-history": "pass",
+        "tx-completed-steps-never-tracked": "pass",
+        "tx-retry-skips-final-attempt": "pass"
+      }
+    }
+  ]
+}

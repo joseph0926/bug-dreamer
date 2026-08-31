@@ -5,15 +5,15 @@ import { fileURLToPath } from 'node:url';
 import { classifyRun } from '../src/classify.mjs';
 import {
   DEFAULT_TIMEOUT_MS,
-  IMAGE_TAG,
   MAX_TIMEOUT_MS,
   MIN_TIMEOUT_MS,
   RUN_LIMITS,
-  TARGET_MODULE,
   TARGET_PROJECT,
   TARGET_REVISION,
 } from '../src/constants.mjs';
+import { benchImageTagFor, loadManifest, resolveDefect } from '../src/benchmark.mjs';
 import { buildDockerRunArgs } from '../src/docker-command.mjs';
+import { DEFAULT_MODULE, imageTagFor, resolveModule } from '../src/modules.mjs';
 import { runCommand } from '../src/process.mjs';
 import { inspectScenario, relativeScenarioPath } from '../src/scenario-file.mjs';
 
@@ -21,6 +21,8 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 
 function parseArgs(args) {
   let scenario;
+  let moduleName;
+  let defectId;
   let timeoutMs = DEFAULT_TIMEOUT_MS;
 
   for (let index = 0; index < args.length; index += 2) {
@@ -28,20 +30,25 @@ function parseArgs(args) {
     const value = args[index + 1];
     if (value === undefined) throw new Error(`Missing value for ${name}`);
     if (name === '--scenario') scenario = value;
+    else if (name === '--module') moduleName = value;
+    else if (name === '--defect') defectId = value;
     else if (name === '--timeout-ms') timeoutMs = Number(value);
     else throw new Error(`Unknown option: ${name}`);
   }
 
   if (scenario === undefined) {
     throw new Error(
-      'Usage: node scripts/run-scenario.mjs --scenario <scenario.test.ts> [--timeout-ms <milliseconds>]',
+      'Usage: node scripts/run-scenario.mjs --scenario <scenario.test.ts> [--module <module> | --defect <defect-id>] [--timeout-ms <milliseconds>]',
     );
+  }
+  if (moduleName !== undefined && defectId !== undefined) {
+    throw new Error('Use either --module or --defect, not both; a defect fixes its module');
   }
   if (!Number.isInteger(timeoutMs) || timeoutMs < MIN_TIMEOUT_MS || timeoutMs > MAX_TIMEOUT_MS) {
     throw new Error(`Timeout must be an integer between ${MIN_TIMEOUT_MS} and ${MAX_TIMEOUT_MS}`);
   }
 
-  return { scenario, timeoutMs };
+  return { scenario, moduleName: moduleName ?? DEFAULT_MODULE, defectId, timeoutMs };
 }
 
 function shellQuote(value) {
@@ -58,14 +65,17 @@ async function removeContainer(containerName) {
 }
 
 async function main() {
-  const { scenario: scenarioInput, timeoutMs } = parseArgs(process.argv.slice(2));
+  const { scenario: scenarioInput, moduleName, defectId, timeoutMs } = parseArgs(process.argv.slice(2));
+  const defect = defectId === undefined ? undefined : resolveDefect(await loadManifest(), defectId);
+  const module = resolveModule(defect?.module ?? moduleName);
+  const imageTag = defect === undefined ? imageTagFor(module.module) : benchImageTagFor(defect.id);
   const scenario = await inspectScenario(scenarioInput);
   const image = await runCommand('docker', [
     'image',
     'inspect',
     '--format',
     '{{.Id}} {{index .Config.Labels "org.bug-dreamer.dependencies-ref"}}',
-    IMAGE_TAG,
+    imageTag,
   ]);
   if (image.exitCode !== 0) {
     throw new Error(`Runner image is unavailable. Run the prepare command first.\n${image.stderr.trim()}`);
@@ -76,6 +86,8 @@ async function main() {
   const dockerArgs = buildDockerRunArgs({
     scenarioPath: scenario.path,
     containerName,
+    moduleDir: module.module,
+    imageTag,
   });
   const result = await runCommand('docker', dockerArgs, {
     timeoutMs,
@@ -90,11 +102,12 @@ async function main() {
     target: {
       project: TARGET_PROJECT,
       project_revision: TARGET_REVISION,
-      module: TARGET_MODULE,
+      module: module.module,
+      defect: defect?.id,
     },
     environment: {
       isolation: 'docker',
-      image_or_os: `${IMAGE_TAG}@${imageId}`,
+      image_or_os: `${imageTag}@${imageId}`,
       runtime: 'node 24.16.0',
       dependencies_ref: dependenciesRef,
       limits: {
@@ -118,7 +131,7 @@ async function main() {
       control_ref: scenarioMetadata.control_ref,
     },
     reproduction: {
-      command: `node scripts/run-scenario.mjs --scenario ${shellQuote(commandScenario)} --timeout-ms ${timeoutMs}`,
+      command: `node scripts/run-scenario.mjs --scenario ${shellQuote(commandScenario)} ${defect === undefined ? `--module ${module.module}` : `--defect ${defect.id}`} --timeout-ms ${timeoutMs}`,
       working_directory: '.',
     },
     inputs: scenarioMetadata.inputs,

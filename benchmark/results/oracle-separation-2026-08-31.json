@@ -1,0 +1,166 @@
+{
+  "experiment": "oracle-source-separation",
+  "date": "2026-08-31",
+  "design": {
+    "control": "one session imagines scenarios and defines expectations (benchmark/arms/control)",
+    "separated": "invariants extracted from existing tests, docs, and types in one session (benchmark/arms/separated/INVARIANTS.md); a second session generates scenarios that cite only those invariants",
+    "shared": "18 scenarios per arm, same fixture benchmark, same budget, generation contexts never saw the defect manifest"
+  },
+  "metrics": {
+    "defects_caught": {
+      "baseline": 5,
+      "control": 11,
+      "separated": 10,
+      "total": 20
+    },
+    "caught_beyond_baseline": {
+      "control": 7,
+      "separated": 6
+    },
+    "clean_failures_pending_verdict": {
+      "baseline": 14,
+      "control": 4,
+      "separated": 2
+    },
+    "reproduction_3run": {
+      "baseline": {
+        "pairs": 5,
+        "reproduced": 4
+      },
+      "control": {
+        "pairs": 11,
+        "reproduced": 11
+      },
+      "separated": {
+        "pairs": 12,
+        "reproduced": 12
+      }
+    },
+    "minimized_standalone": "every caught defect is caught by a single standalone scenario file: 100 percent for all arms",
+    "budget_used": {
+      "generation_sessions": 4,
+      "of": 30
+    }
+  },
+  "per_arm": {
+    "baseline": {
+      "caught": {
+        "tx-total-timeout-resets-per-step": [
+          "baseline-05.test.ts"
+        ],
+        "tx-completed-steps-never-tracked": [
+          "baseline-05.test.ts"
+        ],
+        "tx-retry-exhausted-drops-error-history": [
+          "baseline-06.test.ts"
+        ],
+        "tx-retry-skips-final-attempt": [
+          "baseline-06.test.ts"
+        ],
+        "prepaint-relative-route-accepted": [
+          "baseline-06.test.ts"
+        ]
+      },
+      "cleanFail": [
+        "packages/tx/baseline-01.test.ts",
+        "packages/tx/baseline-02.test.ts",
+        "packages/tx/baseline-03.test.ts",
+        "packages/tx/baseline-04.test.ts",
+        "packages/local-first/baseline-01.test.ts",
+        "packages/local-first/baseline-02.test.ts",
+        "packages/local-first/baseline-03.test.ts",
+        "packages/local-first/baseline-04.test.ts",
+        "packages/local-first/baseline-05.test.ts",
+        "packages/local-first/baseline-06.test.ts",
+        "packages/prepaint/baseline-01.test.ts",
+        "packages/prepaint/baseline-02.test.ts",
+        "packages/prepaint/baseline-03.test.ts",
+        "packages/prepaint/baseline-04.test.ts"
+      ]
+    },
+    "control": {
+      "caught": {
+        "tx-concurrent-step-guard-removed": [
+          "control-02.test.ts"
+        ],
+        "tx-retry-exhausted-drops-error-history": [
+          "control-03.test.ts"
+        ],
+        "tx-retry-skips-final-attempt": [
+          "control-03.test.ts"
+        ],
+        "tx-compensation-errors-swallowed": [
+          "control-05.test.ts"
+        ],
+        "tx-completed-steps-never-tracked": [
+          "control-05.test.ts"
+        ],
+        "local-first-cache-unsubscribe-noop": [
+          "control-01.test.ts"
+        ],
+        "local-first-stale-flag-inverted": [
+          "control-03.test.ts"
+        ],
+        "local-first-unsubscribe-removes-all": [
+          "control-06.test.ts"
+        ],
+        "prepaint-relative-route-accepted": [
+          "control-02.test.ts"
+        ],
+        "prepaint-expired-snapshot-kept": [
+          "control-03.test.ts"
+        ],
+        "prepaint-oversize-snapshot-kept": [
+          "control-04.test.ts"
+        ]
+      },
+      "cleanFail": [
+        "packages/tx/control-01.test.ts",
+        "packages/tx/control-04.test.ts",
+        "packages/local-first/control-02.test.ts",
+        "packages/prepaint/control-01.test.ts"
+      ]
+    },
+    "separated": {
+      "caught": {
+        "tx-rollback-forward-order": [
+          "separated-01.test.ts"
+        ],
+        "tx-completed-steps-never-tracked": [
+          "separated-01.test.ts"
+        ],
+        "tx-reuse-after-rollback-allowed": [
+          "separated-02.test.ts"
+        ],
+        "tx-commit-after-rollback-allowed": [
+          "separated-02.test.ts"
+        ],
+        "tx-retry-skips-final-attempt": [
+          "separated-04.test.ts",
+          "separated-05.test.ts"
+        ],
+        "tx-retry-exhausted-drops-error-history": [
+          "separated-05.test.ts"
+        ],
+        "tx-total-timeout-resets-per-step": [
+          "separated-06.test.ts"
+        ],
+        "local-first-self-broadcast-not-filtered": [
+          "separated-01.test.ts"
+        ],
+        "prepaint-route-prefix-overcapture": [
+          "separated-02.test.ts"
+        ],
+        "prepaint-expired-snapshot-kept": [
+          "separated-03.test.ts",
+          "separated-06.test.ts"
+        ]
+      },
+      "cleanFail": [
+        "packages/tx/separated-03.test.ts",
+        "packages/local-first/separated-04.test.ts"
+      ]
+    }
+  },
+  "adoption_decision": "pending: the separated arm shows fewer clean-revision failures (2 vs 4) and equal-order yield (10 vs 11 planted defects); its two clean failures assert documented contracts that conflict with the implementation (INV-TX-15, INV-LF-10) and may be real bugs, not false oracles. Human verdicts on the 20 clean-failure scenarios (benchmark/results/VERDICT-SHEET.md) decide the false-oracle rate and the adopt or reject call."
+}

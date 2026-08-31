@@ -2,18 +2,20 @@ import { spawn } from 'node:child_process';
 
 import { emit } from './events.mjs';
 
+const moduleDir = process.env.BUG_DREAMER_MODULE_DIR;
+
+if (moduleDir === undefined || moduleDir.length === 0) {
+  process.stderr.write('BUG_DREAMER_MODULE_DIR is not set\n');
+  process.exit(126);
+}
+
 emit('P1');
 
 const child = spawn(
-  '/workspace/packages/tx/node_modules/.bin/vitest',
-  [
-    'run',
-    '.bug-dreamer/generated.test.ts',
-    '--config',
-    '/workspace/packages/tx/.bug-dreamer/vitest.config.mjs',
-  ],
+  `${moduleDir}/node_modules/.bin/vitest`,
+  ['run', '.bug-dreamer/generated.test.ts', '--config', `${moduleDir}/.bug-dreamer/vitest.config.mjs`],
   {
-    cwd: '/workspace/packages/tx',
+    cwd: moduleDir,
     env: process.env,
     stdio: 'inherit',
   },

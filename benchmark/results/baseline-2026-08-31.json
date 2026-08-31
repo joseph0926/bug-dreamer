@@ -1,0 +1,293 @@
+{
+  "arm": "baseline",
+  "date": "2026-08-31",
+  "prompt_ref": "benchmark/baseline/PROMPT.md",
+  "generation_sessions_used": 1,
+  "scenarios": 18,
+  "scoring_rule": "defect caught when a scenario is candidate-failure on the defect image and pass on the clean module image",
+  "defects_caught": {
+    "tx-total-timeout-resets-per-step": [
+      "baseline-05.test.ts"
+    ],
+    "tx-completed-steps-never-tracked": [
+      "baseline-05.test.ts"
+    ],
+    "tx-retry-exhausted-drops-error-history": [
+      "baseline-06.test.ts"
+    ],
+    "tx-retry-skips-final-attempt": [
+      "baseline-06.test.ts"
+    ],
+    "prepaint-relative-route-accepted": [
+      "baseline-06.test.ts"
+    ]
+  },
+  "defects_caught_count": 5,
+  "defects_total": 20,
+  "clean_outcomes": {
+    "packages/tx/baseline-01.test.ts": "candidate-failure",
+    "packages/tx/baseline-02.test.ts": "candidate-failure",
+    "packages/tx/baseline-03.test.ts": "candidate-failure",
+    "packages/tx/baseline-04.test.ts": "candidate-failure",
+    "packages/tx/baseline-05.test.ts": "pass",
+    "packages/tx/baseline-06.test.ts": "pass",
+    "packages/local-first/baseline-01.test.ts": "candidate-failure",
+    "packages/local-first/baseline-02.test.ts": "candidate-failure",
+    "packages/local-first/baseline-03.test.ts": "candidate-failure",
+    "packages/local-first/baseline-04.test.ts": "candidate-failure",
+    "packages/local-first/baseline-05.test.ts": "candidate-failure",
+    "packages/local-first/baseline-06.test.ts": "candidate-failure",
+    "packages/prepaint/baseline-01.test.ts": "candidate-failure",
+    "packages/prepaint/baseline-02.test.ts": "candidate-failure",
+    "packages/prepaint/baseline-03.test.ts": "candidate-failure",
+    "packages/prepaint/baseline-04.test.ts": "candidate-failure",
+    "packages/prepaint/baseline-05.test.ts": "pass",
+    "packages/prepaint/baseline-06.test.ts": "pass"
+  },
+  "clean_failures_note": "14 of 18 scenarios are candidate failures on the clean revision; each needs a human verdict (real bug or wrong expectation) before counting toward any bug-yield metric",
+  "raw": {
+    "packages/tx": {
+      "module": "packages/tx",
+      "results": [
+        {
+          "file": "baseline-01.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-02.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-03.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-04.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "pass",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-05.test.ts",
+          "clean": "pass",
+          "defects": {
+            "tx-rollback-forward-order": "pass",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "pass",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "pass",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "pass"
+          }
+        },
+        {
+          "file": "baseline-06.test.ts",
+          "clean": "pass",
+          "defects": {
+            "tx-rollback-forward-order": "pass",
+            "tx-total-timeout-resets-per-step": "pass",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "pass",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "pass",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        }
+      ]
+    },
+    "packages/local-first": {
+      "module": "packages/local-first",
+      "results": [
+        {
+          "file": "baseline-01.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-02.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "baseline-03.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-04.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-05.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-06.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "candidate-failure",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "candidate-failure"
+          }
+        }
+      ]
+    },
+    "packages/prepaint": {
+      "module": "packages/prepaint",
+      "results": [
+        {
+          "file": "baseline-01.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "candidate-failure",
+            "prepaint-expired-snapshot-kept": "candidate-failure",
+            "prepaint-oversize-snapshot-kept": "candidate-failure",
+            "prepaint-relative-route-accepted": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-02.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "candidate-failure",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "candidate-failure",
+            "prepaint-relative-route-accepted": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-03.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "candidate-failure",
+            "prepaint-expired-snapshot-kept": "candidate-failure",
+            "prepaint-oversize-snapshot-kept": "candidate-failure",
+            "prepaint-relative-route-accepted": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-04.test.ts",
+          "clean": "candidate-failure",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "candidate-failure",
+            "prepaint-expired-snapshot-kept": "candidate-failure",
+            "prepaint-oversize-snapshot-kept": "candidate-failure",
+            "prepaint-relative-route-accepted": "candidate-failure"
+          }
+        },
+        {
+          "file": "baseline-05.test.ts",
+          "clean": "pass",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "baseline-06.test.ts",
+          "clean": "pass",
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "candidate-failure"
+          }
+        }
+      ]
+    }
+  }
+}

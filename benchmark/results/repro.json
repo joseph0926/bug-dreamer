@@ -1,0 +1,312 @@
+{
+  "results": [
+    {
+      "arm": "baseline",
+      "defect": "tx-total-timeout-resets-per-step",
+      "scenario": "tx/baseline-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": false
+    },
+    {
+      "arm": "baseline",
+      "defect": "tx-completed-steps-never-tracked",
+      "scenario": "tx/baseline-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "baseline",
+      "defect": "tx-retry-exhausted-drops-error-history",
+      "scenario": "tx/baseline-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "baseline",
+      "defect": "tx-retry-skips-final-attempt",
+      "scenario": "tx/baseline-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "baseline",
+      "defect": "prepaint-relative-route-accepted",
+      "scenario": "prepaint/baseline-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "tx-concurrent-step-guard-removed",
+      "scenario": "tx/control-02.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "tx-retry-exhausted-drops-error-history",
+      "scenario": "tx/control-03.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "tx-retry-skips-final-attempt",
+      "scenario": "tx/control-03.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "tx-compensation-errors-swallowed",
+      "scenario": "tx/control-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "tx-completed-steps-never-tracked",
+      "scenario": "tx/control-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "local-first-cache-unsubscribe-noop",
+      "scenario": "local-first/control-01.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "local-first-stale-flag-inverted",
+      "scenario": "local-first/control-03.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "local-first-unsubscribe-removes-all",
+      "scenario": "local-first/control-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "prepaint-relative-route-accepted",
+      "scenario": "prepaint/control-02.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "prepaint-expired-snapshot-kept",
+      "scenario": "prepaint/control-03.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "control",
+      "defect": "prepaint-oversize-snapshot-kept",
+      "scenario": "prepaint/control-04.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-rollback-forward-order",
+      "scenario": "tx/separated-01.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-completed-steps-never-tracked",
+      "scenario": "tx/separated-01.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-reuse-after-rollback-allowed",
+      "scenario": "tx/separated-02.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-commit-after-rollback-allowed",
+      "scenario": "tx/separated-02.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-retry-skips-final-attempt",
+      "scenario": "tx/separated-04.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-retry-exhausted-drops-error-history",
+      "scenario": "tx/separated-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-retry-skips-final-attempt",
+      "scenario": "tx/separated-05.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "tx-total-timeout-resets-per-step",
+      "scenario": "tx/separated-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "local-first-self-broadcast-not-filtered",
+      "scenario": "local-first/separated-01.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "prepaint-route-prefix-overcapture",
+      "scenario": "prepaint/separated-02.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "prepaint-expired-snapshot-kept",
+      "scenario": "prepaint/separated-03.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    },
+    {
+      "arm": "separated",
+      "defect": "prepaint-expired-snapshot-kept",
+      "scenario": "prepaint/separated-06.test.ts",
+      "outcomes": [
+        "candidate-failure",
+        "candidate-failure",
+        "candidate-failure"
+      ],
+      "reproduced": true
+    }
+  ]
+}
