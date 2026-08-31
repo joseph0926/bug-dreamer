@@ -63,7 +63,13 @@ v0.2 is in progress. Phase 1 (batch executor) and phase 2 (module execution cont
 
 Phase 4 is measured and recorded in `benchmark/results/oracle-separation-2026-08-31.json`. All generation ran in fresh contexts that never saw the defect manifest. Defects caught: baseline 5/20, control 11/20, separated 10/20; caught beyond the baseline: control 7, separated 6 (criterion is 5). Clean-revision failures pending human verdict: baseline 14, control 4, separated 2 — the separated arm's two both assert documented contracts that the implementation violates (INV-TX-15, INV-LF-10). Three-run reproduction of caught pairs: control 11/11, separated 12/12, baseline 4/5. Budget used: 4 of 30 generation sessions.
 
-The phase 4 adoption decision and the phase 5 verdict wait on one input: the human verdicts for the 20 clean-revision failures in `benchmark/results/VERDICT-SHEET.md`, which determine the false-oracle rate. Phase 6 stays unimplemented until the phase 5 verdict passes, and phase 7 requires a fresh uncontaminated generation session beyond the current session's agent budget.
+Human review is complete: 17 of the 20 clean-revision failures were verified as real bugs (9 worth fixing, 8 not) with the user delegating the mechanically verifiable rows, and 3 were marked undecided at the user's direction (`benchmark/results/VERDICT-SHEET.md`). No verdict was wrong-expectation.
+
+Phase 5 verdict: **adopt** (`benchmark/results/phase5-verdict-2026-08-31.json`). All pre-registered criteria pass: 7 (control) and 6 (separated) valid bugs beyond the baseline against a floor of 5; false-oracle rate 0 percent in every arm; reproduction 11/11 and 12/12; every caught defect preserved as a minimized standalone test; 4 of 30 generation sessions used. Phase 4 decision: **keep-control** — the separated design's false-oracle rate tied at 0 percent instead of dropping and its yield was slightly lower, so the current same-context design remains the default; the invariant catalog uniquely rediscovered documented-contract violations and is the first candidate to revisit if false oracles appear at scale.
+
+Phase 6 is complete: `scripts/run-digest.mjs` runs one unattended batch within the recorded budget and writes a candidate digest to `digests/YYYY-MM-DD.md` (first digest: `digests/2026-08-31.md`, one candidate); nothing is auto-published to `nightmares/`, whose promotion rules stay at v0.1. Scheduling is left to the user with an at-most-one-batch-per-day contract.
+
+Phase 7 (incident-seeded) remains: it requires a fresh uncontaminated generation session beyond this session's agent budget.
 
 The following phase 3 values are fixed as of 2026-08-31, before any measured run, under the standing v0.2 directive. Generation contexts are separated from the defect manifest: whoever plants defects never generates scenarios for a measured arm, and generation sessions receive only clean module sources.
 

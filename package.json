@@ -11,6 +11,7 @@
     "runner:prepare": "node scripts/prepare-image.mjs",
     "runner:run": "node scripts/run-scenario.mjs",
     "runner:batch": "node scripts/run-batch.mjs",
+    "runner:digest": "node scripts/run-digest.mjs",
     "test": "node --test test/*.test.mjs"
   }
 }

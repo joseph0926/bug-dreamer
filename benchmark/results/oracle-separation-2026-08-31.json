@@ -162,5 +162,9 @@
       ]
     }
   },
-  "adoption_decision": "pending: the separated arm shows fewer clean-revision failures (2 vs 4) and equal-order yield (10 vs 11 planted defects); its two clean failures assert documented contracts that conflict with the implementation (INV-TX-15, INV-LF-10) and may be real bugs, not false oracles. Human verdicts on the 20 clean-failure scenarios (benchmark/results/VERDICT-SHEET.md) decide the false-oracle rate and the adopt or reject call."
+  "adoption_decision": {
+    "decision": "keep-control",
+    "rule": "separated is adopted only if the false-oracle rate drops without losing valid-bug yield",
+    "reasoning": "false-oracle rates tied at 0 percent after human review; separated caught 10 planted defects and 2 real clean-revision bugs versus 11 and 3 for control, so the yield condition is not met. The separated design uniquely rediscovered documented-contract violations via its invariant catalog and remains the first candidate to revisit if false oracles appear at scale."
+  }
 }
