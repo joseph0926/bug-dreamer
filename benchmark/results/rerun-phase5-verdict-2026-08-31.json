@@ -1,0 +1,43 @@
+{
+  "verdict": "adopt",
+  "date": "2026-08-31",
+  "basis": "phase 4 re-measurement under benchmark/rerun-2026-08-31/REGISTRATION.md (registration committed in 59cdb00 before generation)",
+  "adopted_design": "separated (invariant-first): invariants extracted from documentation, existing tests, and public types first, scenarios generated to break them",
+  "retired_as_default": "control (same-context): fails the beyond-baseline criterion in this measurement (2 of the required 5)",
+  "criteria": {
+    "five_plus_valid_bugs_beyond_baseline": {
+      "floor": 5,
+      "control": 2,
+      "separated": 5,
+      "control_pass": false,
+      "separated_pass": true
+    },
+    "false_oracle_rate": {
+      "ceiling": "10 percent",
+      "measured": "0 percent (0 wrong-expectation of 13 human-reviewed clean-revision candidate failures: baseline 0/4, control 0/7, separated 0/2)",
+      "pass": true,
+      "verdict_sheet": "benchmark/results/RERUN-VERDICT-SHEET.md"
+    },
+    "reproduction_rate": {
+      "floor": "80 percent",
+      "measured": "100 percent (13 of 13 valid bugs candidate-failure with one signature in 3 of 3 isolated clean runs)",
+      "pass": true
+    },
+    "minimized_standalone_tests": {
+      "floor": "70 percent",
+      "measured": "100 percent (every caught defect is by construction a single scenario failing on the defect image and passing on the clean image)",
+      "pass": true
+    },
+    "budget": {
+      "recorded": "at most 30 generation sessions, 20 scenarios per batch, 30s per isolated run",
+      "used": "8 of 30 generation sessions; batch cap and run limit respected",
+      "pass": true
+    }
+  },
+  "phase4_decision_reversal": "the suspended keep-control decision is replaced: this measurement's baseline caught 9/20 (versus 5/20 originally), which drops the control design below the pre-registered floor while the separated design meets it exactly (5) with the lowest clean-failure noise (2 versus control 7); the separated design becomes the default generation design",
+  "caveats": [
+    "single re-measurement round; the arm ranking moved between rounds mainly because baseline strength varies across fresh sessions, so the separated-versus-control margin should be treated as one observation, not a stable effect size",
+    "rows 8 and 10 of the verdict sheet were recorded real-bug-not-worth-fixing under a delegated split; flipping them changes no criterion"
+  ],
+  "human_verdicts": "all 13 clean-revision candidate failures judged real bugs by the user on 2026-08-31 (11 worth fixing, 2 not worth fixing under the delegated split), 0 wrong-expectation"
+}

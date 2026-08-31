@@ -24,16 +24,18 @@ Verdicts (check one per row):
 
 | # | real-bug-worth-fixing | real-bug-not-worth-fixing | wrong-expectation | undecided |
 |---|---|---|---|---|
-| 1 | [ ] | [ ] | [ ] | [ ] |
-| 2 | [ ] | [ ] | [ ] | [ ] |
-| 3 | [ ] | [ ] | [ ] | [ ] |
-| 4 | [ ] | [ ] | [ ] | [ ] |
-| 5 | [ ] | [ ] | [ ] | [ ] |
-| 6 | [ ] | [ ] | [ ] | [ ] |
-| 7 | [ ] | [ ] | [ ] | [ ] |
-| 8 | [ ] | [ ] | [ ] | [ ] |
-| 9 | [ ] | [ ] | [ ] | [ ] |
-| 10 | [ ] | [ ] | [ ] | [ ] |
-| 11 | [ ] | [ ] | [ ] | [ ] |
-| 12 | [ ] | [ ] | [ ] | [ ] |
-| 13 | [ ] | [ ] | [ ] | [ ] |
+| 1 | [v] | [ ] | [ ] | [ ] |
+| 2 | [v] | [ ] | [ ] | [ ] |
+| 3 | [v] | [ ] | [ ] | [ ] |
+| 4 | [v] | [ ] | [ ] | [ ] |
+| 5 | [v] | [ ] | [ ] | [ ] |
+| 6 | [v] | [ ] | [ ] | [ ] |
+| 7 | [v] | [ ] | [ ] | [ ] |
+| 8 | [ ] | [v] | [ ] | [ ] |
+| 9 | [v] | [ ] | [ ] | [ ] |
+| 10 | [ ] | [v] | [ ] | [ ] |
+| 11 | [v] | [ ] | [ ] | [ ] |
+| 12 | [v] | [ ] | [ ] | [ ] |
+| 13 | [v] | [ ] | [ ] | [ ] |
+
+Recorded 2026-08-31: the user judged all 13 rows real bugs (0 wrong-expectation). The worth-fixing split for rows 8 and 10 (real-bug-not-worth-fixing: boundary-input error leak, 1ms staleness doc mismatch) was delegated to the assistant and can be flipped without changing any pre-registered metric.
