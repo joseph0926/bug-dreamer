@@ -1,0 +1,99 @@
+{
+  "experiment": "phase4-rerun",
+  "date": "2026-08-31",
+  "registration": "benchmark/rerun-2026-08-31/REGISTRATION.md (committed 59cdb00 before generation)",
+  "generation_sessions": {
+    "used": 3,
+    "benchmark_total": "8 of 30"
+  },
+  "caught": {
+    "baseline": 9,
+    "control": 9,
+    "separated": 11
+  },
+  "caught_defects": {
+    "baseline": [
+      "tx-rollback-forward-order",
+      "tx-total-timeout-resets-per-step",
+      "tx-retry-exhausted-drops-error-history",
+      "tx-completed-steps-never-tracked",
+      "tx-retry-skips-final-attempt",
+      "local-first-stale-flag-inverted",
+      "prepaint-expired-snapshot-kept",
+      "prepaint-oversize-snapshot-kept",
+      "prepaint-relative-route-accepted"
+    ],
+    "control": [
+      "tx-rollback-forward-order",
+      "tx-total-timeout-resets-per-step",
+      "tx-compensation-errors-swallowed",
+      "tx-completed-steps-never-tracked",
+      "local-first-stale-flag-inverted",
+      "local-first-unsubscribe-removes-all",
+      "prepaint-expired-snapshot-kept",
+      "prepaint-oversize-snapshot-kept",
+      "prepaint-relative-route-accepted"
+    ],
+    "separated": [
+      "tx-rollback-forward-order",
+      "tx-compensation-errors-swallowed",
+      "tx-retry-exhausted-drops-error-history",
+      "tx-completed-steps-never-tracked",
+      "tx-retry-skips-final-attempt",
+      "local-first-stale-flag-inverted",
+      "local-first-cache-unsubscribe-noop",
+      "local-first-error-not-notified",
+      "local-first-self-broadcast-not-filtered",
+      "prepaint-route-prefix-overcapture",
+      "prepaint-expired-snapshot-kept"
+    ]
+  },
+  "beyond_baseline": {
+    "control": [
+      "tx-compensation-errors-swallowed",
+      "local-first-unsubscribe-removes-all"
+    ],
+    "separated": [
+      "tx-compensation-errors-swallowed",
+      "local-first-cache-unsubscribe-noop",
+      "local-first-error-not-notified",
+      "local-first-self-broadcast-not-filtered",
+      "prepaint-route-prefix-overcapture"
+    ]
+  },
+  "clean_candidate_failures": {
+    "baseline": [
+      "packages/tx/baseline-01.test.ts",
+      "packages/tx/baseline-03.test.ts",
+      "packages/local-first/baseline-03.test.ts",
+      "packages/local-first/baseline-04.test.ts"
+    ],
+    "control": [
+      "packages/tx/control-01.test.ts",
+      "packages/tx/control-02.test.ts",
+      "packages/tx/control-03.test.ts",
+      "packages/tx/control-04.test.ts",
+      "packages/local-first/control-03.test.ts",
+      "packages/local-first/control-04.test.ts",
+      "packages/local-first/control-06.test.ts"
+    ],
+    "separated": [
+      "packages/tx/separated-01.test.ts",
+      "packages/tx/separated-03.test.ts"
+    ]
+  },
+  "clean_failure_signature_consistency": "13 of 13 scenarios candidate-failure in 3/3 clean runs with one signature",
+  "criteria_partial": {
+    "five-plus-beyond-baseline": {
+      "control": 2,
+      "separated": 5,
+      "floor": 5,
+      "control_pass": false,
+      "separated_pass": true
+    },
+    "false-oracle-rate": "pending human verdicts (benchmark/results/RERUN-VERDICT-SHEET.md)",
+    "reproduction": "clean candidate failures 13/13 signature-consistent across 3 runs; final rate computed over valid bugs after verdicts",
+    "minimized-standalone": "every caught defect is by construction a single scenario failing on the defect image and passing on clean",
+    "budget": "8 of 30 generation sessions, 20-scenario batch cap respected, 30s per-run limit unchanged"
+  }
+}

@@ -1,0 +1,1464 @@
+{
+  "batch": {
+    "scenario_directory": "benchmark/rerun-2026-08-31/separated/local-first",
+    "module": "packages/local-first",
+    "runs_per_scenario": 3,
+    "scenario_count": 6,
+    "execution": {
+      "started_at": "2026-08-31T10:11:41.733Z",
+      "finished_at": "2026-08-31T10:11:52.757Z",
+      "duration_ms": 11024
+    },
+    "results": [
+      {
+        "scenario": "separated-01.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:87b4bc19cafd8d118ad4422708fc86c50669d12ec06cb6c1e6c4bad0613e7adf",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should not reload cache for own messages\" and code contract lf/src/broadcast.ts:139-141"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-01.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "key": "sep01:user",
+              "messages": [
+                "model-patched with senderId equal to the local broadcaster senderId",
+                "model-patched with senderId \"foreign-tab\""
+              ]
+            },
+            "expected": "The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.",
+            "actual": {
+              "callsAfterOwnSender": 0,
+              "foreignDelivered": true,
+              "totalCalls": 1
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 684,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should not reload cache for own messages\\\" and code contract lf/src/broadcast.ts:139-141\",\"inputs\":{\"key\":\"sep01:user\",\"messages\":[\"model-patched with senderId equal to the local broadcaster senderId\",\"model-patched with senderId \\\"foreign-tab\\\"\"]},\"expected\":\"The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"callsAfterOwnSender\":0,\"foreignDelivered\":true,\"totalCalls\":1}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 223ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:42\n   Duration  360ms (transform 49ms, setup 0ms, import 56ms, tests 223ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:87b4bc19cafd8d118ad4422708fc86c50669d12ec06cb6c1e6c4bad0613e7adf",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should not reload cache for own messages\" and code contract lf/src/broadcast.ts:139-141"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-01.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "key": "sep01:user",
+              "messages": [
+                "model-patched with senderId equal to the local broadcaster senderId",
+                "model-patched with senderId \"foreign-tab\""
+              ]
+            },
+            "expected": "The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.",
+            "actual": {
+              "callsAfterOwnSender": 0,
+              "foreignDelivered": true,
+              "totalCalls": 1
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 674,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should not reload cache for own messages\\\" and code contract lf/src/broadcast.ts:139-141\",\"inputs\":{\"key\":\"sep01:user\",\"messages\":[\"model-patched with senderId equal to the local broadcaster senderId\",\"model-patched with senderId \\\"foreign-tab\\\"\"]},\"expected\":\"The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"callsAfterOwnSender\":0,\"foreignDelivered\":true,\"totalCalls\":1}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 228ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:42\n   Duration  352ms (transform 27ms, setup 0ms, import 61ms, tests 228ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:87b4bc19cafd8d118ad4422708fc86c50669d12ec06cb6c1e6c4bad0613e7adf",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should not reload cache for own messages\" and code contract lf/src/broadcast.ts:139-141"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-01.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "key": "sep01:user",
+              "messages": [
+                "model-patched with senderId equal to the local broadcaster senderId",
+                "model-patched with senderId \"foreign-tab\""
+              ]
+            },
+            "expected": "The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.",
+            "actual": {
+              "callsAfterOwnSender": 0,
+              "foreignDelivered": true,
+              "totalCalls": 1
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 661,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"incoming message carrying the local senderId is ignored while a foreign senderId triggers subscribers\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-03 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should not reload cache for own messages\\\" and code contract lf/src/broadcast.ts:139-141\",\"inputs\":{\"key\":\"sep01:user\",\"messages\":[\"model-patched with senderId equal to the local broadcaster senderId\",\"model-patched with senderId \\\"foreign-tab\\\"\"]},\"expected\":\"The subscriber fires zero times for the message with the local senderId and exactly once for the foreign message.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"callsAfterOwnSender\":0,\"foreignDelivered\":true,\"totalCalls\":1}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 231ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:43\n   Duration  357ms (transform 27ms, setup 0ms, import 35ms, tests 231ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-02.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "a broadcast for one model key never invokes subscribers of a different key",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:197f0120a36571ea75e8b9b930839faca255d103c4bb594114a1f30546bff6ef",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should only reload affected model\" and \"should broadcast different keys independently\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscriptions": [
+                "sep02:alpha",
+                "sep02:beta"
+              ],
+              "message": "foreign model-replaced for key sep02:alpha only"
+            },
+            "expected": "The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.",
+            "actual": {
+              "delivered": true,
+              "alphaCalls": 1,
+              "betaCalls": 0
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 613,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a broadcast for one model key never invokes subscribers of a different key\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should only reload affected model\\\" and \\\"should broadcast different keys independently\\\"\",\"inputs\":{\"subscriptions\":[\"sep02:alpha\",\"sep02:beta\"],\"message\":\"foreign model-replaced for key sep02:alpha only\"},\"expected\":\"The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"alphaCalls\":1,\"betaCalls\":0}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 174ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:44\n   Duration  293ms (transform 45ms, setup 0ms, import 53ms, tests 174ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "a broadcast for one model key never invokes subscribers of a different key",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:197f0120a36571ea75e8b9b930839faca255d103c4bb594114a1f30546bff6ef",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should only reload affected model\" and \"should broadcast different keys independently\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscriptions": [
+                "sep02:alpha",
+                "sep02:beta"
+              ],
+              "message": "foreign model-replaced for key sep02:alpha only"
+            },
+            "expected": "The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.",
+            "actual": {
+              "delivered": true,
+              "alphaCalls": 1,
+              "betaCalls": 0
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 632,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a broadcast for one model key never invokes subscribers of a different key\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should only reload affected model\\\" and \\\"should broadcast different keys independently\\\"\",\"inputs\":{\"subscriptions\":[\"sep02:alpha\",\"sep02:beta\"],\"message\":\"foreign model-replaced for key sep02:alpha only\"},\"expected\":\"The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"alphaCalls\":1,\"betaCalls\":0}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 170ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:44\n   Duration  330ms (transform 60ms, setup 0ms, import 68ms, tests 170ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "a broadcast for one model key never invokes subscribers of a different key",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:197f0120a36571ea75e8b9b930839faca255d103c4bb594114a1f30546bff6ef",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \"should only reload affected model\" and \"should broadcast different keys independently\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscriptions": [
+                "sep02:alpha",
+                "sep02:beta"
+              ],
+              "message": "foreign model-replaced for key sep02:alpha only"
+            },
+            "expected": "The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.",
+            "actual": {
+              "delivered": true,
+              "alphaCalls": 1,
+              "betaCalls": 0
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 636,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a broadcast for one model key never invokes subscribers of a different key\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-04 — separated invariant catalog, sourced from lf/tests/broadcast.test.ts \\\"should only reload affected model\\\" and \\\"should broadcast different keys independently\\\"\",\"inputs\":{\"subscriptions\":[\"sep02:alpha\",\"sep02:beta\"],\"message\":\"foreign model-replaced for key sep02:alpha only\"},\"expected\":\"The subscriber of sep02:alpha fires exactly once and the subscriber of sep02:beta fires zero times.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"alphaCalls\":1,\"betaCalls\":0}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 174ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:45\n   Duration  329ms (transform 63ms, setup 0ms, import 70ms, tests 174ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-03.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "every outgoing broadcast message carries senderId, a numeric timestamp and a valid type",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:c5d07e7beaa28e9e3d4ba2d46eea2f3325e10c1e94e2e7acb878c29171242655",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "broadcast": {
+                "type": "model-replaced",
+                "key": "sep03:profile"
+              },
+              "observer": "a second BroadcastChannel on firsttx:models capturing the raw message"
+            },
+            "expected": "The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.",
+            "actual": {
+              "delivered": true,
+              "type": "model-replaced",
+              "senderIdIsString": true,
+              "timestampIsFiniteNumber": true,
+              "timestampNotBeforeSend": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 454,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every outgoing broadcast message carries senderId, a numeric timestamp and a valid type\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124\",\"inputs\":{\"broadcast\":{\"type\":\"model-replaced\",\"key\":\"sep03:profile\"},\"observer\":\"a second BroadcastChannel on firsttx:models capturing the raw message\"},\"expected\":\"The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"type\":\"model-replaced\",\"senderIdIsString\":true,\"timestampIsFiniteNumber\":true,\"timestampNotBeforeSend\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 13ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:46\n   Duration  179ms (transform 28ms, setup 0ms, import 35ms, tests 13ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "every outgoing broadcast message carries senderId, a numeric timestamp and a valid type",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:c5d07e7beaa28e9e3d4ba2d46eea2f3325e10c1e94e2e7acb878c29171242655",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "broadcast": {
+                "type": "model-replaced",
+                "key": "sep03:profile"
+              },
+              "observer": "a second BroadcastChannel on firsttx:models capturing the raw message"
+            },
+            "expected": "The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.",
+            "actual": {
+              "delivered": true,
+              "type": "model-replaced",
+              "senderIdIsString": true,
+              "timestampIsFiniteNumber": true,
+              "timestampNotBeforeSend": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 485,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every outgoing broadcast message carries senderId, a numeric timestamp and a valid type\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124\",\"inputs\":{\"broadcast\":{\"type\":\"model-replaced\",\"key\":\"sep03:profile\"},\"observer\":\"a second BroadcastChannel on firsttx:models capturing the raw message\"},\"expected\":\"The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"type\":\"model-replaced\",\"senderIdIsString\":true,\"timestampIsFiniteNumber\":true,\"timestampNotBeforeSend\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 13ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:46\n   Duration  174ms (transform 68ms, setup 0ms, import 76ms, tests 13ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "every outgoing broadcast message carries senderId, a numeric timestamp and a valid type",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:c5d07e7beaa28e9e3d4ba2d46eea2f3325e10c1e94e2e7acb878c29171242655",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "broadcast": {
+                "type": "model-replaced",
+                "key": "sep03:profile"
+              },
+              "observer": "a second BroadcastChannel on firsttx:models capturing the raw message"
+            },
+            "expected": "The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.",
+            "actual": {
+              "delivered": true,
+              "type": "model-replaced",
+              "senderIdIsString": true,
+              "timestampIsFiniteNumber": true,
+              "timestampNotBeforeSend": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 462,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every outgoing broadcast message carries senderId, a numeric timestamp and a valid type\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-07 — separated invariant catalog, sourced from public type BroadcastMessage in lf/src/broadcast.ts:16-21 and code contract lf/src/broadcast.ts:117-124\",\"inputs\":{\"broadcast\":{\"type\":\"model-replaced\",\"key\":\"sep03:profile\"},\"observer\":\"a second BroadcastChannel on firsttx:models capturing the raw message\"},\"expected\":\"The observed message has type model-replaced, a non-empty string senderId, and a finite numeric timestamp.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"delivered\":true,\"type\":\"model-replaced\",\"senderIdIsString\":true,\"timestampIsFiniteNumber\":true,\"timestampNotBeforeSend\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 14ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:47\n   Duration  129ms (transform 27ms, setup 0ms, import 35ms, tests 14ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-04.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "cache state is exclusive: snapshot only in success, error only in error, both null in loading",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:b76a8fd6e370a0ac8a5e7f0b12191e95ef02c2c9956ecd538b4ef76f6933e8c8",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-04.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "transitions": [
+                "updateWithData(\"payload\", now)",
+                "updateWithError(StorageError UNKNOWN)",
+                "setLoading()"
+              ]
+            },
+            "expected": "After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.",
+            "actual": {
+              "afterData": {
+                "status": "success",
+                "snapshot": "payload",
+                "error": null
+              },
+              "afterError": {
+                "status": "error",
+                "snapshot": null,
+                "errorIsSame": true
+              },
+              "afterLoading": {
+                "status": "loading",
+                "snapshot": null,
+                "error": null
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 469,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"cache state is exclusive: snapshot only in success, error only in error, both null in loading\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions\",\"inputs\":{\"transitions\":[\"updateWithData(\\\"payload\\\", now)\",\"updateWithError(StorageError UNKNOWN)\",\"setLoading()\"]},\"expected\":\"After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"status\":\"success\",\"snapshot\":\"payload\",\"error\":null},\"afterError\":{\"status\":\"error\",\"snapshot\":null,\"errorIsSame\":true},\"afterLoading\":{\"status\":\"loading\",\"snapshot\":null,\"error\":null}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:48\n   Duration  172ms (transform 70ms, setup 0ms, import 79ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "cache state is exclusive: snapshot only in success, error only in error, both null in loading",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:b76a8fd6e370a0ac8a5e7f0b12191e95ef02c2c9956ecd538b4ef76f6933e8c8",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-04.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "transitions": [
+                "updateWithData(\"payload\", now)",
+                "updateWithError(StorageError UNKNOWN)",
+                "setLoading()"
+              ]
+            },
+            "expected": "After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.",
+            "actual": {
+              "afterData": {
+                "status": "success",
+                "snapshot": "payload",
+                "error": null
+              },
+              "afterError": {
+                "status": "error",
+                "snapshot": null,
+                "errorIsSame": true
+              },
+              "afterLoading": {
+                "status": "loading",
+                "snapshot": null,
+                "error": null
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 499,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"cache state is exclusive: snapshot only in success, error only in error, both null in loading\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions\",\"inputs\":{\"transitions\":[\"updateWithData(\\\"payload\\\", now)\",\"updateWithError(StorageError UNKNOWN)\",\"setLoading()\"]},\"expected\":\"After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"status\":\"success\",\"snapshot\":\"payload\",\"error\":null},\"afterError\":{\"status\":\"error\",\"snapshot\":null,\"errorIsSame\":true},\"afterLoading\":{\"status\":\"loading\",\"snapshot\":null,\"error\":null}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:48\n   Duration  168ms (transform 74ms, setup 0ms, import 83ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "cache state is exclusive: snapshot only in success, error only in error, both null in loading",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:b76a8fd6e370a0ac8a5e7f0b12191e95ef02c2c9956ecd538b4ef76f6933e8c8",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-04.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "transitions": [
+                "updateWithData(\"payload\", now)",
+                "updateWithError(StorageError UNKNOWN)",
+                "setLoading()"
+              ]
+            },
+            "expected": "After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.",
+            "actual": {
+              "afterData": {
+                "status": "success",
+                "snapshot": "payload",
+                "error": null
+              },
+              "afterError": {
+                "status": "error",
+                "snapshot": null,
+                "errorIsSame": true
+              },
+              "afterLoading": {
+                "status": "loading",
+                "snapshot": null,
+                "error": null
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 479,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"cache state is exclusive: snapshot only in success, error only in error, both null in loading\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-08 — separated invariant catalog, sourced from public types CacheState (lf/src/cache-manager.ts:4-5) and CacheStatus (lf/src/types.ts:82) plus lf/tests/model.test.ts null-read assertions\",\"inputs\":{\"transitions\":[\"updateWithData(\\\"payload\\\", now)\",\"updateWithError(StorageError UNKNOWN)\",\"setLoading()\"]},\"expected\":\"After data the error read is null; after error the snapshot read is null and the error is returned; after setLoading both reads are null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"status\":\"success\",\"snapshot\":\"payload\",\"error\":null},\"afterError\":{\"status\":\"error\",\"snapshot\":null,\"errorIsSame\":true},\"afterLoading\":{\"status\":\"loading\",\"snapshot\":null,\"error\":null}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:49\n   Duration  164ms (transform 37ms, setup 0ms, import 66ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-05.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:b5d54cfcd53cc72b3458ab48a8146166cf778861bd8a9ccaebd6296728dbae26",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \"should handle 0 TTL (always stale)\" and \"should handle Infinity TTL (never expires)\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-05.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": "CacheManager(0) with updateWithData at updatedAt = Date.now()",
+              "infinityTtl": "CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9"
+            },
+            "expected": "With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.",
+            "actual": {
+              "zeroTtlStale": true,
+              "zeroTtlUpdatedAtSet": true,
+              "infinityStale": false,
+              "infinityAgeAtLeast": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 502,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \\\"should handle 0 TTL (always stale)\\\" and \\\"should handle Infinity TTL (never expires)\\\"\",\"inputs\":{\"zeroTtl\":\"CacheManager(0) with updateWithData at updatedAt = Date.now()\",\"infinityTtl\":\"CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9\"},\"expected\":\"With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"zeroTtlStale\":true,\"zeroTtlUpdatedAtSet\":true,\"infinityStale\":false,\"infinityAgeAtLeast\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:49\n   Duration  161ms (transform 61ms, setup 0ms, import 69ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:b5d54cfcd53cc72b3458ab48a8146166cf778861bd8a9ccaebd6296728dbae26",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \"should handle 0 TTL (always stale)\" and \"should handle Infinity TTL (never expires)\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-05.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": "CacheManager(0) with updateWithData at updatedAt = Date.now()",
+              "infinityTtl": "CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9"
+            },
+            "expected": "With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.",
+            "actual": {
+              "zeroTtlStale": true,
+              "zeroTtlUpdatedAtSet": true,
+              "infinityStale": false,
+              "infinityAgeAtLeast": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 456,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \\\"should handle 0 TTL (always stale)\\\" and \\\"should handle Infinity TTL (never expires)\\\"\",\"inputs\":{\"zeroTtl\":\"CacheManager(0) with updateWithData at updatedAt = Date.now()\",\"infinityTtl\":\"CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9\"},\"expected\":\"With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"zeroTtlStale\":true,\"zeroTtlUpdatedAtSet\":true,\"infinityStale\":false,\"infinityAgeAtLeast\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 46ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:50\n   Duration  172ms (transform 36ms, setup 0ms, import 44ms, tests 46ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:b5d54cfcd53cc72b3458ab48a8146166cf778861bd8a9ccaebd6296728dbae26",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \"should handle 0 TTL (always stale)\" and \"should handle Infinity TTL (never expires)\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-05.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": "CacheManager(0) with updateWithData at updatedAt = Date.now()",
+              "infinityTtl": "CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9"
+            },
+            "expected": "With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.",
+            "actual": {
+              "zeroTtlStale": true,
+              "zeroTtlUpdatedAtSet": true,
+              "infinityStale": false,
+              "infinityAgeAtLeast": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 487,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"TTL 0 marks freshly written data stale and TTL Infinity keeps very old data fresh\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-10 — separated invariant catalog, sourced from lf/tests/model-ttl-optional.test.ts \\\"should handle 0 TTL (always stale)\\\" and \\\"should handle Infinity TTL (never expires)\\\"\",\"inputs\":{\"zeroTtl\":\"CacheManager(0) with updateWithData at updatedAt = Date.now()\",\"infinityTtl\":\"CacheManager(Infinity) with updateWithData at updatedAt = Date.now() - 1e9\"},\"expected\":\"With TTL 0 the history reports isStale true even for brand-new data; with TTL Infinity the history reports isStale false even for data a billion milliseconds old.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"zeroTtlStale\":true,\"zeroTtlUpdatedAtSet\":true,\"infinityStale\":false,\"infinityAgeAtLeast\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:50\n   Duration  169ms (transform 36ms, setup 0ms, import 78ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-06.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "every state transition synchronously notifies all subscribers and unsubscribing stops future notifications",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:da095e5ad548c5fe3f73097eb2e8a6dbb373aab912e625dd8f817c01994fdd54",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-06.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscribers": [
+                "first",
+                "second"
+              ],
+              "transitions": [
+                "updateWithData",
+                "updateWithError",
+                "setLoading after unsubscribing first"
+              ]
+            },
+            "expected": "updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.",
+            "actual": {
+              "afterData": {
+                "firstCalls": 1,
+                "secondCalls": 1
+              },
+              "afterError": {
+                "firstCalls": 2,
+                "secondCalls": 2
+              },
+              "afterLoading": {
+                "firstCalls": 2,
+                "secondCalls": 3
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 481,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every state transition synchronously notifies all subscribers and unsubscribing stops future notifications\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts\",\"inputs\":{\"subscribers\":[\"first\",\"second\"],\"transitions\":[\"updateWithData\",\"updateWithError\",\"setLoading after unsubscribing first\"]},\"expected\":\"updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"firstCalls\":1,\"secondCalls\":1},\"afterError\":{\"firstCalls\":2,\"secondCalls\":2},\"afterLoading\":{\"firstCalls\":2,\"secondCalls\":3}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:51\n   Duration  160ms (transform 65ms, setup 0ms, import 73ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "every state transition synchronously notifies all subscribers and unsubscribing stops future notifications",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:da095e5ad548c5fe3f73097eb2e8a6dbb373aab912e625dd8f817c01994fdd54",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-06.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscribers": [
+                "first",
+                "second"
+              ],
+              "transitions": [
+                "updateWithData",
+                "updateWithError",
+                "setLoading after unsubscribing first"
+              ]
+            },
+            "expected": "updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.",
+            "actual": {
+              "afterData": {
+                "firstCalls": 1,
+                "secondCalls": 1
+              },
+              "afterError": {
+                "firstCalls": 2,
+                "secondCalls": 2
+              },
+              "afterLoading": {
+                "firstCalls": 2,
+                "secondCalls": 3
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 496,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every state transition synchronously notifies all subscribers and unsubscribing stops future notifications\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts\",\"inputs\":{\"subscribers\":[\"first\",\"second\"],\"transitions\":[\"updateWithData\",\"updateWithError\",\"setLoading after unsubscribing first\"]},\"expected\":\"updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"firstCalls\":1,\"secondCalls\":1},\"afterError\":{\"firstCalls\":2,\"secondCalls\":2},\"afterLoading\":{\"firstCalls\":2,\"secondCalls\":3}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:51\n   Duration  162ms (transform 64ms, setup 0ms, import 72ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "every state transition synchronously notifies all subscribers and unsubscribing stops future notifications",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:da095e5ad548c5fe3f73097eb2e8a6dbb373aab912e625dd8f817c01994fdd54",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/local-first/separated-06.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "subscribers": [
+                "first",
+                "second"
+              ],
+              "transitions": [
+                "updateWithData",
+                "updateWithError",
+                "setLoading after unsubscribing first"
+              ]
+            },
+            "expected": "updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.",
+            "actual": {
+              "afterData": {
+                "firstCalls": 1,
+                "secondCalls": 1
+              },
+              "afterError": {
+                "firstCalls": 2,
+                "secondCalls": 2
+              },
+              "afterLoading": {
+                "firstCalls": 2,
+                "secondCalls": 3
+              }
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 485,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"every state transition synchronously notifies all subscribers and unsubscribing stops future notifications\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-LF-13 — separated invariant catalog, sourced from explicit code contract lf/src/cache-manager.ts:60-77,94-107 and subscriber assertions in lf/tests/broadcast.test.ts\",\"inputs\":{\"subscribers\":[\"first\",\"second\"],\"transitions\":[\"updateWithData\",\"updateWithError\",\"setLoading after unsubscribing first\"]},\"expected\":\"updateWithData and updateWithError each synchronously bump both subscriber counters in the same tick; after unsubscribing the first subscriber, setLoading notifies only the second.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"afterData\":{\"firstCalls\":1,\"secondCalls\":1},\"afterError\":{\"firstCalls\":2,\"secondCalls\":2},\"afterLoading\":{\"firstCalls\":2,\"secondCalls\":3}}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:11:52\n   Duration  165ms (transform 58ms, setup 0ms, import 66ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}

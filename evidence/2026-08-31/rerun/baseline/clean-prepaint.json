@@ -1,0 +1,1464 @@
+{
+  "batch": {
+    "scenario_directory": "benchmark/rerun-2026-08-31/baseline/prepaint",
+    "module": "packages/prepaint",
+    "runs_per_scenario": 3,
+    "scenario_count": 6,
+    "execution": {
+      "started_at": "2026-08-31T10:14:19.500Z",
+      "finished_at": "2026-08-31T10:14:29.087Z",
+      "duration_ms": 9587
+    },
+    "results": [
+      {
+        "scenario": "baseline-01.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "relative route rejected: validate throws while normalize silently returns null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:aa1ed7acdd019e95ca33f9379d4a46772ab1eda6505a2f66a026ac842a7e923c",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "dashboard",
+                  "/ok"
+                ]
+              }
+            },
+            "expected": "A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.",
+            "actual": {
+              "validateOutcome": "threw",
+              "mentionsRoute": true,
+              "normalized": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 451,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"relative route rejected: validate throws while normalize silently returns null\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant\",\"inputs\":{\"policy\":{\"routes\":[\"dashboard\",\"/ok\"]}},\"expected\":\"A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateOutcome\":\"threw\",\"mentionsRoute\":true,\"normalized\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:19\n   Duration  123ms (transform 50ms, setup 0ms, import 58ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "relative route rejected: validate throws while normalize silently returns null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:aa1ed7acdd019e95ca33f9379d4a46772ab1eda6505a2f66a026ac842a7e923c",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "dashboard",
+                  "/ok"
+                ]
+              }
+            },
+            "expected": "A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.",
+            "actual": {
+              "validateOutcome": "threw",
+              "mentionsRoute": true,
+              "normalized": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 470,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"relative route rejected: validate throws while normalize silently returns null\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant\",\"inputs\":{\"policy\":{\"routes\":[\"dashboard\",\"/ok\"]}},\"expected\":\"A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateOutcome\":\"threw\",\"mentionsRoute\":true,\"normalized\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 1ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:20\n   Duration  146ms (transform 26ms, setup 0ms, import 59ms, tests 1ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "relative route rejected: validate throws while normalize silently returns null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:aa1ed7acdd019e95ca33f9379d4a46772ab1eda6505a2f66a026ac842a7e923c",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "dashboard",
+                  "/ok"
+                ]
+              }
+            },
+            "expected": "A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.",
+            "actual": {
+              "validateOutcome": "threw",
+              "mentionsRoute": true,
+              "normalized": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 459,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"relative route rejected: validate throws while normalize silently returns null\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"policy.ts: routes are absolute pathnames; validatePrepaintPolicy throws on invalid input while normalizePrepaintPolicy is the non-throwing variant\",\"inputs\":{\"policy\":{\"routes\":[\"dashboard\",\"/ok\"]}},\"expected\":\"A policy containing a route without a leading slash makes validatePrepaintPolicy throw a route-related error and makes normalizePrepaintPolicy return null.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateOutcome\":\"threw\",\"mentionsRoute\":true,\"normalized\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:20\n   Duration  114ms (transform 42ms, setup 0ms, import 50ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-02.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "degenerate policies: empty routes, null and undefined all resolve to no policy without throwing",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:f258c8345e7ac696a7f0d73873023ba13464675bf9f3690039e7284e9236d186",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policies": [
+                "{ routes: [] }",
+                "null",
+                "undefined"
+              ]
+            },
+            "expected": "An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.",
+            "actual": {
+              "validateEmpty": null,
+              "normalizeEmpty": null,
+              "normalizeNull": null,
+              "normalizeUndefined": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 445,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"degenerate policies: empty routes, null and undefined all resolve to no policy without throwing\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error\",\"inputs\":{\"policies\":[\"{ routes: [] }\",\"null\",\"undefined\"]},\"expected\":\"An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateEmpty\":null,\"normalizeEmpty\":null,\"normalizeNull\":null,\"normalizeUndefined\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 42ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:21\n   Duration  156ms (transform 27ms, setup 0ms, import 35ms, tests 42ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "degenerate policies: empty routes, null and undefined all resolve to no policy without throwing",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:f258c8345e7ac696a7f0d73873023ba13464675bf9f3690039e7284e9236d186",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policies": [
+                "{ routes: [] }",
+                "null",
+                "undefined"
+              ]
+            },
+            "expected": "An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.",
+            "actual": {
+              "validateEmpty": null,
+              "normalizeEmpty": null,
+              "normalizeNull": null,
+              "normalizeUndefined": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 447,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"degenerate policies: empty routes, null and undefined all resolve to no policy without throwing\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error\",\"inputs\":{\"policies\":[\"{ routes: [] }\",\"null\",\"undefined\"]},\"expected\":\"An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateEmpty\":null,\"normalizeEmpty\":null,\"normalizeNull\":null,\"normalizeUndefined\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:21\n   Duration  148ms (transform 28ms, setup 0ms, import 35ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "degenerate policies: empty routes, null and undefined all resolve to no policy without throwing",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:f258c8345e7ac696a7f0d73873023ba13464675bf9f3690039e7284e9236d186",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policies": [
+                "{ routes: [] }",
+                "null",
+                "undefined"
+              ]
+            },
+            "expected": "An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.",
+            "actual": {
+              "validateEmpty": null,
+              "normalizeEmpty": null,
+              "normalizeNull": null,
+              "normalizeUndefined": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 446,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"degenerate policies: empty routes, null and undefined all resolve to no policy without throwing\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts parsePolicy(): absent policy and zero routes both mean prepaint disabled, returned as null with no error\",\"inputs\":{\"policies\":[\"{ routes: [] }\",\"null\",\"undefined\"]},\"expected\":\"An empty routes array, null and undefined all yield null from both normalize and validate, and validate does not throw for any of them.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateEmpty\":null,\"normalizeEmpty\":null,\"normalizeNull\":null,\"normalizeUndefined\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:22\n   Duration  127ms (transform 26ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-03.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:074bf4f1ba97475421a7cfd415360f002d2ad3841cb7814175fefd1d933f455f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/home"
+                ],
+                "ttlMs": 1000,
+                "maxSnapshotBytes": 1000000,
+                "includeStyles": true
+              },
+              "now": 1700000000000,
+              "snapshots": "fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp"
+            },
+            "expected": "Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.",
+            "actual": {
+              "freshAllowed": false,
+              "disallowedRoute": true,
+              "expired": true,
+              "noPolicy": true,
+              "malformed": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 472,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape\",\"inputs\":{\"policy\":{\"routes\":[\"/home\"],\"ttlMs\":1000,\"maxSnapshotBytes\":1000000,\"includeStyles\":true},\"now\":1700000000000,\"snapshots\":\"fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp\"},\"expected\":\"Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"freshAllowed\":false,\"disallowedRoute\":true,\"expired\":true,\"noPolicy\":true,\"malformed\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:22\n   Duration  116ms (transform 47ms, setup 0ms, import 55ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:074bf4f1ba97475421a7cfd415360f002d2ad3841cb7814175fefd1d933f455f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/home"
+                ],
+                "ttlMs": 1000,
+                "maxSnapshotBytes": 1000000,
+                "includeStyles": true
+              },
+              "now": 1700000000000,
+              "snapshots": "fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp"
+            },
+            "expected": "Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.",
+            "actual": {
+              "freshAllowed": false,
+              "disallowedRoute": true,
+              "expired": true,
+              "noPolicy": true,
+              "malformed": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 485,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape\",\"inputs\":{\"policy\":{\"routes\":[\"/home\"],\"ttlMs\":1000,\"maxSnapshotBytes\":1000000,\"includeStyles\":true},\"now\":1700000000000,\"snapshots\":\"fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp\"},\"expected\":\"Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"freshAllowed\":false,\"disallowedRoute\":true,\"expired\":true,\"noPolicy\":true,\"malformed\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:23\n   Duration  151ms (transform 54ms, setup 0ms, import 61ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:074bf4f1ba97475421a7cfd415360f002d2ad3841cb7814175fefd1d933f455f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/home"
+                ],
+                "ttlMs": 1000,
+                "maxSnapshotBytes": 1000000,
+                "includeStyles": true
+              },
+              "now": 1700000000000,
+              "snapshots": "fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp"
+            },
+            "expected": "Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.",
+            "actual": {
+              "freshAllowed": false,
+              "disallowedRoute": true,
+              "expired": true,
+              "noPolicy": true,
+              "malformed": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 470,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot pruning gates: allowed fresh snapshot kept, wrong route, expired ttl, missing policy and malformed snapshot pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts shouldPruneSnapshot(): a snapshot survives only with an active policy, an allowed route, age within ttlMs and a well-formed shape\",\"inputs\":{\"policy\":{\"routes\":[\"/home\"],\"ttlMs\":1000,\"maxSnapshotBytes\":1000000,\"includeStyles\":true},\"now\":1700000000000,\"snapshots\":\"fresh allowed, route /admin, aged ttl+1ms, no policy, missing body and timestamp\"},\"expected\":\"Only the fresh snapshot for an allowed route is kept; disallowed route, expired age, null policy and malformed snapshots are all pruned.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"freshAllowed\":false,\"disallowedRoute\":true,\"expired\":true,\"noPolicy\":true,\"malformed\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:24\n   Duration  155ms (transform 58ms, setup 0ms, import 65ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-04.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "payload byte accounting uses utf-8 length and the byte budget boundary is inclusive",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:b918959a6946912f9e0ae53083adb9a4f72aaf5eb04095e852fcfc5d14afd578",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "snapshot": {
+                "route": "/home",
+                "body": "one 3-byte Hangul character",
+                "styles": []
+              },
+              "expectedBytes": 26,
+              "policies": "maxSnapshotBytes 26 (exact fit) and 25 (one byte short)"
+            },
+            "expected": "The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.",
+            "actual": {
+              "bytes": 26,
+              "keptAtLimit": false,
+              "prunedOverLimit": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 460,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"payload byte accounting uses utf-8 length and the byte budget boundary is inclusive\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes\",\"inputs\":{\"snapshot\":{\"route\":\"/home\",\"body\":\"one 3-byte Hangul character\",\"styles\":[]},\"expectedBytes\":26,\"policies\":\"maxSnapshotBytes 26 (exact fit) and 25 (one byte short)\"},\"expected\":\"The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"bytes\":26,\"keptAtLimit\":false,\"prunedOverLimit\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:24\n   Duration  109ms (transform 41ms, setup 0ms, import 48ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "payload byte accounting uses utf-8 length and the byte budget boundary is inclusive",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:b918959a6946912f9e0ae53083adb9a4f72aaf5eb04095e852fcfc5d14afd578",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "snapshot": {
+                "route": "/home",
+                "body": "one 3-byte Hangul character",
+                "styles": []
+              },
+              "expectedBytes": 26,
+              "policies": "maxSnapshotBytes 26 (exact fit) and 25 (one byte short)"
+            },
+            "expected": "The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.",
+            "actual": {
+              "bytes": 26,
+              "keptAtLimit": false,
+              "prunedOverLimit": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 459,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"payload byte accounting uses utf-8 length and the byte budget boundary is inclusive\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes\",\"inputs\":{\"snapshot\":{\"route\":\"/home\",\"body\":\"one 3-byte Hangul character\",\"styles\":[]},\"expectedBytes\":26,\"policies\":\"maxSnapshotBytes 26 (exact fit) and 25 (one byte short)\"},\"expected\":\"The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"bytes\":26,\"keptAtLimit\":false,\"prunedOverLimit\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:25\n   Duration  110ms (transform 42ms, setup 0ms, import 49ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "payload byte accounting uses utf-8 length and the byte budget boundary is inclusive",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:b918959a6946912f9e0ae53083adb9a4f72aaf5eb04095e852fcfc5d14afd578",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "snapshot": {
+                "route": "/home",
+                "body": "one 3-byte Hangul character",
+                "styles": []
+              },
+              "expectedBytes": 26,
+              "policies": "maxSnapshotBytes 26 (exact fit) and 25 (one byte short)"
+            },
+            "expected": "The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.",
+            "actual": {
+              "bytes": 26,
+              "keptAtLimit": false,
+              "prunedOverLimit": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 462,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"payload byte accounting uses utf-8 length and the byte budget boundary is inclusive\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts getSnapshotPayloadBytes(): utf-8 byte length of JSON {body, styles}; shouldPruneSnapshot prunes only payloads exceeding maxSnapshotBytes\",\"inputs\":{\"snapshot\":{\"route\":\"/home\",\"body\":\"one 3-byte Hangul character\",\"styles\":[]},\"expectedBytes\":26,\"policies\":\"maxSnapshotBytes 26 (exact fit) and 25 (one byte short)\"},\"expected\":\"The multi-byte body serializes to 26 utf-8 bytes, a 26-byte budget keeps the snapshot and a 25-byte budget prunes it.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"bytes\":26,\"keptAtLimit\":false,\"prunedOverLimit\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:25\n   Duration  131ms (transform 27ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-05.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "serialized policy escapes html-sensitive characters yet round-trips through JSON.parse",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:6f1c87bf6066bdf3ba05e61fbdd47a29c116a984800553af9369e2c5a5b88b7d",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a</script><script>"
+                ],
+                "ttlMs": 5000,
+                "maxSnapshotBytes": 1024,
+                "includeStyles": false
+              }
+            },
+            "expected": "The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.",
+            "actual": {
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawAmp": false,
+              "route": "/a</script><script>",
+              "includeStyles": false,
+              "ttlMs": 5000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 454,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy escapes html-sensitive characters yet round-trips through JSON.parse\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON\",\"inputs\":{\"policy\":{\"routes\":[\"/a</script><script>\"],\"ttlMs\":5000,\"maxSnapshotBytes\":1024,\"includeStyles\":false}},\"expected\":\"The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawAmp\":false,\"route\":\"/a</script><script>\",\"includeStyles\":false,\"ttlMs\":5000}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:26\n   Duration  156ms (transform 26ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "serialized policy escapes html-sensitive characters yet round-trips through JSON.parse",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:6f1c87bf6066bdf3ba05e61fbdd47a29c116a984800553af9369e2c5a5b88b7d",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a</script><script>"
+                ],
+                "ttlMs": 5000,
+                "maxSnapshotBytes": 1024,
+                "includeStyles": false
+              }
+            },
+            "expected": "The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.",
+            "actual": {
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawAmp": false,
+              "route": "/a</script><script>",
+              "includeStyles": false,
+              "ttlMs": 5000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 451,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy escapes html-sensitive characters yet round-trips through JSON.parse\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON\",\"inputs\":{\"policy\":{\"routes\":[\"/a</script><script>\"],\"ttlMs\":5000,\"maxSnapshotBytes\":1024,\"includeStyles\":false}},\"expected\":\"The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawAmp\":false,\"route\":\"/a</script><script>\",\"includeStyles\":false,\"ttlMs\":5000}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:26\n   Duration  139ms (transform 27ms, setup 0ms, import 35ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "serialized policy escapes html-sensitive characters yet round-trips through JSON.parse",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:6f1c87bf6066bdf3ba05e61fbdd47a29c116a984800553af9369e2c5a5b88b7d",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a</script><script>"
+                ],
+                "ttlMs": 5000,
+                "maxSnapshotBytes": 1024,
+                "includeStyles": false
+              }
+            },
+            "expected": "The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.",
+            "actual": {
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawAmp": false,
+              "route": "/a</script><script>",
+              "includeStyles": false,
+              "ttlMs": 5000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 454,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy escapes html-sensitive characters yet round-trips through JSON.parse\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"policy.ts serializePrepaintPolicy(): output is meant for inline script injection, so <, > and & must never appear raw while remaining valid JSON\",\"inputs\":{\"policy\":{\"routes\":[\"/a</script><script>\"],\"ttlMs\":5000,\"maxSnapshotBytes\":1024,\"includeStyles\":false}},\"expected\":\"The serialized string contains no raw <, > or & characters and JSON.parse recovers the original route and includeStyles flag.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawAmp\":false,\"route\":\"/a</script><script>\",\"includeStyles\":false,\"ttlMs\":5000}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:27\n   Duration  124ms (transform 27ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-06.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "style entry normalization drops blank entries and strips empty external content",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:b1af95ca2525b929b6e8035c3c8ab774b65ce34ace008c16ed97c0d5751437d3",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "entries": "empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content"
+            },
+            "expected": "Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.",
+            "actual": {
+              "emptyString": null,
+              "whitespaceString": null,
+              "plainString": {
+                "type": "inline",
+                "content": "body{margin:0}"
+              },
+              "blankInline": null,
+              "externalNoHref": null,
+              "externalWithContent": {
+                "type": "external",
+                "href": "/a.css",
+                "content": "x"
+              },
+              "emptyContentEntryExists": true,
+              "emptyContentHasContentField": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 454,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"style entry normalization drops blank entries and strips empty external content\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty\",\"inputs\":{\"entries\":\"empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content\"},\"expected\":\"Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"emptyString\":null,\"whitespaceString\":null,\"plainString\":{\"type\":\"inline\",\"content\":\"body{margin:0}\"},\"blankInline\":null,\"externalNoHref\":null,\"externalWithContent\":{\"type\":\"external\",\"href\":\"/a.css\",\"content\":\"x\"},\"emptyContentEntryExists\":true,\"emptyContentHasContentField\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:27\n   Duration  119ms (transform 24ms, setup 0ms, import 31ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "style entry normalization drops blank entries and strips empty external content",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:b1af95ca2525b929b6e8035c3c8ab774b65ce34ace008c16ed97c0d5751437d3",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "entries": "empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content"
+            },
+            "expected": "Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.",
+            "actual": {
+              "emptyString": null,
+              "whitespaceString": null,
+              "plainString": {
+                "type": "inline",
+                "content": "body{margin:0}"
+              },
+              "blankInline": null,
+              "externalNoHref": null,
+              "externalWithContent": {
+                "type": "external",
+                "href": "/a.css",
+                "content": "x"
+              },
+              "emptyContentEntryExists": true,
+              "emptyContentHasContentField": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 463,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"style entry normalization drops blank entries and strips empty external content\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty\",\"inputs\":{\"entries\":\"empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content\"},\"expected\":\"Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"emptyString\":null,\"whitespaceString\":null,\"plainString\":{\"type\":\"inline\",\"content\":\"body{margin:0}\"},\"blankInline\":null,\"externalNoHref\":null,\"externalWithContent\":{\"type\":\"external\",\"href\":\"/a.css\",\"content\":\"x\"},\"emptyContentEntryExists\":true,\"emptyContentHasContentField\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:28\n   Duration  146ms (transform 42ms, setup 0ms, import 49ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "style entry normalization drops blank entries and strips empty external content",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:b1af95ca2525b929b6e8035c3c8ab774b65ce34ace008c16ed97c0d5751437d3",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/prepaint/baseline-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "entries": "empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content"
+            },
+            "expected": "Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.",
+            "actual": {
+              "emptyString": null,
+              "whitespaceString": null,
+              "plainString": {
+                "type": "inline",
+                "content": "body{margin:0}"
+              },
+              "blankInline": null,
+              "externalNoHref": null,
+              "externalWithContent": {
+                "type": "external",
+                "href": "/a.css",
+                "content": "x"
+              },
+              "emptyContentEntryExists": true,
+              "emptyContentHasContentField": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 455,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"style entry normalization drops blank entries and strips empty external content\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"style-utils.ts normalizeSnapshotStyleEntry(): returns null for entries with no usable content or href, and only carries content on external entries when non-empty\",\"inputs\":{\"entries\":\"empty string, whitespace-only string, plain css string, blank inline object, external without href, external with content, external with empty content\"},\"expected\":\"Blank strings, blank inline entries and href-less external entries normalize to null; a plain string becomes an inline entry; external entries keep href and only include content when it is non-empty.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"emptyString\":null,\"whitespaceString\":null,\"plainString\":{\"type\":\"inline\",\"content\":\"body{margin:0}\"},\"blankInline\":null,\"externalNoHref\":null,\"externalWithContent\":{\"type\":\"external\",\"href\":\"/a.css\",\"content\":\"x\"},\"emptyContentEntryExists\":true,\"emptyContentHasContentField\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:14:28\n   Duration  111ms (transform 44ms, setup 0ms, import 51ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}

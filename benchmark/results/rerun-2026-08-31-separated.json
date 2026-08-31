@@ -1,0 +1,285 @@
+{
+  "arm": "separated",
+  "date": "2026-08-31",
+  "modules": [
+    {
+      "module": "packages/tx",
+      "results": [
+        {
+          "file": "separated-01.test.ts",
+          "clean": "candidate-failure",
+          "clean_signatures_match": true,
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "separated-02.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "tx-rollback-forward-order": "pass",
+            "tx-total-timeout-resets-per-step": "pass",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "pass",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "pass",
+            "tx-completed-steps-never-tracked": "pass",
+            "tx-retry-skips-final-attempt": "pass"
+          }
+        },
+        {
+          "file": "separated-03.test.ts",
+          "clean": "candidate-failure",
+          "clean_signatures_match": true,
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "candidate-failure",
+            "tx-reuse-after-rollback-allowed": "candidate-failure",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "candidate-failure",
+            "tx-concurrent-step-guard-removed": "candidate-failure",
+            "tx-commit-after-rollback-allowed": "candidate-failure",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "separated-04.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "tx-rollback-forward-order": "pass",
+            "tx-total-timeout-resets-per-step": "pass",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "pass",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "candidate-failure",
+            "tx-completed-steps-never-tracked": "pass",
+            "tx-retry-skips-final-attempt": "candidate-failure"
+          }
+        },
+        {
+          "file": "separated-05.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "tx-rollback-forward-order": "pass",
+            "tx-total-timeout-resets-per-step": "pass",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "pass",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "pass",
+            "tx-completed-steps-never-tracked": "pass",
+            "tx-retry-skips-final-attempt": "pass"
+          }
+        },
+        {
+          "file": "separated-06.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "tx-rollback-forward-order": "candidate-failure",
+            "tx-total-timeout-resets-per-step": "pass",
+            "tx-reuse-after-rollback-allowed": "pass",
+            "tx-compensation-errors-swallowed": "candidate-failure",
+            "tx-preaborted-signal-ignored": "pass",
+            "tx-concurrent-step-guard-removed": "pass",
+            "tx-commit-after-rollback-allowed": "pass",
+            "tx-retry-exhausted-drops-error-history": "pass",
+            "tx-completed-steps-never-tracked": "candidate-failure",
+            "tx-retry-skips-final-attempt": "pass"
+          }
+        }
+      ]
+    },
+    {
+      "module": "packages/local-first",
+      "results": [
+        {
+          "file": "separated-01.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "pass",
+            "local-first-error-not-notified": "pass",
+            "local-first-self-broadcast-not-filtered": "candidate-failure",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "separated-02.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "pass",
+            "local-first-error-not-notified": "pass",
+            "local-first-self-broadcast-not-filtered": "pass",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "separated-03.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "pass",
+            "local-first-error-not-notified": "pass",
+            "local-first-self-broadcast-not-filtered": "pass",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "separated-04.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "pass",
+            "local-first-error-not-notified": "pass",
+            "local-first-self-broadcast-not-filtered": "pass",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "separated-05.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "candidate-failure",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "pass",
+            "local-first-error-not-notified": "pass",
+            "local-first-self-broadcast-not-filtered": "pass",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        },
+        {
+          "file": "separated-06.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "local-first-stale-flag-inverted": "pass",
+            "local-first-history-change-not-reflected": "pass",
+            "local-first-cache-unsubscribe-noop": "candidate-failure",
+            "local-first-error-not-notified": "candidate-failure",
+            "local-first-self-broadcast-not-filtered": "pass",
+            "local-first-unsubscribe-removes-all": "pass"
+          }
+        }
+      ]
+    },
+    {
+      "module": "packages/prepaint",
+      "results": [
+        {
+          "file": "separated-01.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "separated-02.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "candidate-failure",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "separated-03.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "separated-04.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "separated-05.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "candidate-failure",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        },
+        {
+          "file": "separated-06.test.ts",
+          "clean": "pass",
+          "clean_signatures_match": null,
+          "defects": {
+            "prepaint-route-prefix-overcapture": "pass",
+            "prepaint-expired-snapshot-kept": "pass",
+            "prepaint-oversize-snapshot-kept": "pass",
+            "prepaint-relative-route-accepted": "pass"
+          }
+        }
+      ]
+    }
+  ],
+  "caught_defects": [
+    "tx-rollback-forward-order",
+    "tx-compensation-errors-swallowed",
+    "tx-retry-exhausted-drops-error-history",
+    "tx-completed-steps-never-tracked",
+    "tx-retry-skips-final-attempt",
+    "local-first-stale-flag-inverted",
+    "local-first-cache-unsubscribe-noop",
+    "local-first-error-not-notified",
+    "local-first-self-broadcast-not-filtered",
+    "prepaint-route-prefix-overcapture",
+    "prepaint-expired-snapshot-kept"
+  ],
+  "caught_count": 11,
+  "clean_candidate_failures": [
+    "packages/tx/separated-01.test.ts",
+    "packages/tx/separated-03.test.ts"
+  ]
+}

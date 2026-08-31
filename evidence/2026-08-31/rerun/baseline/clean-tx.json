@@ -1,0 +1,1409 @@
+{
+  "batch": {
+    "scenario_directory": "benchmark/rerun-2026-08-31/baseline/tx",
+    "module": "packages/tx",
+    "runs_per_scenario": 3,
+    "scenario_count": 6,
+    "execution": {
+      "started_at": "2026-08-31T10:12:55.951Z",
+      "finished_at": "2026-08-31T10:13:07.044Z",
+      "duration_ms": 11093
+    },
+    "results": [
+      {
+        "scenario": "baseline-01.test.ts",
+        "aggregate": {
+          "outcome": "candidate-failure",
+          "signatures_match": true,
+          "reportable": true,
+          "rule": "consistent-candidate-failure"
+        },
+        "runs": [
+          {
+            "scenario_id": "single failing step without retry config surfaces the original step error",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:f95312a050d3cd73046bf680a245dcd89666ae8ce21af18931ad595aba56df6a",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "async function that throws PaymentDeclinedError(\"original-failure\") once",
+              "retry": "not configured"
+            },
+            "expected": "run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.",
+            "actual": {
+              "name": "RetryExhaustedError",
+              "message": "Retry exhausted for step-0"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 507,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "single failing step without retry config surfaces the original step error",
+                "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw",
+                "message": "expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality",
+                "expected": "PaymentDeclinedError",
+                "actual": "RetryExhaustedError"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"single failing step without retry config surfaces the original step error\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw\",\"inputs\":{\"step\":\"async function that throws PaymentDeclinedError(\\\"original-failure\\\") once\",\"retry\":\"not configured\"},\"expected\":\"run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"RetryExhaustedError\",\"message\":\"Retry exhausted for step-0\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\",\"expected\":\"PaymentDeclinedError\",\"actual\":\"RetryExhaustedError\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 6ms\n   × single failing step without retry config surfaces the original step error 6ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:12:56\n   Duration  202ms (transform 68ms, setup 0ms, import 78ms, tests 6ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > single failing step without retry config surfaces the original step error\nAssertionError: expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\n\nExpected: \"PaymentDeclinedError\"\nReceived: \"RetryExhaustedError\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:31:25\n     29|   },\n     30|   assert: (actual, expect) => {\n     31|     expect(actual.name).toBe('PaymentDeclinedError');\n       |                         ^\n     32|     expect(actual.message).toBe('original-failure');\n     33|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "single failing step without retry config surfaces the original step error",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:f95312a050d3cd73046bf680a245dcd89666ae8ce21af18931ad595aba56df6a",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "async function that throws PaymentDeclinedError(\"original-failure\") once",
+              "retry": "not configured"
+            },
+            "expected": "run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.",
+            "actual": {
+              "name": "RetryExhaustedError",
+              "message": "Retry exhausted for step-0"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 510,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "single failing step without retry config surfaces the original step error",
+                "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw",
+                "message": "expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality",
+                "expected": "PaymentDeclinedError",
+                "actual": "RetryExhaustedError"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"single failing step without retry config surfaces the original step error\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw\",\"inputs\":{\"step\":\"async function that throws PaymentDeclinedError(\\\"original-failure\\\") once\",\"retry\":\"not configured\"},\"expected\":\"run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"RetryExhaustedError\",\"message\":\"Retry exhausted for step-0\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\",\"expected\":\"PaymentDeclinedError\",\"actual\":\"RetryExhaustedError\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 6ms\n   × single failing step without retry config surfaces the original step error 6ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:12:56\n   Duration  205ms (transform 91ms, setup 0ms, import 101ms, tests 6ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > single failing step without retry config surfaces the original step error\nAssertionError: expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\n\nExpected: \"PaymentDeclinedError\"\nReceived: \"RetryExhaustedError\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:31:25\n     29|   },\n     30|   assert: (actual, expect) => {\n     31|     expect(actual.name).toBe('PaymentDeclinedError');\n       |                         ^\n     32|     expect(actual.message).toBe('original-failure');\n     33|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "single failing step without retry config surfaces the original step error",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-01.test.ts",
+              "test_hash": "sha256:f95312a050d3cd73046bf680a245dcd89666ae8ce21af18931ad595aba56df6a",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "async function that throws PaymentDeclinedError(\"original-failure\") once",
+              "retry": "not configured"
+            },
+            "expected": "run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.",
+            "actual": {
+              "name": "RetryExhaustedError",
+              "message": "Retry exhausted for step-0"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 504,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "single failing step without retry config surfaces the original step error",
+                "oracle_basis_ref": "packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw",
+                "message": "expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality",
+                "expected": "PaymentDeclinedError",
+                "actual": "RetryExhaustedError"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"single failing step without retry config surfaces the original step error\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/src/types.ts RetryConfig jsdoc: maxAttempts default is 1 (no retry), so a plain step failure should reach the caller as the error the step threw\",\"inputs\":{\"step\":\"async function that throws PaymentDeclinedError(\\\"original-failure\\\") once\",\"retry\":\"not configured\"},\"expected\":\"run() rejects with the exact error the step threw, not a retry wrapper, when no retry was requested.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"RetryExhaustedError\",\"message\":\"Retry exhausted for step-0\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\",\"expected\":\"PaymentDeclinedError\",\"actual\":\"RetryExhaustedError\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 7ms\n   × single failing step without retry config surfaces the original step error 6ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:12:57\n   Duration  141ms (transform 63ms, setup 0ms, import 73ms, tests 7ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > single failing step without retry config surfaces the original step error\nAssertionError: expected 'RetryExhaustedError' to be 'PaymentDeclinedError' // Object.is equality\n\nExpected: \"PaymentDeclinedError\"\nReceived: \"RetryExhaustedError\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:31:25\n     29|   },\n     30|   assert: (actual, expect) => {\n     31|     expect(actual.name).toBe('PaymentDeclinedError');\n       |                         ^\n     32|     expect(actual.message).toBe('original-failure');\n     33|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-02.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "rollback compensates completed steps in reverse order and never runs the failed step compensation",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:0ee62b13627e3aa44b945e95bd6b375b807a0ddb5b08ed5cba652b570b622bbd",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-02.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": "two successful steps with compensations, then a third step that fails and also declares a compensation"
+            },
+            "expected": "Only the two completed compensations run, last completed first, and the failed step compensation never runs.",
+            "actual": [
+              "undo-second",
+              "undo-first",
+              "run-rejected"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 487,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"rollback compensates completed steps in reverse order and never runs the failed step compensation\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one\",\"inputs\":{\"steps\":\"two successful steps with compensations, then a third step that fails and also declares a compensation\"},\"expected\":\"Only the two completed compensations run, last completed first, and the failed step compensation never runs.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"undo-second\",\"undo-first\",\"run-rejected\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 4ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:58\n   Duration  146ms (transform 70ms, setup 0ms, import 80ms, tests 4ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "rollback compensates completed steps in reverse order and never runs the failed step compensation",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:0ee62b13627e3aa44b945e95bd6b375b807a0ddb5b08ed5cba652b570b622bbd",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-02.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": "two successful steps with compensations, then a third step that fails and also declares a compensation"
+            },
+            "expected": "Only the two completed compensations run, last completed first, and the failed step compensation never runs.",
+            "actual": [
+              "undo-second",
+              "undo-first",
+              "run-rejected"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 524,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"rollback compensates completed steps in reverse order and never runs the failed step compensation\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one\",\"inputs\":{\"steps\":\"two successful steps with compensations, then a third step that fails and also declares a compensation\"},\"expected\":\"Only the two completed compensations run, last completed first, and the failed step compensation never runs.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"undo-second\",\"undo-first\",\"run-rejected\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 4ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:58\n   Duration  188ms (transform 94ms, setup 0ms, import 104ms, tests 4ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "rollback compensates completed steps in reverse order and never runs the failed step compensation",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-02.test.ts",
+              "test_hash": "sha256:0ee62b13627e3aa44b945e95bd6b375b807a0ddb5b08ed5cba652b570b622bbd",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-02.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": "two successful steps with compensations, then a third step that fails and also declares a compensation"
+            },
+            "expected": "Only the two completed compensations run, last completed first, and the failed step compensation never runs.",
+            "actual": [
+              "undo-second",
+              "undo-first",
+              "run-rejected"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 478,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"rollback compensates completed steps in reverse order and never runs the failed step compensation\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts rollback(): saga compensation contract, only completed steps are compensated starting from the last completed one\",\"inputs\":{\"steps\":\"two successful steps with compensations, then a third step that fails and also declares a compensation\"},\"expected\":\"Only the two completed compensations run, last completed first, and the failed step compensation never runs.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"undo-second\",\"undo-first\",\"run-rejected\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 4ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:59\n   Duration  137ms (transform 64ms, setup 0ms, import 74ms, tests 4ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-03.test.ts",
+        "aggregate": {
+          "outcome": "candidate-failure",
+          "signatures_match": true,
+          "reportable": true,
+          "rule": "consistent-candidate-failure"
+        },
+        "runs": [
+          {
+            "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:2e476609a448023b8098a2b2e8df16f7382bb562f01177008b632e3cf9555312",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-03.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "sequence": "step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again"
+            },
+            "expected": "Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.",
+            "actual": [
+              "compensated-after-commit",
+              "step-failed",
+              "second-commit-threw:TransactionStateError"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 541,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+                "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts",
+                "message": "expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]",
+                "expected": [
+                  "step-failed",
+                  "second-commit-ok"
+                ],
+                "actual": [
+                  "compensated-after-commit",
+                  "step-failed",
+                  "second-commit-threw:TransactionStateError"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"committed transaction stays committed when an in-flight step later fails\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts\",\"inputs\":{\"sequence\":\"step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again\"},\"expected\":\"Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\",\"expected\":[\"step-failed\",\"second-commit-ok\"],\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 59ms\n   × committed transaction stays committed when an in-flight step later fails 59ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:12:59\n   Duration  243ms (transform 78ms, setup 0ms, import 88ms, tests 59ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > committed transaction stays committed when an in-flight step later fails\nAssertionError: expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\n\n- Expected\n+ Received\n\n  [\n+   \"compensated-after-commit\",\n    \"step-failed\",\n-   \"second-commit-ok\",\n+   \"second-commit-threw:TransactionStateError\",\n  ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:46:20\n     44|   },\n     45|   assert: (actual, expect) => {\n     46|     expect(actual).toEqual(['step-failed', 'second-commit-ok']);\n       |                    ^\n     47|   },\n     48| });\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:2e476609a448023b8098a2b2e8df16f7382bb562f01177008b632e3cf9555312",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-03.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "sequence": "step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again"
+            },
+            "expected": "Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.",
+            "actual": [
+              "compensated-after-commit",
+              "step-failed",
+              "second-commit-threw:TransactionStateError"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 530,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+                "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts",
+                "message": "expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]",
+                "expected": [
+                  "step-failed",
+                  "second-commit-ok"
+                ],
+                "actual": [
+                  "compensated-after-commit",
+                  "step-failed",
+                  "second-commit-threw:TransactionStateError"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"committed transaction stays committed when an in-flight step later fails\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts\",\"inputs\":{\"sequence\":\"step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again\"},\"expected\":\"Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\",\"expected\":[\"step-failed\",\"second-commit-ok\"],\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 62ms\n   × committed transaction stays committed when an in-flight step later fails 61ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:13:00\n   Duration  245ms (transform 88ms, setup 0ms, import 99ms, tests 62ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > committed transaction stays committed when an in-flight step later fails\nAssertionError: expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\n\n- Expected\n+ Received\n\n  [\n+   \"compensated-after-commit\",\n    \"step-failed\",\n-   \"second-commit-ok\",\n+   \"second-commit-threw:TransactionStateError\",\n  ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:46:20\n     44|   },\n     45|   assert: (actual, expect) => {\n     46|     expect(actual).toEqual(['step-failed', 'second-commit-ok']);\n       |                    ^\n     47|   },\n     48| });\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-03.test.ts",
+              "test_hash": "sha256:2e476609a448023b8098a2b2e8df16f7382bb562f01177008b632e3cf9555312",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-03.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "sequence": "step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again"
+            },
+            "expected": "Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.",
+            "actual": [
+              "compensated-after-commit",
+              "step-failed",
+              "second-commit-threw:TransactionStateError"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 554,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "committed transaction stays committed when an in-flight step later fails",
+                "oracle_basis_ref": "transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts",
+                "message": "expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]",
+                "expected": [
+                  "step-failed",
+                  "second-commit-ok"
+                ],
+                "actual": [
+                  "compensated-after-commit",
+                  "step-failed",
+                  "second-commit-threw:TransactionStateError"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"committed transaction stays committed when an in-flight step later fails\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"transaction.ts commit(): committed is a terminal status and repeated commit() returns silently (early return on status committed); TxStatus in types.ts\",\"inputs\":{\"sequence\":\"step 1 succeeds with a compensation, step 2 started and still running, commit() awaited while step 2 runs (allowed for running status), step 2 rejects 50ms later, then commit() called again\"},\"expected\":\"Once commit() has resolved the transaction is terminal: the late step failure must not trigger rollback of the committed step and the second commit() resolves silently.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\",\"expected\":[\"step-failed\",\"second-commit-ok\"],\"actual\":[\"compensated-after-commit\",\"step-failed\",\"second-commit-threw:TransactionStateError\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 69ms\n   × committed transaction stays committed when an in-flight step later fails 69ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  10:13:00\n   Duration  270ms (transform 95ms, setup 0ms, import 105ms, tests 69ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > committed transaction stays committed when an in-flight step later fails\nAssertionError: expected [ 'compensated-after-commit', …(2) ] to deeply equal [ 'step-failed', 'second-commit-ok' ]\n\n- Expected\n+ Received\n\n  [\n+   \"compensated-after-commit\",\n    \"step-failed\",\n-   \"second-commit-ok\",\n+   \"second-commit-threw:TransactionStateError\",\n  ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:46:20\n     44|   },\n     45|   assert: (actual, expect) => {\n     46|     expect(actual).toEqual(['step-failed', 'second-commit-ok']);\n       |                    ^\n     47|   },\n     48| });\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-04.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "transaction timeout budget is shared across steps instead of resetting per step",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:fca25a91e62515c01d7d0375d71a3abcde1cff25f5ee589a73f9a8bd71c9b725",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-04.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "timeout": 200,
+              "step1": "resolves after 120ms",
+              "step2": "would resolve after 2000ms"
+            },
+            "expected": "The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.",
+            "actual": {
+              "name": "TransactionTimeoutError",
+              "budgetShared": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 689,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"transaction timeout budget is shared across steps instead of resetting per step\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step\",\"inputs\":{\"timeout\":200,\"step1\":\"resolves after 120ms\",\"step2\":\"would resolve after 2000ms\"},\"expected\":\"The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"TransactionTimeoutError\",\"budgetShared\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 217ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:01\n   Duration  374ms (transform 80ms, setup 0ms, import 91ms, tests 217ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "transaction timeout budget is shared across steps instead of resetting per step",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:fca25a91e62515c01d7d0375d71a3abcde1cff25f5ee589a73f9a8bd71c9b725",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-04.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "timeout": 200,
+              "step1": "resolves after 120ms",
+              "step2": "would resolve after 2000ms"
+            },
+            "expected": "The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.",
+            "actual": {
+              "name": "TransactionTimeoutError",
+              "budgetShared": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 697,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"transaction timeout budget is shared across steps instead of resetting per step\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step\",\"inputs\":{\"timeout\":200,\"step1\":\"resolves after 120ms\",\"step2\":\"would resolve after 2000ms\"},\"expected\":\"The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"TransactionTimeoutError\",\"budgetShared\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 216ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:02\n   Duration  354ms (transform 64ms, setup 0ms, import 74ms, tests 216ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "transaction timeout budget is shared across steps instead of resetting per step",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-04.test.ts",
+              "test_hash": "sha256:fca25a91e62515c01d7d0375d71a3abcde1cff25f5ee589a73f9a8bd71c9b725",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-04.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "timeout": 200,
+              "step1": "resolves after 120ms",
+              "step2": "would resolve after 2000ms"
+            },
+            "expected": "The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.",
+            "actual": {
+              "name": "TransactionTimeoutError",
+              "budgetShared": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 695,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"transaction timeout budget is shared across steps instead of resetting per step\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts TxOptions.timeout jsdoc: overall transaction timeout in milliseconds, measured from the first step\",\"inputs\":{\"timeout\":200,\"step1\":\"resolves after 120ms\",\"step2\":\"would resolve after 2000ms\"},\"expected\":\"The second step rejects with TransactionTimeoutError after roughly the remaining 80ms of the overall budget, not after a fresh 200ms of its own.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"name\":\"TransactionTimeoutError\",\"budgetShared\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 218ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:03\n   Duration  403ms (transform 66ms, setup 0ms, import 76ms, tests 218ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-05.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "retry runs the step exactly maxAttempts times and reports every attempt error in order",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:e7a378e4b128fcc6f971a2b51722f4242715a7f2d8c07e7b7d69fd24af9036b2",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-05.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "always throws Error(\"attempt-N\") where N is the call count",
+              "retry": {
+                "maxAttempts": 3,
+                "delayMs": 1,
+                "backoff": "linear"
+              }
+            },
+            "expected": "The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.",
+            "actual": {
+              "calls": 3,
+              "name": "RetryExhaustedError",
+              "attempts": 3,
+              "errorCount": 3,
+              "firstMessage": "attempt-1",
+              "lastMessage": "attempt-3"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 496,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"retry runs the step exactly maxAttempts times and reports every attempt error in order\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors\",\"inputs\":{\"step\":\"always throws Error(\\\"attempt-N\\\") where N is the call count\",\"retry\":{\"maxAttempts\":3,\"delayMs\":1,\"backoff\":\"linear\"}},\"expected\":\"The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"calls\":3,\"name\":\"RetryExhaustedError\",\"attempts\":3,\"errorCount\":3,\"firstMessage\":\"attempt-1\",\"lastMessage\":\"attempt-3\"}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 5ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:03\n   Duration  179ms (transform 67ms, setup 0ms, import 77ms, tests 5ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "retry runs the step exactly maxAttempts times and reports every attempt error in order",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:e7a378e4b128fcc6f971a2b51722f4242715a7f2d8c07e7b7d69fd24af9036b2",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-05.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "always throws Error(\"attempt-N\") where N is the call count",
+              "retry": {
+                "maxAttempts": 3,
+                "delayMs": 1,
+                "backoff": "linear"
+              }
+            },
+            "expected": "The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.",
+            "actual": {
+              "calls": 3,
+              "name": "RetryExhaustedError",
+              "attempts": 3,
+              "errorCount": 3,
+              "firstMessage": "attempt-1",
+              "lastMessage": "attempt-3"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 509,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"retry runs the step exactly maxAttempts times and reports every attempt error in order\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors\",\"inputs\":{\"step\":\"always throws Error(\\\"attempt-N\\\") where N is the call count\",\"retry\":{\"maxAttempts\":3,\"delayMs\":1,\"backoff\":\"linear\"}},\"expected\":\"The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"calls\":3,\"name\":\"RetryExhaustedError\",\"attempts\":3,\"errorCount\":3,\"firstMessage\":\"attempt-1\",\"lastMessage\":\"attempt-3\"}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 6ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:04\n   Duration  194ms (transform 77ms, setup 0ms, import 87ms, tests 6ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "retry runs the step exactly maxAttempts times and reports every attempt error in order",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-05.test.ts",
+              "test_hash": "sha256:e7a378e4b128fcc6f971a2b51722f4242715a7f2d8c07e7b7d69fd24af9036b2",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-05.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step": "always throws Error(\"attempt-N\") where N is the call count",
+              "retry": {
+                "maxAttempts": 3,
+                "delayMs": 1,
+                "backoff": "linear"
+              }
+            },
+            "expected": "The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.",
+            "actual": {
+              "calls": 3,
+              "name": "RetryExhaustedError",
+              "attempts": 3,
+              "errorCount": 3,
+              "firstMessage": "attempt-1",
+              "lastMessage": "attempt-3"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 498,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"retry runs the step exactly maxAttempts times and reports every attempt error in order\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts RetryConfig.maxAttempts jsdoc plus errors.ts RetryExhaustedError fields attempts and errors\",\"inputs\":{\"step\":\"always throws Error(\\\"attempt-N\\\") where N is the call count\",\"retry\":{\"maxAttempts\":3,\"delayMs\":1,\"backoff\":\"linear\"}},\"expected\":\"The step is invoked exactly 3 times and the rejection is a RetryExhaustedError carrying attempts=3 and the three attempt errors in order.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"calls\":3,\"name\":\"RetryExhaustedError\",\"attempts\":3,\"errorCount\":3,\"firstMessage\":\"attempt-1\",\"lastMessage\":\"attempt-3\"}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 4ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:05\n   Duration  133ms (transform 58ms, setup 0ms, import 67ms, tests 4ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "baseline-06.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "external abort during a step rejects with the abort reason and rolls back completed steps",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:246895c8d7caef38834862663047a9015a30192aa7fef18d1612e0cb4d7deec5",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-06.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step1": "succeeds and registers a compensation",
+              "step2": "sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\"user-cancelled\")"
+            },
+            "expected": "The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.",
+            "actual": [
+              "released-reservation",
+              "step-rejected:user-cancelled"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 522,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"external abort during a step rejects with the abort reason and rolls back completed steps\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback\",\"inputs\":{\"step1\":\"succeeds and registers a compensation\",\"step2\":\"sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\\\"user-cancelled\\\")\"},\"expected\":\"The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"released-reservation\",\"step-rejected:user-cancelled\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 44ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:05\n   Duration  227ms (transform 86ms, setup 0ms, import 96ms, tests 44ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "external abort during a step rejects with the abort reason and rolls back completed steps",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:246895c8d7caef38834862663047a9015a30192aa7fef18d1612e0cb4d7deec5",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-06.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step1": "succeeds and registers a compensation",
+              "step2": "sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\"user-cancelled\")"
+            },
+            "expected": "The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.",
+            "actual": [
+              "released-reservation",
+              "step-rejected:user-cancelled"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 515,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"external abort during a step rejects with the abort reason and rolls back completed steps\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback\",\"inputs\":{\"step1\":\"succeeds and registers a compensation\",\"step2\":\"sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\\\"user-cancelled\\\")\"},\"expected\":\"The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"released-reservation\",\"step-rejected:user-cancelled\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 41ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:06\n   Duration  223ms (transform 89ms, setup 0ms, import 100ms, tests 41ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "external abort during a step rejects with the abort reason and rolls back completed steps",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "baseline-06.test.ts",
+              "test_hash": "sha256:246895c8d7caef38834862663047a9015a30192aa7fef18d1612e0cb4d7deec5",
+              "oracle_basis": "public-type",
+              "oracle_basis_ref": "types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/baseline/tx/baseline-06.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "step1": "succeeds and registers a compensation",
+              "step2": "sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\"user-cancelled\")"
+            },
+            "expected": "The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.",
+            "actual": [
+              "released-reservation",
+              "step-rejected:user-cancelled"
+            ],
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 513,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"external abort during a step rejects with the abort reason and rolls back completed steps\",\"oracle_basis\":\"public-type\",\"oracle_basis_ref\":\"types.ts StepOptions.signal jsdoc: optional AbortSignal to cancel the current step; StepOptions.compensate: compensation function to run on rollback\",\"inputs\":{\"step1\":\"succeeds and registers a compensation\",\"step2\":\"sleeps 2000ms, aborted after 30ms via AbortController with reason Error(\\\"user-cancelled\\\")\"},\"expected\":\"The aborted step rejects with the caller-supplied abort reason and the completed step is compensated before the rejection reaches the caller.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":[\"released-reservation\",\"step-rejected:user-cancelled\"]}\n ✓ .bug-dreamer/generated.test.ts (1 test) 40ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:13:06\n   Duration  218ms (transform 83ms, setup 0ms, import 93ms, tests 40ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}

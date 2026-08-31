@@ -1,0 +1,1524 @@
+{
+  "batch": {
+    "scenario_directory": "benchmark/rerun-2026-08-31/separated/prepaint",
+    "module": "packages/prepaint",
+    "runs_per_scenario": 3,
+    "scenario_count": 6,
+    "execution": {
+      "started_at": "2026-08-31T10:12:14.664Z",
+      "finished_at": "2026-08-31T10:12:24.344Z",
+      "duration_ms": 9680
+    },
+    "results": [
+      {
+        "scenario": "separated-01.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "missing, non-object, routes-less and empty-routes policies all normalize to null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:008579d8d51aaf1a4fd2719f441bacfe80cfd01156de9c15b37c02ca453ca099",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"disables capture and restore when policy or routes are missing\" and pp/README.md opt-in statements"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "candidates": [
+                "undefined",
+                "null",
+                "the string \"policy\"",
+                "{} without routes",
+                "{ routes: [] }"
+              ]
+            },
+            "expected": "normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.",
+            "actual": {
+              "missing": null,
+              "explicitNull": null,
+              "nonObject": null,
+              "noRoutes": null,
+              "emptyRoutes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 471,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"missing, non-object, routes-less and empty-routes policies all normalize to null\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"disables capture and restore when policy or routes are missing\\\" and pp/README.md opt-in statements\",\"inputs\":{\"candidates\":[\"undefined\",\"null\",\"the string \\\"policy\\\"\",\"{} without routes\",\"{ routes: [] }\"]},\"expected\":\"normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"missing\":null,\"explicitNull\":null,\"nonObject\":null,\"noRoutes\":null,\"emptyRoutes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:15\n   Duration  108ms (transform 28ms, setup 0ms, import 35ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "missing, non-object, routes-less and empty-routes policies all normalize to null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:008579d8d51aaf1a4fd2719f441bacfe80cfd01156de9c15b37c02ca453ca099",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"disables capture and restore when policy or routes are missing\" and pp/README.md opt-in statements"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "candidates": [
+                "undefined",
+                "null",
+                "the string \"policy\"",
+                "{} without routes",
+                "{ routes: [] }"
+              ]
+            },
+            "expected": "normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.",
+            "actual": {
+              "missing": null,
+              "explicitNull": null,
+              "nonObject": null,
+              "noRoutes": null,
+              "emptyRoutes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 461,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"missing, non-object, routes-less and empty-routes policies all normalize to null\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"disables capture and restore when policy or routes are missing\\\" and pp/README.md opt-in statements\",\"inputs\":{\"candidates\":[\"undefined\",\"null\",\"the string \\\"policy\\\"\",\"{} without routes\",\"{ routes: [] }\"]},\"expected\":\"normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"missing\":null,\"explicitNull\":null,\"nonObject\":null,\"noRoutes\":null,\"emptyRoutes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 1ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:15\n   Duration  126ms (transform 28ms, setup 0ms, import 36ms, tests 1ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "missing, non-object, routes-less and empty-routes policies all normalize to null",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-01.test.ts",
+              "test_hash": "sha256:008579d8d51aaf1a4fd2719f441bacfe80cfd01156de9c15b37c02ca453ca099",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"disables capture and restore when policy or routes are missing\" and pp/README.md opt-in statements"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-01.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "candidates": [
+                "undefined",
+                "null",
+                "the string \"policy\"",
+                "{} without routes",
+                "{ routes: [] }"
+              ]
+            },
+            "expected": "normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.",
+            "actual": {
+              "missing": null,
+              "explicitNull": null,
+              "nonObject": null,
+              "noRoutes": null,
+              "emptyRoutes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 454,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"missing, non-object, routes-less and empty-routes policies all normalize to null\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-01 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"disables capture and restore when policy or routes are missing\\\" and pp/README.md opt-in statements\",\"inputs\":{\"candidates\":[\"undefined\",\"null\",\"the string \\\"policy\\\"\",\"{} without routes\",\"{ routes: [] }\"]},\"expected\":\"normalizePrepaintPolicy returns null for every candidate, leaving prepaint disabled.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"missing\":null,\"explicitNull\":null,\"nonObject\":null,\"noRoutes\":null,\"emptyRoutes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 1ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:16\n   Duration  110ms (transform 41ms, setup 0ms, import 48ms, tests 1ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-02.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "route matching is exact pathname equality with duplicates deduplicated, never prefix matching",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:d5e65cfd1e9942ce06e34d5eeba066ead6c4f3a17f963896dc68f192b8ab7137",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"deduplicates exact routes without enabling prefix matches\" and pp/README.md \"Matching is exact\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/app",
+                  "/app",
+                  "/app/child"
+                ]
+              },
+              "probes": [
+                "/app",
+                "/app/child",
+                "/app/settings",
+                "/application",
+                "/ap"
+              ]
+            },
+            "expected": "The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.",
+            "actual": {
+              "routes": [
+                "/app",
+                "/app/child"
+              ],
+              "exactApp": true,
+              "exactChild": true,
+              "prefixSettings": false,
+              "prefixApplication": false,
+              "shorterPath": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 467,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"route matching is exact pathname equality with duplicates deduplicated, never prefix matching\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"deduplicates exact routes without enabling prefix matches\\\" and pp/README.md \\\"Matching is exact\\\"\",\"inputs\":{\"policy\":{\"routes\":[\"/app\",\"/app\",\"/app/child\"]},\"probes\":[\"/app\",\"/app/child\",\"/app/settings\",\"/application\",\"/ap\"]},\"expected\":\"The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"routes\":[\"/app\",\"/app/child\"],\"exactApp\":true,\"exactChild\":true,\"prefixSettings\":false,\"prefixApplication\":false,\"shorterPath\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:16\n   Duration  153ms (transform 45ms, setup 0ms, import 52ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "route matching is exact pathname equality with duplicates deduplicated, never prefix matching",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:d5e65cfd1e9942ce06e34d5eeba066ead6c4f3a17f963896dc68f192b8ab7137",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"deduplicates exact routes without enabling prefix matches\" and pp/README.md \"Matching is exact\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/app",
+                  "/app",
+                  "/app/child"
+                ]
+              },
+              "probes": [
+                "/app",
+                "/app/child",
+                "/app/settings",
+                "/application",
+                "/ap"
+              ]
+            },
+            "expected": "The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.",
+            "actual": {
+              "routes": [
+                "/app",
+                "/app/child"
+              ],
+              "exactApp": true,
+              "exactChild": true,
+              "prefixSettings": false,
+              "prefixApplication": false,
+              "shorterPath": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 473,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"route matching is exact pathname equality with duplicates deduplicated, never prefix matching\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"deduplicates exact routes without enabling prefix matches\\\" and pp/README.md \\\"Matching is exact\\\"\",\"inputs\":{\"policy\":{\"routes\":[\"/app\",\"/app\",\"/app/child\"]},\"probes\":[\"/app\",\"/app/child\",\"/app/settings\",\"/application\",\"/ap\"]},\"expected\":\"The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"routes\":[\"/app\",\"/app/child\"],\"exactApp\":true,\"exactChild\":true,\"prefixSettings\":false,\"prefixApplication\":false,\"shorterPath\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:17\n   Duration  137ms (transform 29ms, setup 0ms, import 37ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "route matching is exact pathname equality with duplicates deduplicated, never prefix matching",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-02.test.ts",
+              "test_hash": "sha256:d5e65cfd1e9942ce06e34d5eeba066ead6c4f3a17f963896dc68f192b8ab7137",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"deduplicates exact routes without enabling prefix matches\" and pp/README.md \"Matching is exact\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-02.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/app",
+                  "/app",
+                  "/app/child"
+                ]
+              },
+              "probes": [
+                "/app",
+                "/app/child",
+                "/app/settings",
+                "/application",
+                "/ap"
+              ]
+            },
+            "expected": "The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.",
+            "actual": {
+              "routes": [
+                "/app",
+                "/app/child"
+              ],
+              "exactApp": true,
+              "exactChild": true,
+              "prefixSettings": false,
+              "prefixApplication": false,
+              "shorterPath": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 466,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"route matching is exact pathname equality with duplicates deduplicated, never prefix matching\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-03 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"deduplicates exact routes without enabling prefix matches\\\" and pp/README.md \\\"Matching is exact\\\"\",\"inputs\":{\"policy\":{\"routes\":[\"/app\",\"/app\",\"/app/child\"]},\"probes\":[\"/app\",\"/app/child\",\"/app/settings\",\"/application\",\"/ap\"]},\"expected\":\"The resolved routes are exactly [/app, /app/child]; only those two exact pathnames are allowed and the prefix-shaped probes /app/settings, /application and /ap are rejected.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"routes\":[\"/app\",\"/app/child\"],\"exactApp\":true,\"exactChild\":true,\"prefixSettings\":false,\"prefixApplication\":false,\"shorterPath\":false}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:17\n   Duration  121ms (transform 53ms, setup 0ms, import 61ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-03.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:9e514601c6c1cea877b5b89dccf75c3cf191da987153fb0bbc67f7f3c9454cc4",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"rejects invalid limits and relative routes\" and code contract pp/src/policy.ts:46-57,75-85"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 0
+              },
+              "unsafeBytes": {
+                "routes": [
+                  "/a"
+                ],
+                "maxSnapshotBytes": 1.7976931348623157e+308
+              }
+            },
+            "expected": "validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.",
+            "actual": {
+              "validateZeroTtl": "threw",
+              "validateUnsafeBytes": "threw",
+              "normalizeZeroTtl": null,
+              "normalizeUnsafeBytes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 459,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"rejects invalid limits and relative routes\\\" and code contract pp/src/policy.ts:46-57,75-85\",\"inputs\":{\"zeroTtl\":{\"routes\":[\"/a\"],\"ttlMs\":0},\"unsafeBytes\":{\"routes\":[\"/a\"],\"maxSnapshotBytes\":1.7976931348623157e+308}},\"expected\":\"validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateZeroTtl\":\"threw\",\"validateUnsafeBytes\":\"threw\",\"normalizeZeroTtl\":null,\"normalizeUnsafeBytes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:18\n   Duration  111ms (transform 43ms, setup 0ms, import 51ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:9e514601c6c1cea877b5b89dccf75c3cf191da987153fb0bbc67f7f3c9454cc4",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"rejects invalid limits and relative routes\" and code contract pp/src/policy.ts:46-57,75-85"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 0
+              },
+              "unsafeBytes": {
+                "routes": [
+                  "/a"
+                ],
+                "maxSnapshotBytes": 1.7976931348623157e+308
+              }
+            },
+            "expected": "validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.",
+            "actual": {
+              "validateZeroTtl": "threw",
+              "validateUnsafeBytes": "threw",
+              "normalizeZeroTtl": null,
+              "normalizeUnsafeBytes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 460,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"rejects invalid limits and relative routes\\\" and code contract pp/src/policy.ts:46-57,75-85\",\"inputs\":{\"zeroTtl\":{\"routes\":[\"/a\"],\"ttlMs\":0},\"unsafeBytes\":{\"routes\":[\"/a\"],\"maxSnapshotBytes\":1.7976931348623157e+308}},\"expected\":\"validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateZeroTtl\":\"threw\",\"validateUnsafeBytes\":\"threw\",\"normalizeZeroTtl\":null,\"normalizeUnsafeBytes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:18\n   Duration  131ms (transform 27ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-03.test.ts",
+              "test_hash": "sha256:9e514601c6c1cea877b5b89dccf75c3cf191da987153fb0bbc67f7f3c9454cc4",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"rejects invalid limits and relative routes\" and code contract pp/src/policy.ts:46-57,75-85"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-03.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "zeroTtl": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 0
+              },
+              "unsafeBytes": {
+                "routes": [
+                  "/a"
+                ],
+                "maxSnapshotBytes": 1.7976931348623157e+308
+              }
+            },
+            "expected": "validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.",
+            "actual": {
+              "validateZeroTtl": "threw",
+              "validateUnsafeBytes": "threw",
+              "normalizeZeroTtl": null,
+              "normalizeUnsafeBytes": null
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 445,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"invalid limits make validatePrepaintPolicy throw while normalizePrepaintPolicy returns null for the same inputs\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-05 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"rejects invalid limits and relative routes\\\" and code contract pp/src/policy.ts:46-57,75-85\",\"inputs\":{\"zeroTtl\":{\"routes\":[\"/a\"],\"ttlMs\":0},\"unsafeBytes\":{\"routes\":[\"/a\"],\"maxSnapshotBytes\":1.7976931348623157e+308}},\"expected\":\"validatePrepaintPolicy throws for ttlMs 0 and for maxSnapshotBytes Number.MAX_VALUE; normalizePrepaintPolicy returns null for both without throwing.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"validateZeroTtl\":\"threw\",\"validateUnsafeBytes\":\"threw\",\"normalizeZeroTtl\":null,\"normalizeUnsafeBytes\":null}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 38ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:19\n   Duration  156ms (transform 29ms, setup 0ms, import 37ms, tests 38ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-04.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:5c3508f16d53e8877e50661d70527c3f1d1b98f1a6fd172021d0affdaad93dd3",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"measures the UTF-8 payload including stored styles\" and pp/README.md maxSnapshotBytes \"UTF-8 JSON payload\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "asciiBody": "aaaa",
+              "multibyteBody": "aaa한 (replaces one 1-byte character with a 3-byte character)",
+              "styledSnapshot": "asciiBody plus styles [\"p{}\"]"
+            },
+            "expected": "Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.",
+            "actual": {
+              "multibyteDelta": 2,
+              "emptyStylesEqualsOmitted": true,
+              "styledGrowth": 5
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 465,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"measures the UTF-8 payload including stored styles\\\" and pp/README.md maxSnapshotBytes \\\"UTF-8 JSON payload\\\"\",\"inputs\":{\"asciiBody\":\"aaaa\",\"multibyteBody\":\"aaa한 (replaces one 1-byte character with a 3-byte character)\",\"styledSnapshot\":\"asciiBody plus styles [\\\"p{}\\\"]\"},\"expected\":\"Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"multibyteDelta\":2,\"emptyStylesEqualsOmitted\":true,\"styledGrowth\":5}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:19\n   Duration  125ms (transform 57ms, setup 0ms, import 65ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:5c3508f16d53e8877e50661d70527c3f1d1b98f1a6fd172021d0affdaad93dd3",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"measures the UTF-8 payload including stored styles\" and pp/README.md maxSnapshotBytes \"UTF-8 JSON payload\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "asciiBody": "aaaa",
+              "multibyteBody": "aaa한 (replaces one 1-byte character with a 3-byte character)",
+              "styledSnapshot": "asciiBody plus styles [\"p{}\"]"
+            },
+            "expected": "Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.",
+            "actual": {
+              "multibyteDelta": 2,
+              "emptyStylesEqualsOmitted": true,
+              "styledGrowth": 5
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 467,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"measures the UTF-8 payload including stored styles\\\" and pp/README.md maxSnapshotBytes \\\"UTF-8 JSON payload\\\"\",\"inputs\":{\"asciiBody\":\"aaaa\",\"multibyteBody\":\"aaa한 (replaces one 1-byte character with a 3-byte character)\",\"styledSnapshot\":\"asciiBody plus styles [\\\"p{}\\\"]\"},\"expected\":\"Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"multibyteDelta\":2,\"emptyStylesEqualsOmitted\":true,\"styledGrowth\":5}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 1ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:20\n   Duration  140ms (transform 28ms, setup 0ms, import 36ms, tests 1ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-04.test.ts",
+              "test_hash": "sha256:5c3508f16d53e8877e50661d70527c3f1d1b98f1a6fd172021d0affdaad93dd3",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"measures the UTF-8 payload including stored styles\" and pp/README.md maxSnapshotBytes \"UTF-8 JSON payload\""
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-04.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "asciiBody": "aaaa",
+              "multibyteBody": "aaa한 (replaces one 1-byte character with a 3-byte character)",
+              "styledSnapshot": "asciiBody plus styles [\"p{}\"]"
+            },
+            "expected": "Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.",
+            "actual": {
+              "multibyteDelta": 2,
+              "emptyStylesEqualsOmitted": true,
+              "styledGrowth": 5
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 464,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"snapshot size is the UTF-8 byte length of the JSON payload so multibyte characters and styles enlarge it\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-06 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"measures the UTF-8 payload including stored styles\\\" and pp/README.md maxSnapshotBytes \\\"UTF-8 JSON payload\\\"\",\"inputs\":{\"asciiBody\":\"aaaa\",\"multibyteBody\":\"aaa한 (replaces one 1-byte character with a 3-byte character)\",\"styledSnapshot\":\"asciiBody plus styles [\\\"p{}\\\"]\"},\"expected\":\"Replacing one ASCII character with the 3-byte character 한 grows the measured payload by exactly 2 bytes; omitted styles measure the same as styles: []; adding a style entry grows the payload.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"multibyteDelta\":2,\"emptyStylesEqualsOmitted\":true,\"styledGrowth\":5}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:20\n   Duration  135ms (transform 29ms, setup 0ms, import 36ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-05.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:455278671a2a8a5487053e752bbf13d3e6e787ad099ddc2f0b55001230c431e9",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"prunes disallowed, expired, oversized, and style-bearing records\" (lines 69-71) and code contract pp/src/policy.ts:142"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 1000
+              },
+              "record": {
+                "route": "/a",
+                "body": "x",
+                "timestamp": 5000
+              },
+              "nowValues": [
+                5500,
+                6000,
+                6001
+              ]
+            },
+            "expected": "With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).",
+            "actual": {
+              "policyResolved": true,
+              "freshKept": false,
+              "boundaryKept": false,
+              "expiredPruned": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 481,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"prunes disallowed, expired, oversized, and style-bearing records\\\" (lines 69-71) and code contract pp/src/policy.ts:142\",\"inputs\":{\"policy\":{\"routes\":[\"/a\"],\"ttlMs\":1000},\"record\":{\"route\":\"/a\",\"body\":\"x\",\"timestamp\":5000},\"nowValues\":[5500,6000,6001]},\"expected\":\"With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"policyResolved\":true,\"freshKept\":false,\"boundaryKept\":false,\"expiredPruned\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:21\n   Duration  152ms (transform 56ms, setup 0ms, import 63ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:455278671a2a8a5487053e752bbf13d3e6e787ad099ddc2f0b55001230c431e9",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"prunes disallowed, expired, oversized, and style-bearing records\" (lines 69-71) and code contract pp/src/policy.ts:142"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 1000
+              },
+              "record": {
+                "route": "/a",
+                "body": "x",
+                "timestamp": 5000
+              },
+              "nowValues": [
+                5500,
+                6000,
+                6001
+              ]
+            },
+            "expected": "With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).",
+            "actual": {
+              "policyResolved": true,
+              "freshKept": false,
+              "boundaryKept": false,
+              "expiredPruned": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 459,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"prunes disallowed, expired, oversized, and style-bearing records\\\" (lines 69-71) and code contract pp/src/policy.ts:142\",\"inputs\":{\"policy\":{\"routes\":[\"/a\"],\"ttlMs\":1000},\"record\":{\"route\":\"/a\",\"body\":\"x\",\"timestamp\":5000},\"nowValues\":[5500,6000,6001]},\"expected\":\"With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"policyResolved\":true,\"freshKept\":false,\"boundaryKept\":false,\"expiredPruned\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 1ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:21\n   Duration  122ms (transform 27ms, setup 0ms, import 34ms, tests 1ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-05.test.ts",
+              "test_hash": "sha256:455278671a2a8a5487053e752bbf13d3e6e787ad099ddc2f0b55001230c431e9",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"prunes disallowed, expired, oversized, and style-bearing records\" (lines 69-71) and code contract pp/src/policy.ts:142"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-05.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/a"
+                ],
+                "ttlMs": 1000
+              },
+              "record": {
+                "route": "/a",
+                "body": "x",
+                "timestamp": 5000
+              },
+              "nowValues": [
+                5500,
+                6000,
+                6001
+              ]
+            },
+            "expected": "With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).",
+            "actual": {
+              "policyResolved": true,
+              "freshKept": false,
+              "boundaryKept": false,
+              "expiredPruned": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 465,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"a snapshot exactly at the TTL boundary is kept and one millisecond past it is pruned\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-08 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"prunes disallowed, expired, oversized, and style-bearing records\\\" (lines 69-71) and code contract pp/src/policy.ts:142\",\"inputs\":{\"policy\":{\"routes\":[\"/a\"],\"ttlMs\":1000},\"record\":{\"route\":\"/a\",\"body\":\"x\",\"timestamp\":5000},\"nowValues\":[5500,6000,6001]},\"expected\":\"With ttlMs 1000 and timestamp 5000, the record is kept at now 5500 (age 500) and at now 6000 (age exactly 1000), and pruned at now 6001 (age 1001).\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"policyResolved\":true,\"freshKept\":false,\"boundaryKept\":false,\"expiredPruned\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:22\n   Duration  128ms (transform 27ms, setup 0ms, import 35ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "separated-06.test.ts",
+        "aggregate": {
+          "outcome": "pass",
+          "reportable": false,
+          "rule": "all-pass"
+        },
+        "runs": [
+          {
+            "scenario_id": "serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:744adfa3f2f6e420f07a43b336aab622b91653490f1df422cde3c35e95fe051f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"escapes policy values before embedding them in a script\" and code contract pp/src/policy.ts:148-155"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/x<y>&z",
+                  "/sep\\u2028mid\\u2029end"
+                ]
+              }
+            },
+            "expected": "The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\uXXXX escape sequence.",
+            "actual": {
+              "hasRawAmp": false,
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawLineSep": false,
+              "hasRawParaSep": false,
+              "hasEscapedAmp": true,
+              "hasEscapedLt": true,
+              "hasEscapedGt": true,
+              "hasEscapedLineSep": true,
+              "hasEscapedParaSep": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 459,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"escapes policy values before embedding them in a script\\\" and code contract pp/src/policy.ts:148-155\",\"inputs\":{\"policy\":{\"routes\":[\"/x<y>&z\",\"/sep\\\\u2028mid\\\\u2029end\"]}},\"expected\":\"The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\\\uXXXX escape sequence.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawAmp\":false,\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawLineSep\":false,\"hasRawParaSep\":false,\"hasEscapedAmp\":true,\"hasEscapedLt\":true,\"hasEscapedGt\":true,\"hasEscapedLineSep\":true,\"hasEscapedParaSep\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:23\n   Duration  112ms (transform 43ms, setup 0ms, import 50ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:744adfa3f2f6e420f07a43b336aab622b91653490f1df422cde3c35e95fe051f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"escapes policy values before embedding them in a script\" and code contract pp/src/policy.ts:148-155"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/x<y>&z",
+                  "/sep\\u2028mid\\u2029end"
+                ]
+              }
+            },
+            "expected": "The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\uXXXX escape sequence.",
+            "actual": {
+              "hasRawAmp": false,
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawLineSep": false,
+              "hasRawParaSep": false,
+              "hasEscapedAmp": true,
+              "hasEscapedLt": true,
+              "hasEscapedGt": true,
+              "hasEscapedLineSep": true,
+              "hasEscapedParaSep": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 464,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"escapes policy values before embedding them in a script\\\" and code contract pp/src/policy.ts:148-155\",\"inputs\":{\"policy\":{\"routes\":[\"/x<y>&z\",\"/sep\\\\u2028mid\\\\u2029end\"]}},\"expected\":\"The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\\\uXXXX escape sequence.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawAmp\":false,\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawLineSep\":false,\"hasRawParaSep\":false,\"hasEscapedAmp\":true,\"hasEscapedLt\":true,\"hasEscapedGt\":true,\"hasEscapedLineSep\":true,\"hasEscapedParaSep\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:23\n   Duration  147ms (transform 52ms, setup 0ms, import 60ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/prepaint"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint@sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "separated-06.test.ts",
+              "test_hash": "sha256:744adfa3f2f6e420f07a43b336aab622b91653490f1df422cde3c35e95fe051f",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \"escapes policy values before embedding them in a script\" and code contract pp/src/policy.ts:148-155"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/separated/prepaint/separated-06.test.ts' --module packages/prepaint --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "policy": {
+                "routes": [
+                  "/x<y>&z",
+                  "/sep\\u2028mid\\u2029end"
+                ]
+              }
+            },
+            "expected": "The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\uXXXX escape sequence.",
+            "actual": {
+              "hasRawAmp": false,
+              "hasRawLt": false,
+              "hasRawGt": false,
+              "hasRawLineSep": false,
+              "hasRawParaSep": false,
+              "hasEscapedAmp": true,
+              "hasEscapedLt": true,
+              "hasEscapedGt": true,
+              "hasEscapedLineSep": true,
+              "hasEscapedParaSep": true
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 0,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "pass",
+                  "duration_ms": 474,
+                  "exit_reason": "exit-0"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "pass",
+              "rule": "oracle-satisfied"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/prepaint\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"serialized policy never contains raw script-breaking characters, each is replaced by its unicode escape\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"INV-PP-09 — separated invariant catalog, sourced from pp/tests/policy.test.ts \\\"escapes policy values before embedding them in a script\\\" and code contract pp/src/policy.ts:148-155\",\"inputs\":{\"policy\":{\"routes\":[\"/x<y>&z\",\"/sep\\\\u2028mid\\\\u2029end\"]}},\"expected\":\"The serialized string contains no raw &, <, >, U+2028 or U+2029 characters; each appears only as its \\\\uXXXX escape sequence.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"hasRawAmp\":false,\"hasRawLt\":false,\"hasRawGt\":false,\"hasRawLineSep\":false,\"hasRawParaSep\":false,\"hasEscapedAmp\":true,\"hasEscapedLt\":true,\"hasEscapedGt\":true,\"hasEscapedLineSep\":true,\"hasEscapedParaSep\":true}}\n ✓ .bug-dreamer/generated.test.ts (1 test) 2ms\n\n Test Files  1 passed (1)\n      Tests  1 passed (1)\n   Start at  10:12:24\n   Duration  154ms (transform 51ms, setup 0ms, import 58ms, tests 2ms, environment 0ms)\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}
