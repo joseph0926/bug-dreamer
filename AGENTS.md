@@ -18,12 +18,12 @@
 - 재현 명령과 실행 증거가 없는 시나리오는 그럴듯해도 보고하지 않는다.
 - 실제 버그인지, 고칠 가치가 있는지는 사용자가 최종 판정한다.
 
-## v0.1 경계
+## 버전 경계
 
-- 구현 범위는 항상 [docs/ROADMAP.md](docs/ROADMAP.md)에서 확인한다.
-- v0.1은 한 프로젝트의 지정 모듈 하나를 대상으로 한 수동 실행만 다룬다.
-- 야간 자동 실행, 여러 저장소 지원, 웹 인터페이스와 자동 수정은 구현하지 않는다.
-- v0.2 이후 아이디어는 ROADMAP의 범위와 완료 조건이 먼저 바뀌지 않는 한 구현하지 않는다.
+- 구현 범위는 항상 [docs/ROADMAP.md](docs/ROADMAP.md)에서 확인한다. v0.2는 2026-08-31에 완료됐다.
+- 구현된 범위는 한 저장소(firsttx)의 등록 모듈에 대한 격리 실행, 배치 실행기, 사전 등록 품질 게이트가 있는 픽스처 벤치마크, 하루 최대 1회의 후보 다이제스트까지다. 기본 시나리오 생성 설계는 separated(불변식 우선)다.
+- 여러 저장소 지원, 웹 인터페이스, 자동 수정과 스타트업 트랙 기능(shadow customers, bounty, underwriting)은 구현하지 않는다.
+- 다음 버전 아이디어는 ROADMAP의 범위와 완료 조건이 먼저 바뀌지 않는 한 구현하지 않는다.
 - 격리 실행기와 실행 증거 형식은 이 저장소 안에서 먼저 검증한다. 실제 두 번째 소비자가 생기기 전에는 공유 패키지나 별도 저장소로 추출하지 않는다.
 
 ## 실행 안전
@@ -51,8 +51,8 @@
 - 단위 테스트는 `node --test test/*.test.mjs`로 실행한다. `test/fixtures/`의 시나리오는 호스트에서 실행하지 않는다.
 - Docker 이미지 준비는 `node scripts/prepare-image.mjs --target <firsttx 경로> [--module <모듈>]`로 실행한다. 이 명령만 이미지와 락파일 의존성을 내려받기 위해 네트워크를 사용할 수 있다.
 - 시나리오는 `node scripts/run-scenario.mjs --scenario <테스트 파일> [--module <모듈>]`로 저장소 루트에서 실행한다. 이 명령은 Docker 네트워크를 차단한다.
-- 배치는 `node scripts/run-batch.mjs --dir <시나리오 디렉터리> [--module <모듈>]`로 실행한다. 각 시나리오를 기본 3회 연속 실행해 시그니처 일치 여부를 집계하며, 리포트는 생성하지 않는다.
-- 모듈 실행 계약은 `src/modules.mjs`가 소유한다. 미등록 모듈 지정은 잘못된 실행기 입력(exit 2)이며, 격리 속성은 모듈별로 완화할 수 없다. 기본 모듈은 `packages/tx`다.
-- 벤치마크 결함은 `benchmark/manifest.json`이 소유한다. 결함 이미지는 `node scripts/prepare-image.mjs --target <경로> --defect <결함 id>`로 빌드하고, 실행은 `--defect <결함 id>`로 지정한다. 각 결함의 check 시나리오는 결함 이미지에서 candidate-failure, 정상 이미지에서 pass여야 한다.
-- 다이제스트는 `node scripts/run-digest.mjs --dir <시나리오 디렉터리> [--module <모듈>] [--model-calls <생성 세션 model call 수>]`로 생성하며 `digests/YYYY-MM-DD.md`와 배치 실행 증거 `evidence/YYYY-MM-DD/digest-batch.json`을 쓴다. 시나리오가 20개를 넘으면 실행 전에 거절하고, 다이제스트는 실행 시간과 전달받은 model call 수를 기록하며 각 후보가 배치 증거를 참조한다. 다이제스트 항목은 후보일 뿐이며, `nightmares/` 승격은 독립 재현과 사람 판정을 요구하는 v0.1 규칙을 그대로 따른다. 어떤 자동 실행도 `nightmares/`에 직접 쓰지 않는다. 스케줄 등록은 사용자 몫이고 하루 최대 1회 배치가 계약이다.
+- 배치는 `node scripts/run-batch.mjs --dir <시나리오 디렉터리> [--module <모듈>]`로 실행한다. 각 시나리오를 기본 3회 연속 실행해 시그니처 일치 여부를 집계하며 리포트는 생성하지 않는다.
+- 모듈 실행 계약은 `src/modules.mjs`가 소유한다. 미등록 모듈 지정은 잘못된 실행기 입력(exit 2)이며 격리 속성은 모듈별로 완화할 수 없다. 기본 모듈은 `packages/tx`다.
+- 벤치마크 결함은 `benchmark/manifest.json`이 소유한다. 결함 이미지는 `node scripts/prepare-image.mjs --target <경로> --defect <결함 id>`로 빌드한다. 실행은 `--defect <결함 id>`로 지정한다. 각 결함의 check 시나리오는 결함 이미지에서 candidate-failure, 정상 이미지에서 pass여야 한다.
+- 다이제스트는 `node scripts/run-digest.mjs --dir <시나리오 디렉터리> [--module <모듈>] [--model-calls <생성 세션 model call 수>]`로 생성하며 `digests/YYYY-MM-DD.md`와 배치 실행 증거 `evidence/YYYY-MM-DD/digest-batch.json`을 쓴다. 시나리오가 20개를 넘으면 실행 전에 거절한다. 다이제스트는 실행 시간과 전달받은 model call 수를 기록하며 각 후보가 배치 증거를 참조한다. 다이제스트 항목은 후보일 뿐이며 `nightmares/` 승격은 독립 재현과 사람 판정을 요구하는 v0.1 규칙을 그대로 따른다. 어떤 자동 실행도 `nightmares/`에 직접 쓰지 않는다. 스케줄 등록은 사용자 몫이고 하루 최대 1회 배치가 계약이다.
 - 현재 확정된 lint와 typecheck 명령은 없다.
