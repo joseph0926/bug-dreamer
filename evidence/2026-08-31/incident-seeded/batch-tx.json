@@ -1,0 +1,270 @@
+{
+  "batch": {
+    "scenario_directory": "scenarios/firsttx/incident-seeded-2026-08-31/tx",
+    "module": "packages/tx",
+    "runs_per_scenario": 3,
+    "scenario_count": 1,
+    "results": [
+      {
+        "scenario": "incident-01.test.ts",
+        "aggregate": {
+          "outcome": "candidate-failure",
+          "signatures_match": true,
+          "reportable": true,
+          "rule": "consistent-candidate-failure"
+        },
+        "runs": [
+          {
+            "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-01.test.ts",
+              "test_hash": "sha256:81cec1c3ebdeb82d1d91b5c5acd6ad634e409719e2a814440052c1efbac1e6b8",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": 2,
+              "commitTiming": "while step 2 is still running",
+              "step2Outcome": "rejects after commit resolves"
+            },
+            "expected": "Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \"committed\".",
+            "actual": {
+              "commitOutcome": "resolved",
+              "stepOutcome": "Retry exhausted for step-1",
+              "compensated": [
+                "step-1"
+              ],
+              "stateAfter": "rolled-back"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 601,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+                "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state",
+                "message": "expected [ 'step-1' ] to deeply equal []",
+                "expected": [],
+                "actual": [
+                  "step-1"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"commit accepted while a step is in flight must leave the transaction committed and immutable\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/README.md \\\"After commit\\\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state\",\"inputs\":{\"steps\":2,\"commitTiming\":\"while step 2 is still running\",\"step2Outcome\":\"rejects after commit resolves\"},\"expected\":\"Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \\\"committed\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"commitOutcome\":\"resolved\",\"stepOutcome\":\"Retry exhausted for step-1\",\"compensated\":[\"step-1\"],\"stateAfter\":\"rolled-back\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'step-1' ] to deeply equal []\",\"expected\":[],\"actual\":[\"step-1\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 7ms\n   × commit accepted while a step is in flight must leave the transaction committed and immutable 7ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:24\n   Duration  223ms (transform 139ms, setup 0ms, import 151ms, tests 7ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > commit accepted while a step is in flight must leave the transaction committed and immutable\nAssertionError: expected [ 'step-1' ] to deeply equal []\n\n- Expected\n+ Received\n\n- []\n+ [\n+   \"step-1\",\n+ ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:76:34\n     74|       return;\n     75|     }\n     76|     expect(observed.compensated).toEqual([]);\n       |                                  ^\n     77|     expect(observed.stateAfter).toBe('committed');\n     78|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-01.test.ts",
+              "test_hash": "sha256:81cec1c3ebdeb82d1d91b5c5acd6ad634e409719e2a814440052c1efbac1e6b8",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": 2,
+              "commitTiming": "while step 2 is still running",
+              "step2Outcome": "rejects after commit resolves"
+            },
+            "expected": "Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \"committed\".",
+            "actual": {
+              "commitOutcome": "resolved",
+              "stepOutcome": "Retry exhausted for step-1",
+              "compensated": [
+                "step-1"
+              ],
+              "stateAfter": "rolled-back"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 589,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+                "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state",
+                "message": "expected [ 'step-1' ] to deeply equal []",
+                "expected": [],
+                "actual": [
+                  "step-1"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"commit accepted while a step is in flight must leave the transaction committed and immutable\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/README.md \\\"After commit\\\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state\",\"inputs\":{\"steps\":2,\"commitTiming\":\"while step 2 is still running\",\"step2Outcome\":\"rejects after commit resolves\"},\"expected\":\"Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \\\"committed\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"commitOutcome\":\"resolved\",\"stepOutcome\":\"Retry exhausted for step-1\",\"compensated\":[\"step-1\"],\"stateAfter\":\"rolled-back\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'step-1' ] to deeply equal []\",\"expected\":[],\"actual\":[\"step-1\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 8ms\n   × commit accepted while a step is in flight must leave the transaction committed and immutable 7ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:25\n   Duration  208ms (transform 100ms, setup 0ms, import 135ms, tests 8ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > commit accepted while a step is in flight must leave the transaction committed and immutable\nAssertionError: expected [ 'step-1' ] to deeply equal []\n\n- Expected\n+ Received\n\n- []\n+ [\n+   \"step-1\",\n+ ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:76:34\n     74|       return;\n     75|     }\n     76|     expect(observed.compensated).toEqual([]);\n       |                                  ^\n     77|     expect(observed.stateAfter).toBe('committed');\n     78|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/tx"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c@sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-01.test.ts",
+              "test_hash": "sha256:81cec1c3ebdeb82d1d91b5c5acd6ad634e409719e2a814440052c1efbac1e6b8",
+              "oracle_basis": "documentation",
+              "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "steps": 2,
+              "commitTiming": "while step 2 is still running",
+              "step2Outcome": "rejects after commit resolves"
+            },
+            "expected": "Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \"committed\".",
+            "actual": {
+              "commitOutcome": "resolved",
+              "stepOutcome": "Retry exhausted for step-1",
+              "compensated": [
+                "step-1"
+              ],
+              "stateAfter": "rolled-back"
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 519,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "commit accepted while a step is in flight must leave the transaction committed and immutable",
+                "oracle_basis_ref": "packages/tx/README.md \"After commit\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state",
+                "message": "expected [ 'step-1' ] to deeply equal []",
+                "expected": [],
+                "actual": [
+                  "step-1"
+                ]
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/tx\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"commit accepted while a step is in flight must leave the transaction committed and immutable\",\"oracle_basis\":\"documentation\",\"oracle_basis_ref\":\"packages/tx/README.md \\\"After commit\\\": the transaction becomes immutable and no more steps can be added; packages/tx/src/types.ts TxStatus lifecycle where committed is a terminal state\",\"inputs\":{\"steps\":2,\"commitTiming\":\"while step 2 is still running\",\"step2Outcome\":\"rejects after commit resolves\"},\"expected\":\"Either commit() called while a step is running throws TransactionStateError, or once commit() resolves the transaction stays committed: the later step failure does not execute compensations and a follow-up run() reports currentState \\\"committed\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"commitOutcome\":\"resolved\",\"stepOutcome\":\"Retry exhausted for step-1\",\"compensated\":[\"step-1\"],\"stateAfter\":\"rolled-back\"}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected [ 'step-1' ] to deeply equal []\",\"expected\":[],\"actual\":[\"step-1\"]}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 50ms\n   × commit accepted while a step is in flight must leave the transaction committed and immutable 49ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:25\n   Duration  203ms (transform 78ms, setup 0ms, import 88ms, tests 50ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > commit accepted while a step is in flight must leave the transaction committed and immutable\nAssertionError: expected [ 'step-1' ] to deeply equal []\n\n- Expected\n+ Received\n\n- []\n+ [\n+   \"step-1\",\n+ ]\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:76:34\n     74|       return;\n     75|     }\n     76|     expect(observed.compensated).toEqual([]);\n       |                                  ^\n     77|     expect(observed.stateAfter).toBe('committed');\n     78|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}

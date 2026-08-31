@@ -1,0 +1,509 @@
+{
+  "batch": {
+    "scenario_directory": "scenarios/firsttx/incident-seeded-2026-08-31/local-first",
+    "module": "packages/local-first",
+    "runs_per_scenario": 3,
+    "scenario_count": 2,
+    "results": [
+      {
+        "scenario": "incident-02.test.ts",
+        "aggregate": {
+          "outcome": "candidate-failure",
+          "signatures_match": true,
+          "reportable": true,
+          "rule": "consistent-candidate-failure"
+        },
+        "runs": [
+          {
+            "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-02.test.ts",
+              "test_hash": "sha256:adc5b6912a1f22c84480816c240b3f23b22ffa47e6fc3cec04cd2e7b15e7c37b",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "storedValue": "old",
+              "storedUpdatedAt": 1000,
+              "replacedValue": "new"
+            },
+            "expected": "After replace(\"new\") resolves, the cached snapshot and the pending getSyncPromise result reflect \"new\"; the storage row read before the replace never rolls the cache back to \"old\".",
+            "actual": {
+              "cachedAfterReplace": "new",
+              "syncResult": "old",
+              "cachedAfterLoadApplied": "old",
+              "historyUpdatedAtAfterLoadApplied": 1000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 578,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+                "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard",
+                "message": "expected 'old' to be 'new' // Object.is equality",
+                "expected": "new",
+                "actual": "old"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard\",\"inputs\":{\"storedValue\":\"old\",\"storedUpdatedAt\":1000,\"replacedValue\":\"new\"},\"expected\":\"After replace(\\\"new\\\") resolves, the cached snapshot and the pending getSyncPromise result reflect \\\"new\\\"; the storage row read before the replace never rolls the cache back to \\\"old\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"cachedAfterReplace\":\"new\",\"syncResult\":\"old\",\"cachedAfterLoadApplied\":\"old\",\"historyUpdatedAtAfterLoadApplied\":1000}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'old' to be 'new' // Object.is equality\",\"expected\":\"new\",\"actual\":\"old\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 5ms\n   × user replace completing while the initial storage load is in flight must not be reverted by the older loaded value 5ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:32\n   Duration  205ms (transform 91ms, setup 0ms, import 106ms, tests 5ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\nAssertionError: expected 'old' to be 'new' // Object.is equality\n\nExpected: \"new\"\nReceived: \"old\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:92:33\n     90|     };\n     91|     expect(observed.cachedAfterReplace).toBe('new');\n     92|     expect(observed.syncResult).toBe('new');\n       |                                 ^\n     93|     expect(observed.cachedAfterLoadApplied).toBe('new');\n     94|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-02.test.ts",
+              "test_hash": "sha256:adc5b6912a1f22c84480816c240b3f23b22ffa47e6fc3cec04cd2e7b15e7c37b",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "storedValue": "old",
+              "storedUpdatedAt": 1000,
+              "replacedValue": "new"
+            },
+            "expected": "After replace(\"new\") resolves, the cached snapshot and the pending getSyncPromise result reflect \"new\"; the storage row read before the replace never rolls the cache back to \"old\".",
+            "actual": {
+              "cachedAfterReplace": "new",
+              "syncResult": "old",
+              "cachedAfterLoadApplied": "old",
+              "historyUpdatedAtAfterLoadApplied": 1000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 504,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+                "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard",
+                "message": "expected 'old' to be 'new' // Object.is equality",
+                "expected": "new",
+                "actual": "old"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard\",\"inputs\":{\"storedValue\":\"old\",\"storedUpdatedAt\":1000,\"replacedValue\":\"new\"},\"expected\":\"After replace(\\\"new\\\") resolves, the cached snapshot and the pending getSyncPromise result reflect \\\"new\\\"; the storage row read before the replace never rolls the cache back to \\\"old\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"cachedAfterReplace\":\"new\",\"syncResult\":\"old\",\"cachedAfterLoadApplied\":\"old\",\"historyUpdatedAtAfterLoadApplied\":1000}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'old' to be 'new' // Object.is equality\",\"expected\":\"new\",\"actual\":\"old\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 5ms\n   × user replace completing while the initial storage load is in flight must not be reverted by the older loaded value 5ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:33\n   Duration  241ms (transform 54ms, setup 0ms, import 95ms, tests 5ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\nAssertionError: expected 'old' to be 'new' // Object.is equality\n\nExpected: \"new\"\nReceived: \"old\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:92:33\n     90|     };\n     91|     expect(observed.cachedAfterReplace).toBe('new');\n     92|     expect(observed.syncResult).toBe('new');\n       |                                 ^\n     93|     expect(observed.cachedAfterLoadApplied).toBe('new');\n     94|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-02.test.ts",
+              "test_hash": "sha256:adc5b6912a1f22c84480816c240b3f23b22ffa47e6fc3cec04cd2e7b15e7c37b",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "storedValue": "old",
+              "storedUpdatedAt": 1000,
+              "replacedValue": "new"
+            },
+            "expected": "After replace(\"new\") resolves, the cached snapshot and the pending getSyncPromise result reflect \"new\"; the storage row read before the replace never rolls the cache back to \"old\".",
+            "actual": {
+              "cachedAfterReplace": "new",
+              "syncResult": "old",
+              "cachedAfterLoadApplied": "old",
+              "historyUpdatedAtAfterLoadApplied": 1000
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 524,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "user replace completing while the initial storage load is in flight must not be reverted by the older loaded value",
+                "oracle_basis_ref": "packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard",
+                "message": "expected 'old' to be 'new' // Object.is equality",
+                "expected": "new",
+                "actual": "old"
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/sync-manager.ts replace() drops a background replace whose expectedMutationVersion is outdated, declaring that a user mutation must not be overwritten by an older concurrent async result; executeSyncPromise applies the initial load result to the cache without that guard\",\"inputs\":{\"storedValue\":\"old\",\"storedUpdatedAt\":1000,\"replacedValue\":\"new\"},\"expected\":\"After replace(\\\"new\\\") resolves, the cached snapshot and the pending getSyncPromise result reflect \\\"new\\\"; the storage row read before the replace never rolls the cache back to \\\"old\\\".\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"cachedAfterReplace\":\"new\",\"syncResult\":\"old\",\"cachedAfterLoadApplied\":\"old\",\"historyUpdatedAtAfterLoadApplied\":1000}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected 'old' to be 'new' // Object.is equality\",\"expected\":\"new\",\"actual\":\"old\"}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 56ms\n   × user replace completing while the initial storage load is in flight must not be reverted by the older loaded value 56ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:34\n   Duration  244ms (transform 54ms, setup 0ms, import 96ms, tests 56ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > user replace completing while the initial storage load is in flight must not be reverted by the older loaded value\nAssertionError: expected 'old' to be 'new' // Object.is equality\n\nExpected: \"new\"\nReceived: \"old\"\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:92:33\n     90|     };\n     91|     expect(observed.cachedAfterReplace).toBe('new');\n     92|     expect(observed.syncResult).toBe('new');\n       |                                 ^\n     93|     expect(observed.cachedAfterLoadApplied).toBe('new');\n     94|   },\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      },
+      {
+        "scenario": "incident-03.test.ts",
+        "aggregate": {
+          "outcome": "candidate-failure",
+          "signatures_match": true,
+          "reportable": true,
+          "rule": "consistent-candidate-failure"
+        },
+        "runs": [
+          {
+            "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-03.test.ts",
+              "test_hash": "sha256:7fc6d51890a660fc168a5b795d2e47d9d7801e614f5c5de68f2ccf980cf0a246",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "schema": "z.number().max(10)",
+              "storedValidValue": 5,
+              "storedVersion": 1,
+              "modelVersion": 2,
+              "initialData": 99
+            },
+            "expected": "Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.",
+            "actual": {
+              "loadOutcome": "returned",
+              "returnedSatisfiesSchema": false,
+              "persistedSatisfiesSchema": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 501,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+                "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation",
+                "message": "expected false to be true // Object.is equality",
+                "expected": true,
+                "actual": false
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"version-reset seeding must not persist or return initialData that violates the model schema\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation\",\"inputs\":{\"schema\":\"z.number().max(10)\",\"storedValidValue\":5,\"storedVersion\":1,\"modelVersion\":2,\"initialData\":99},\"expected\":\"Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"loadOutcome\":\"returned\",\"returnedSatisfiesSchema\":false,\"persistedSatisfiesSchema\":false}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected false to be true // Object.is equality\",\"expected\":true,\"actual\":false}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 5ms\n   × version-reset seeding must not persist or return initialData that violates the model schema 4ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:34\n   Duration  189ms (transform 82ms, setup 0ms, import 94ms, tests 5ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > version-reset seeding must not persist or return initialData that violates the model schema\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:83:48\n     81|     };\n     82|     if (observed.loadOutcome === 'returned') {\n     83|       expect(observed.returnedSatisfiesSchema).toBe(true);\n       |                                                ^\n     84|     }\n     85|     expect(\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-03.test.ts",
+              "test_hash": "sha256:7fc6d51890a660fc168a5b795d2e47d9d7801e614f5c5de68f2ccf980cf0a246",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "schema": "z.number().max(10)",
+              "storedValidValue": 5,
+              "storedVersion": 1,
+              "modelVersion": 2,
+              "initialData": 99
+            },
+            "expected": "Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.",
+            "actual": {
+              "loadOutcome": "returned",
+              "returnedSatisfiesSchema": false,
+              "persistedSatisfiesSchema": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 512,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+                "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation",
+                "message": "expected false to be true // Object.is equality",
+                "expected": true,
+                "actual": false
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"version-reset seeding must not persist or return initialData that violates the model schema\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation\",\"inputs\":{\"schema\":\"z.number().max(10)\",\"storedValidValue\":5,\"storedVersion\":1,\"modelVersion\":2,\"initialData\":99},\"expected\":\"Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"loadOutcome\":\"returned\",\"returnedSatisfiesSchema\":false,\"persistedSatisfiesSchema\":false}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected false to be true // Object.is equality\",\"expected\":true,\"actual\":false}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 5ms\n   × version-reset seeding must not persist or return initialData that violates the model schema 5ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:35\n   Duration  193ms (transform 87ms, setup 0ms, import 100ms, tests 5ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > version-reset seeding must not persist or return initialData that violates the model schema\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:83:48\n     81|     };\n     82|     if (observed.loadOutcome === 'returned') {\n     83|       expect(observed.returnedSatisfiesSchema).toBe(true);\n       |                                                ^\n     84|     }\n     85|     expect(\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          },
+          {
+            "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+            "target": {
+              "project": "https://github.com/joseph0926/firsttx",
+              "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+              "module": "packages/local-first"
+            },
+            "environment": {
+              "isolation": "docker",
+              "image_or_os": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first@sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+              "runtime": "node 24.16.0",
+              "dependencies_ref": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+              "limits": {
+                "network": "blocked",
+                "allowed_commands": [
+                  "vitest run .bug-dreamer/generated.test.ts"
+                ],
+                "timeout_ms": 30000,
+                "memory": "512m",
+                "cpus": "1",
+                "pids": "64",
+                "temporary_filesystems": {
+                  "general": "128m",
+                  "vite_config": "16m"
+                }
+              }
+            },
+            "test": {
+              "test_ref": "incident-03.test.ts",
+              "test_hash": "sha256:7fc6d51890a660fc168a5b795d2e47d9d7801e614f5c5de68f2ccf980cf0a246",
+              "oracle_basis": "declared-invariant",
+              "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation"
+            },
+            "reproduction": {
+              "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
+              "working_directory": "."
+            },
+            "inputs": {
+              "schema": "z.number().max(10)",
+              "storedValidValue": 5,
+              "storedVersion": 1,
+              "modelVersion": 2,
+              "initialData": 99
+            },
+            "expected": "Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.",
+            "actual": {
+              "loadOutcome": "returned",
+              "returnedSatisfiesSchema": false,
+              "persistedSatisfiesSchema": false
+            },
+            "runs": {
+              "attempts": 1,
+              "failures": 1,
+              "per_run": [
+                {
+                  "phase_reached": "P4",
+                  "outcome": "candidate-failure",
+                  "duration_ms": 486,
+                  "exit_reason": "exit-1"
+                }
+              ]
+            },
+            "classification": {
+              "outcome": "candidate-failure",
+              "failure_signature": {
+                "scenario_id": "version-reset seeding must not persist or return initialData that violates the model schema",
+                "oracle_basis_ref": "packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation",
+                "message": "expected false to be true // Object.is equality",
+                "expected": true,
+                "actual": false
+              },
+              "rule": "oracle-violation"
+            },
+            "logs": {
+              "excerpt": "BUG_DREAMER_EVENT {\"phase\":\"P1\"}\n\n RUN  v4.1.10 /workspace/packages/local-first\n\nBUG_DREAMER_EVENT {\"phase\":\"P2\",\"scenario_id\":\"version-reset seeding must not persist or return initialData that violates the model schema\",\"oracle_basis\":\"declared-invariant\",\"oracle_basis_ref\":\"packages/local-first/src/storage-manager.ts load() deletes stored data that fails schema.safeParse and raises ValidationError (errors.ts), and sync-manager.ts replace()/patch() validate before every save, including drafts built from initialData — declaring that no schema-invalid data is persisted or returned; the version-reset branch saves and returns initialData without validation\",\"inputs\":{\"schema\":\"z.number().max(10)\",\"storedValidValue\":5,\"storedVersion\":1,\"modelVersion\":2,\"initialData\":99},\"expected\":\"Loading after a version bump either seeds a schema-valid value or refuses the seed (null or ValidationError); any value load() returns satisfies the schema and the persisted row stays schema-valid.\"}\nBUG_DREAMER_EVENT {\"phase\":\"P3\"}\nBUG_DREAMER_EVENT {\"phase\":\"P4\",\"actual\":{\"loadOutcome\":\"returned\",\"returnedSatisfiesSchema\":false,\"persistedSatisfiesSchema\":false}}\nBUG_DREAMER_EVENT {\"phase\":\"ORACLE_FAILURE\",\"message\":\"expected false to be true // Object.is equality\",\"expected\":true,\"actual\":false}\n ❯ .bug-dreamer/generated.test.ts (1 test | 1 failed) 6ms\n   × version-reset seeding must not persist or return initialData that violates the model schema 5ms\n\n Test Files  1 failed (1)\n      Tests  1 failed (1)\n   Start at  08:57:35\n   Duration  196ms (transform 116ms, setup 0ms, import 128ms, tests 6ms, environment 0ms)\n\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  .bug-dreamer/generated.test.ts > version-reset seeding must not persist or return initialData that violates the model schema\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ Object.assert .bug-dreamer/generated.test.ts:83:48\n     81|     };\n     82|     if (observed.loadOutcome === 'returned') {\n     83|       expect(observed.returnedSatisfiesSchema).toBe(true);\n       |                                                ^\n     84|     }\n     85|     expect(\n ❯ .bug-dreamer/scenario.mjs:67:24\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n",
+              "truncated": false,
+              "full_ref": null
+            },
+            "human_verdict": "unreviewed"
+          }
+        ]
+      }
+    ]
+  }
+}

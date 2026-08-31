@@ -1,0 +1,165 @@
+{
+  "experiment": "incident-seeded",
+  "phase": 7,
+  "date": "2026-08-31",
+  "target": {
+    "project": "https://github.com/joseph0926/firsttx",
+    "project_revision": "f624b09f148c3368a51807f48d3237db20cef9c6"
+  },
+  "seed": {
+    "pull_request": "https://github.com/joseph0926/firsttx/pull/129",
+    "title": "fix(prepaint): keep form controls in restored snapshots",
+    "merged_at": "2026-07-28T21:52:07Z",
+    "fix_included_in_pinned_revision": true,
+    "cause_abstraction": {
+      "state_transition_sequence": [
+        "user produces visible state V through normal interaction",
+        "stage W persists a representation of V under write-side policy P_w",
+        "a boundary passes (navigation, reload, time, or another actor)",
+        "stage R reads the representation back under read-side policy P_r and presents V' to the user"
+      ],
+      "failure_mechanism": "P_w and P_r disagree about which parts of V survive the round-trip, so user state is silently lost or altered; per-stage tests pass because no test executes the full write-boundary-read sequence",
+      "seed_instance": "capture preserved form controls (P_w) while the mount-time sanitizer removed them (P_r); capture.test.ts and sanitize.test.ts each passed"
+    },
+    "rejected_seed": {
+      "pull_request": "https://github.com/joseph0926/firsttx/pull/137",
+      "reason": "cause is value-domain (truthiness as presence); sibling search from it would collapse into grepping for truthiness checks, which is exactly the pre-registered similarity-degeneration stop condition"
+    }
+  },
+  "mutations": [
+    {
+      "operator": "reorder",
+      "description": "an event that normally follows the sequence end (commit, write completion) is moved between two interior transitions"
+    },
+    {
+      "operator": "delay-injection",
+      "description": "a read started before a write is applied after it; a version or time boundary is inserted between write and read"
+    },
+    {
+      "operator": "actor-swap",
+      "description": "the transition is performed by a different actor than the one that wrote the state (system reset path, concurrent caller) under a policy the original actor's path enforces but the new actor's path skips"
+    }
+  ],
+  "sibling_surface_selection": {
+    "method": "surfaces were enumerated by state role - places where user state makes a persistence or lifecycle round-trip with a transform on one side (tx step/compensation lifecycle, local-first storage load/save/version-reset, local-first cache/sync ordering)",
+    "code_similarity_search_used": false,
+    "similarity_degeneration": {
+      "occurred": false,
+      "check": "no grep, token, or embedding similarity against the seed diff was used to pick targets; none of the three scenarios shares code shape with the seed fix (sanitizer allowlists) - they share only the abstracted sequence with one operator applied",
+      "note": "the pre-registered stop condition was not triggered; the experiment ran to completion"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "incident-01",
+      "file": "scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts",
+      "module": "packages/tx",
+      "mutation": [
+        "reorder",
+        "actor-swap"
+      ],
+      "derivation": "seed sequence with the terminal event (commit) reordered into the middle of a running step; commit() checks status but not isStepRunning",
+      "oracle_basis": "documentation",
+      "oracle_ref": "packages/tx/README.md \"After commit\": transaction becomes immutable; types.ts TxStatus lifecycle",
+      "hypothesis": "a transaction committed while a step is in flight is later rolled back by that step's failure, executing compensations after commit",
+      "outcome": "candidate-failure",
+      "signatures_match": true,
+      "runs": 3,
+      "observed": {
+        "commitOutcome": "resolved",
+        "compensated": [
+          "step-1"
+        ],
+        "stateAfter": "rolled-back"
+      },
+      "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
+      "human_verdict": "real-bug-worth-fixing"
+    },
+    {
+      "id": "incident-02",
+      "file": "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts",
+      "module": "packages/local-first",
+      "mutation": [
+        "delay-injection",
+        "reorder"
+      ],
+      "derivation": "seed sequence with the read (initial storage load) started before the user's write but applied after it; CacheManager.updateWithData has no staleness guard and executeSyncPromise lacks the mutationVersion guard that replace() declares for background results",
+      "oracle_basis": "declared-invariant",
+      "oracle_ref": "packages/local-first/src/sync-manager.ts replace() expectedMutationVersion guard declares that a user mutation must not be overwritten by an older concurrent async result",
+      "hypothesis": "a replace() completing while the initial load is in flight is reverted when the older loaded value is applied to the cache",
+      "outcome": "candidate-failure",
+      "signatures_match": true,
+      "runs": 3,
+      "observed": {
+        "cachedAfterReplace": "new",
+        "syncResult": "old",
+        "cachedAfterLoadApplied": "old",
+        "historyUpdatedAtAfterLoadApplied": 1000
+      },
+      "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
+      "human_verdict": "real-bug-worth-fixing"
+    },
+    {
+      "id": "incident-03",
+      "file": "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts",
+      "module": "packages/local-first",
+      "mutation": [
+        "delay-injection",
+        "actor-swap"
+      ],
+      "derivation": "seed sequence with a version boundary between write and read and the re-seed performed by the system reset actor; every other write path (replace, patch - including drafts built from initialData) validates against the schema, the version-reset branch saves and returns initialData unvalidated",
+      "oracle_basis": "declared-invariant",
+      "oracle_ref": "packages/local-first/src/storage-manager.ts load() deletes and raises ValidationError on schema-invalid stored data; sync-manager.ts validates before every save",
+      "hypothesis": "after a version bump, load() persists and returns initialData that violates the model schema, which the next load() will then destroy",
+      "outcome": "candidate-failure",
+      "signatures_match": true,
+      "runs": 3,
+      "observed": {
+        "loadOutcome": "returned",
+        "returnedSatisfiesSchema": false,
+        "persistedSatisfiesSchema": false
+      },
+      "reproduction": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
+      "human_verdict": "real-bug-worth-fixing"
+    }
+  ],
+  "execution": {
+    "runner": "scripts/run-batch.mjs (three consecutive isolated runs per scenario via the run-scenario contract)",
+    "images": [
+      "bug-dreamer/firsttx:v0.1-f624b09f148c",
+      "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first"
+    ],
+    "all_runs_on_clean_images": true,
+    "evidence": [
+      "evidence/2026-08-31/incident-seeded/batch-tx.json",
+      "evidence/2026-08-31/incident-seeded/batch-lf.json"
+    ]
+  },
+  "budget": {
+    "generation_sessions_used_by_experiment": 1,
+    "generation_sessions_allowed_for_experiment": 5,
+    "benchmark_total_after_experiment": "5 of 30",
+    "isolated_runs": 9
+  },
+  "contamination_notes": [
+    "the generation context read the seed PR (#129) and the rejected seed PR (#137) by design, and clean module sources at the pinned revision",
+    "the generation context never read benchmark/manifest.json; a docker image listing exposed planted-defect ids as image tag names (names only, no diffs); none of the three scenarios targets a planted defect and all runs used clean images"
+  ],
+  "result_summary": {
+    "sibling_bug_candidates_found": 3,
+    "distinct_modules": [
+      "packages/tx",
+      "packages/local-first"
+    ],
+    "seed_module": "packages/prepaint",
+    "all_candidates_outside_seed_module": true,
+    "false_oracle_rate": "0 percent (0 of 3 wrong-expectation)",
+    "note": "the user reviewed all three candidates on 2026-08-31 and judged each a real bug worth fixing; promotion to nightmares/ still requires an accepted independent reproduction per v0.1 rules",
+    "valid_bugs": 3
+  },
+  "startup_track_grounds": {
+    "valid_bug_count": "benchmark human review verified 17 real bugs (9 worth fixing) across phases 4-5; this experiment adds 3 more, all judged real-bug-worth-fixing, for 20 total",
+    "false_oracle_rate": "0 percent across all human-reviewed benchmark arms and 0 of 3 in this experiment",
+    "sibling_bug_discovery": "yes - 3 consistent candidate failures derived from one fixed incident via sequence mutation, all on feature surfaces outside the seed's module, with no code-similarity search"
+  }
+}
