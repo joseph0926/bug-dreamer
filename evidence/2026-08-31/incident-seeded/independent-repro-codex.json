@@ -1,0 +1,29 @@
+{
+  "reproducer": "codex",
+  "date": "2026-08-31",
+  "host": "macOS 26.6.2 arm64, Docker 29.7.2",
+  "results": [
+    {
+      "scenario": "incident-01",
+      "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected [ 'step-1' ] to deeply equal []",
+      "signature_match": true
+    },
+    {
+      "scenario": "incident-02",
+      "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts' --module packages/local-first --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected 'old' to be 'new' // Object.is equality",
+      "signature_match": true
+    },
+    {
+      "scenario": "incident-03",
+      "command": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000",
+      "observed_outcome": "candidate-failure",
+      "observed_message": "expected false to be true // Object.is equality",
+      "signature_match": true
+    }
+  ],
+  "all_match": true
+}
