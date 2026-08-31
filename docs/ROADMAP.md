@@ -38,4 +38,4 @@ Passing tests and tests that cannot run are excluded from the report. Infrastruc
 
 ### Status
 
-v0.1 is under development.
+v0.1 is complete as of 2026-08-31. The first report, [nightmares/2026-08-31.md](../nightmares/2026-08-31.md), delivered one candidate failure in `packages/tx` rollback behavior. The author observed the same failure signature in three consecutive isolated runs, an independent agent session reproduced it once with the recorded command on the same host, and the user judged it a real bug worth fixing.
