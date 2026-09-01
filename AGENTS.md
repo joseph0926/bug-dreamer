@@ -61,4 +61,7 @@
 - v0.2 다이제스트는 `node scripts/run-digest.mjs --dir <시나리오 디렉터리> [--module <모듈>] [--model-calls <생성 세션 model call 수>]`로 생성하며 `digests/YYYY-MM-DD.md`와 배치 실행 증거 `evidence/YYYY-MM-DD/digest-batch.json`을 쓴다. 시나리오가 20개를 넘으면 실행 전에 거절한다. 다이제스트는 실행 시간과 전달받은 model call 수를 기록하며 각 후보가 배치 증거를 참조한다. 다이제스트 항목은 후보일 뿐이며 `nightmares/` 승격은 독립 재현과 사람 판정을 요구하는 v0.1 규칙을 그대로 따른다. 어떤 자동 실행도 `nightmares/`에 직접 쓰지 않는다. 스케줄 등록은 사용자 몫이고 하루 최대 1회 배치가 계약이다.
 - v0.3은 별도 runner, harness와 image namespace를 사용한다. 기존 runner, harness, Dockerfile과 v0.2 image tag를 수정하거나 덮지 않는다.
 - v0.3 구현과 검증 명령은 [docs/V0.3-CONTRACT.md](docs/V0.3-CONTRACT.md)의 CLI 계약을 따른다.
+- CI는 `history`, `contracts`, `spec`, `trust`, `operators`, `replay` 여섯 validator를 실행한다.
+- v0.3 evidence는 계약이 정한 prepare 명령으로만 재봉인한다. `scripts/prepare-v03-*.mjs`, `harness-v0.3/**`, `src/v03-wire.mjs`, `src/v03-spec.mjs`, `src/v03-trust.mjs`를 바꾸면 evaluation contract key가 달라져 재봉인 전까지 `trust`와 `replay`가 실패하므로, 이 파일들을 바꾸는 변경은 재봉인과 같은 커밋에 둔다.
+- `src/v03-runner.mjs`는 host-side 컨테이너 실행기다. evaluator image 안으로 복사되지 않고 evaluation contract key에도 들어가지 않는다.
 - 현재 확정된 lint와 typecheck 명령은 없다.

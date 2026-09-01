@@ -17,7 +17,7 @@ The workflow below describes the completed v0.1 and v0.2 system. v0.3 is in prog
 
 For v0.1 and v0.2, the execution gate is the trust boundary. A plausible story is not enough. Every reported nightmare must include a command that reproduces the failure, and its expectation must cite a contract source that exists independently of the generated scenario.
 
-v0.2 reachability was verified against fixed repository-internal execution contracts. Consumer-level reachability through declared package exports and stronger oracle requirements are under audit in v0.3. Its independent reproduction gate requires a separate session and a newly built evaluator image on the same host; reproduction on another physical host remains follow-up validation. A malicious target package deliberately impersonating the trusted result channel is outside the v0.3 threat model.
+v0.2 reachability was verified against fixed repository-internal execution contracts. Consumer-level reachability through declared package exports and stronger oracle requirements are under audit in v0.3. Its independent reproduction gate requires a separate session and a newly built evaluator image on the same host; reproduction on another physical host remains follow-up validation. A malicious target package deliberately impersonating the trusted result channel is outside the v0.3 threat model. The v0.3 operator spike closed as `adopt`, while deterministic reduction to a minimal spec is still outstanding, so that phase of v0.3 is not complete.
 
 ## What exists today
 
