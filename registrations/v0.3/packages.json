@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "bug-dreamer/public-package-registration/v1",
+  "registrationId": "firsttx-public-packages-f624b09-v1",
+  "repository": "https://github.com/joseph0926/firsttx.git",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "nodeVersion": "24.16.0",
+  "packageManager": "pnpm@11.17.0",
+  "baseImage": "node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203",
+  "consumerDependencies": {
+    "esbuild": "0.25.12",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "vite": "7.3.6",
+    "zod": "3.25.76"
+  },
+  "consumerBuildPolicy": {
+    "allowBuilds": [
+      "esbuild"
+    ]
+  },
+  "consumerLockfile": {
+    "path": "registrations/v0.3/consumer-lock.yaml",
+    "sha256": "8c363c7be87400ea25bda3d0f0e8d21e2cfc9d371e34a9c018718cfe2b8011a4"
+  },
+  "packages": [
+    {
+      "id": "shared",
+      "role": "first-party-dependency",
+      "workspacePath": "packages/shared",
+      "packageName": "@firsttx/shared",
+      "version": "0.3.2",
+      "sourceManifestSha256": "5ff9d4bbc3b8ea44b373043dd78f8e47b0b0e5d800a6333c6c2bcfd8aebee8aa",
+      "firstPartyDependencies": [],
+      "allowedImportSpecifiers": [
+        "@firsttx/shared"
+      ],
+      "requiredRuntimeExports": [
+        "BaseFirstTxError",
+        "DEFAULT_MAX_BUFFER_SIZE"
+      ],
+      "buildArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/shared",
+        "build"
+      ],
+      "packArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/shared",
+        "pack",
+        "--out",
+        "/artifacts/shared.tgz"
+      ],
+      "privateImportSpecifiers": [
+        "@firsttx/shared/utils"
+      ]
+    },
+    {
+      "id": "tx",
+      "role": "target-module",
+      "workspacePath": "packages/tx",
+      "packageName": "@firsttx/tx",
+      "version": "0.8.2",
+      "sourceManifestSha256": "1ad3b875f214c979966726cdf25561cfa47af4cc9f0f7feff2735d56b5cfb162",
+      "firstPartyDependencies": [
+        "@firsttx/shared"
+      ],
+      "allowedImportSpecifiers": [
+        "@firsttx/tx"
+      ],
+      "requiredRuntimeExports": [
+        "CompensationFailedError",
+        "DEFAULT_RETRY_CONFIG",
+        "RETRY_PRESETS",
+        "RetryExhaustedError",
+        "TransactionStateError",
+        "TransactionTimeoutError",
+        "TxError",
+        "startTransaction",
+        "useTx"
+      ],
+      "buildArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/tx",
+        "build"
+      ],
+      "packArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/tx",
+        "pack",
+        "--out",
+        "/artifacts/tx.tgz"
+      ],
+      "privateImportSpecifiers": [
+        "@firsttx/tx/transaction",
+        "@firsttx/tx/errors",
+        "@firsttx/tx/retry",
+        "@firsttx/tx/dist/index.js"
+      ]
+    },
+    {
+      "id": "local-first",
+      "role": "target-module",
+      "workspacePath": "packages/local-first",
+      "packageName": "@firsttx/local-first",
+      "version": "0.12.0",
+      "sourceManifestSha256": "2bb07e7d16f8b69e1ce71a4619cb4138d14da211677d4cd5493091852f2491d5",
+      "firstPartyDependencies": [
+        "@firsttx/shared"
+      ],
+      "allowedImportSpecifiers": [
+        "@firsttx/local-first"
+      ],
+      "requiredRuntimeExports": [
+        "FirstTxError",
+        "Storage",
+        "StorageError",
+        "ValidationError",
+        "defineModel",
+        "useModel",
+        "useSuspenseSyncedModel",
+        "useSyncedModel"
+      ],
+      "buildArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/local-first",
+        "build"
+      ],
+      "packArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/local-first",
+        "pack",
+        "--out",
+        "/artifacts/local-first.tgz"
+      ],
+      "privateImportSpecifiers": [
+        "@firsttx/local-first/storage-manager",
+        "@firsttx/local-first/cache-manager",
+        "@firsttx/local-first/broadcast",
+        "@firsttx/local-first/dist/index.js"
+      ]
+    },
+    {
+      "id": "prepaint",
+      "role": "target-module",
+      "workspacePath": "packages/prepaint",
+      "packageName": "@firsttx/prepaint",
+      "version": "0.13.1",
+      "sourceManifestSha256": "e16a3905165d86551d873b272fd227a3bd40ab88e5c5799f94aa0a2a7e3e19d0",
+      "firstPartyDependencies": [
+        "@firsttx/shared"
+      ],
+      "allowedImportSpecifiers": [
+        "@firsttx/prepaint",
+        "@firsttx/prepaint/plugin/vite"
+      ],
+      "requiredRuntimeExports": [
+        "BootError",
+        "CaptureError",
+        "HydrationError",
+        "PrepaintError",
+        "PrepaintStorageError",
+        "boot",
+        "convertDOMException",
+        "createFirstTxRoot",
+        "handoff",
+        "setupCapture"
+      ],
+      "buildArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/prepaint",
+        "build"
+      ],
+      "packArgv": [
+        "pnpm",
+        "--filter",
+        "@firsttx/prepaint",
+        "pack",
+        "--out",
+        "/artifacts/prepaint.tgz"
+      ],
+      "privateImportSpecifiers": [
+        "@firsttx/prepaint/boot",
+        "@firsttx/prepaint/policy",
+        "@firsttx/prepaint/dist/index.js"
+      ]
+    }
+  ]
+}

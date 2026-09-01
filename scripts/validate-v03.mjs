@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { HistoryValidationError, validateHistory } from '../src/v03-history.mjs';
+import { ContractValidationError, validateContracts } from '../src/v03-contracts.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SUBCOMMANDS = new Set([
@@ -45,17 +46,19 @@ async function main() {
     return;
   }
 
-  if (input.subcommand !== 'history') {
+  if (!['history', 'contracts'].includes(input.subcommand)) {
     process.stderr.write(`${input.subcommand} validation is not implemented yet\n`);
     process.exitCode = 1;
     return;
   }
 
   try {
-    const result = await validateHistory(repositoryRoot, input);
-    process.stdout.write(`${JSON.stringify({ status: 'ok', subcommand: 'history', ...result })}\n`);
+    const result = input.subcommand === 'history'
+      ? await validateHistory(repositoryRoot, input)
+      : await validateContracts(repositoryRoot);
+    process.stdout.write(`${JSON.stringify({ status: 'ok', subcommand: input.subcommand, ...result })}\n`);
   } catch (error) {
-    const message = error instanceof HistoryValidationError ? error.message : `Unexpected validation error: ${error.message}`;
+    const message = error instanceof HistoryValidationError || error instanceof ContractValidationError ? error.message : `Unexpected validation error: ${error.message}`;
     process.stderr.write(`${message}\n`);
     process.exitCode = 1;
   }

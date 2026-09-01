@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "bug-dreamer/public-boundary-audit/v1",
+  "sourceAudit": {
+    "path": "history/v0.2-audit.json",
+    "sha256": "2321d76b10be03f2af3b3ce8b5ddf8e6fee9034fa8a0ae5d58d12e3b2d0992fc"
+  },
+  "registrationId": "firsttx-public-packages-f624b09-v1",
+  "evidence": {
+    "path": "evidence/v0.3/phase1-contracts.json",
+    "sha256": "52263262433cb092cf8c2f6a68dd366af64cf08091c27fcc7632230b35c2fec7"
+  },
+  "records": [
+    {
+      "id": "nightmare-01",
+      "moduleId": "tx",
+      "scenarioPath": "scenarios/firsttx/failed-step-compensation.test.ts",
+      "scenarioSha256": "e59c7f4e14452d18efd088ca2207e26b945ca6fbffc8072b3177d59368682495",
+      "reachability": {
+        "status": "provisional",
+        "value": "public-export"
+      },
+      "reasonCode": "packed-public-trace-executed",
+      "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run",
+          "run"
+        ],
+        "observed": {
+          "events": [
+            "step1-run",
+            "step2-start",
+            "step1-compensate"
+          ]
+        }
+      },
+      "missingPublicActions": [],
+      "evidenceJsonPointer": "/probe/publicTraces/0"
+    },
+    {
+      "id": "nightmare-02",
+      "moduleId": "local-first",
+      "scenarioPath": "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts",
+      "scenarioSha256": "7fc6d51890a660fc168a5b795d2e47d9d7801e614f5c5de68f2ccf980cf0a246",
+      "reachability": {
+        "status": "provisional",
+        "value": "internal-contract"
+      },
+      "reasonCode": "private-import-rejected",
+      "importSpecifier": "@firsttx/local-first/storage-manager",
+      "traceExpectation": null,
+      "missingPublicActions": [
+        "local.materializePreviousVersion",
+        "local.observeUpgradeReset"
+      ],
+      "evidenceJsonPointer": "/probe/privateImports/5"
+    },
+    {
+      "id": "nightmare-03",
+      "moduleId": "tx",
+      "scenarioPath": "scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts",
+      "scenarioSha256": "81cec1c3ebdeb82d1d91b5c5acd6ad634e409719e2a814440052c1efbac1e6b8",
+      "reachability": {
+        "status": "provisional",
+        "value": "public-export"
+      },
+      "reasonCode": "packed-public-trace-executed",
+      "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run",
+          "commit",
+          "run"
+        ],
+        "observed": {
+          "commitOutcome": "resolved",
+          "compensated": [
+            "step-1"
+          ],
+          "stateAfter": "rolled-back"
+        }
+      },
+      "missingPublicActions": [],
+      "evidenceJsonPointer": "/probe/publicTraces/1"
+    },
+    {
+      "id": "nightmare-04",
+      "moduleId": "tx",
+      "scenarioPath": "benchmark/rerun-2026-08-31/control/tx/control-02.test.ts",
+      "scenarioSha256": "dcb12049cff5ee9ad6e48e5782c3150a4a0f7c014ca3c9b703b8ea7d13256161",
+      "reachability": {
+        "status": "provisional",
+        "value": "public-export"
+      },
+      "reasonCode": "packed-public-trace-executed",
+      "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run"
+        ],
+        "observed": {
+          "name": "RetryExhaustedError",
+          "message": "Retry exhausted for step-0"
+        }
+      },
+      "missingPublicActions": [],
+      "evidenceJsonPointer": "/probe/publicTraces/2"
+    },
+    {
+      "id": "nightmare-05",
+      "moduleId": "local-first",
+      "scenarioPath": "benchmark/rerun-2026-08-31/control/local-first/control-06.test.ts",
+      "scenarioSha256": "fb442a6a61fe107548eca31a9c07adba7372cc603a57bea0744262cdc200b9b4",
+      "reachability": {
+        "status": "provisional",
+        "value": "internal-contract"
+      },
+      "reasonCode": "private-import-rejected",
+      "importSpecifier": "@firsttx/local-first/cache-manager",
+      "traceExpectation": null,
+      "missingPublicActions": [
+        "local.observeHistoryNavigation"
+      ],
+      "evidenceJsonPointer": "/probe/privateImports/6"
+    },
+    {
+      "id": "nightmare-06",
+      "moduleId": "local-first",
+      "scenarioPath": "benchmark/rerun-2026-08-31/control/local-first/control-03.test.ts",
+      "scenarioSha256": "ed3e34a4f7d329a0f7aa355bc53b17a031cc78b7990e8a0eb76809d90e5e789b",
+      "reachability": {
+        "status": "provisional",
+        "value": "internal-contract"
+      },
+      "reasonCode": "private-import-rejected",
+      "importSpecifier": "@firsttx/local-first/broadcast",
+      "traceExpectation": null,
+      "missingPublicActions": [
+        "local.observeBroadcasterLifecycle"
+      ],
+      "evidenceJsonPointer": "/probe/privateImports/7"
+    },
+    {
+      "id": "nightmare-07",
+      "moduleId": "tx",
+      "scenarioPath": "benchmark/rerun-2026-08-31/control/tx/control-04.test.ts",
+      "scenarioSha256": "3fa088ea57d69a8062a3ec85f7add616e7a53c19b775fa8564a588b99fccf69a",
+      "reachability": {
+        "status": "provisional",
+        "value": "public-export"
+      },
+      "reasonCode": "packed-public-trace-executed",
+      "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run"
+        ],
+        "observed": {
+          "calls": 0,
+          "outcome": "Error"
+        }
+      },
+      "missingPublicActions": [],
+      "evidenceJsonPointer": "/probe/publicTraces/3"
+    }
+  ]
+}
