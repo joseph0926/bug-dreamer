@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "bug-dreamer/spec-cases/v1",
+  "positive": [
+    "contracts/v0.3/seeds/pass.json",
+    "contracts/v0.3/seeds/candidate.json",
+    "contracts/v0.3/seeds/marker-forgery.json"
+  ],
+  "negative": [
+    {
+      "path": "contracts/v0.3/seeds/negative-duplicate-key.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "Duplicate JSON key"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-unknown-action.json",
+      "expectedKind": "rejected-catalog",
+      "expectedMessage": "Unknown action"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-forward-binding.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "missing or forward-referenced"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-policy-field.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "unknown field"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-empty-actors.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "actor count"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-binding-type.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "Binding type mismatch"
+    }
+  ]
+}

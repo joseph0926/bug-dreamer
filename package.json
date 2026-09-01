@@ -7,6 +7,9 @@
     "node": "24.x"
   },
   "packageManager": "pnpm@11.17.0",
+  "dependencies": {
+    "canonicalize": "4.0.0"
+  },
   "scripts": {
     "runner:prepare": "node scripts/prepare-image.mjs",
     "runner:run": "node scripts/run-scenario.mjs",

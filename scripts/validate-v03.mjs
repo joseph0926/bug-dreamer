@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url';
 
 import { HistoryValidationError, validateHistory } from '../src/v03-history.mjs';
 import { ContractValidationError, validateContracts } from '../src/v03-contracts.mjs';
+import { SpecValidationError, validateSpecContracts } from '../src/v03-spec-validation.mjs';
+import { TrustValidationError, validateTrustContracts } from '../src/v03-trust-validation.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SUBCOMMANDS = new Set([
@@ -19,7 +21,7 @@ const SUBCOMMANDS = new Set([
 ]);
 
 function usage() {
-  return 'Usage: node scripts/validate-v03.mjs history [--replay-available]';
+  return 'Usage: node scripts/validate-v03.mjs <history|contracts|spec|trust|operators|replay|benchmark|evidence|reports|all> [--replay-available for history]';
 }
 
 function parseArgs(args) {
@@ -46,19 +48,27 @@ async function main() {
     return;
   }
 
-  if (!['history', 'contracts'].includes(input.subcommand)) {
+  const validators = {
+    history: () => validateHistory(repositoryRoot, input),
+    contracts: () => validateContracts(repositoryRoot),
+    spec: () => validateSpecContracts(repositoryRoot),
+    trust: () => validateTrustContracts(repositoryRoot),
+  };
+  if (validators[input.subcommand] === undefined) {
     process.stderr.write(`${input.subcommand} validation is not implemented yet\n`);
     process.exitCode = 1;
     return;
   }
 
   try {
-    const result = input.subcommand === 'history'
-      ? await validateHistory(repositoryRoot, input)
-      : await validateContracts(repositoryRoot);
+    const result = await validators[input.subcommand]();
     process.stdout.write(`${JSON.stringify({ status: 'ok', subcommand: input.subcommand, ...result })}\n`);
   } catch (error) {
-    const message = error instanceof HistoryValidationError || error instanceof ContractValidationError ? error.message : `Unexpected validation error: ${error.message}`;
+    const expected = error instanceof HistoryValidationError
+      || error instanceof ContractValidationError
+      || error instanceof SpecValidationError
+      || error instanceof TrustValidationError;
+    const message = expected ? error.message : `Unexpected validation error: ${error.message}`;
     process.stderr.write(`${message}\n`);
     process.exitCode = 1;
   }

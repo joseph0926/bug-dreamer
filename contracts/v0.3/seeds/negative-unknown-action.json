@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "unknown-action",
+  "invariantId": "tx.successful-step-return",
+  "actors": ["checkout"],
+  "actions": [
+    {
+      "actionId": "tx.import-private-source",
+      "actor": "checkout",
+      "arguments": {},
+      "bind": null
+    }
+  ]
+}

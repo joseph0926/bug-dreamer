@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "bug-dreamer/phase2-spec-evidence/v1",
+  "catalog": {
+    "path": "registrations/v0.3/phase2-catalog.json",
+    "sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
+    "catalogVersion": "firsttx-phase2-f624b09-v1"
+  },
+  "cases": {
+    "path": "contracts/v0.3/spec-cases.json",
+    "sha256": "60a0349eaa0d6056078366966ebbd2982003cdde61bcd8d103fa19fa2d8b8635"
+  },
+  "canonicalizer": {
+    "standard": "RFC 8785 JCS",
+    "package": "canonicalize",
+    "version": "4.0.0"
+  },
+  "positive": [
+    {
+      "path": "contracts/v0.3/seeds/pass.json",
+      "sourceSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
+      "seedDigest": "d6448d56e82d84844ad67988183763022d53aa54f4408f79f519171b926a65d9",
+      "specDigest": "ce4bcbf2e731632d251d6d45a2f4d21868635552f14375f86ba07fb9de24d3e5",
+      "planDigest": "210ed148a25b7023cdd7a1e4f881011dabd1e12ba1d73732dc9ae8f6dc7de09a",
+      "actionCount": 3,
+      "fixtureCount": 1
+    },
+    {
+      "path": "contracts/v0.3/seeds/candidate.json",
+      "sourceSha256": "74550adfd1333c4f32399d706b25b56ad0161b863579ec1f2c11118e9eed0d4e",
+      "seedDigest": "7ae1bd805824425bc1a5f807fcc80f02d13c531d29860e527a8060cda8e88271",
+      "specDigest": "4f7ad5b43d9bec97548628e1ed4b534da18a724fb941dccdf9b2c99425998838",
+      "planDigest": "7e4e4b7da3ecd96fcfebbaa87f157c0783acb9e3e9f7a51c49de28332f8b92c2",
+      "actionCount": 2,
+      "fixtureCount": 1
+    },
+    {
+      "path": "contracts/v0.3/seeds/marker-forgery.json",
+      "sourceSha256": "12aa98ca582ef8b9d3b02e2d39213f03fe46ae561d4842c092a786bca3f8becc",
+      "seedDigest": "4a400a00399f7527279000f62942b2645eba61c0ccaaaf83febead4ba1a241b8",
+      "specDigest": "966fc479a8319a6ffad68376348ccf8ac1012608cf21b71802ea9eeedc13f780",
+      "planDigest": "4ab5087dfebda50f1234832c5f9e9ec01be7979af5460827ed15ff309842e951",
+      "actionCount": 3,
+      "fixtureCount": 1
+    }
+  ],
+  "negative": [
+    {
+      "path": "contracts/v0.3/seeds/negative-duplicate-key.json",
+      "sourceSha256": "6e219f4ab4ac66269f58b98cc76c11d70a4b42057b4696d989f138fc9c4159ec",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "Duplicate JSON key"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-unknown-action.json",
+      "sourceSha256": "14fc26a8da3d158155a0f4f73c2182d79bcef5ca45a0245956377b1dfc12f814",
+      "expectedKind": "rejected-catalog",
+      "observedKind": "rejected-catalog",
+      "expectedMessage": "Unknown action"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-forward-binding.json",
+      "sourceSha256": "1a909b4b3122ccb3916319e9a84855fa3d58a45a0d40693011a4ca82dad73198",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "missing or forward-referenced"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-policy-field.json",
+      "sourceSha256": "9a443e313f480579467350f8f30b4fd51b9542380cae8bd55f52ba48a3f98add",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "unknown field"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-empty-actors.json",
+      "sourceSha256": "2dbb56df90de7729d8650eac991d40883c350a9b511647d97480bf279a37e6d3",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "actor count"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-binding-type.json",
+      "sourceSha256": "f9bb04ff59f6d87062dcad60baaf22f59d242f4506a5bf4ef4144612f16da52a",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "Binding type mismatch"
+    }
+  ]
+}

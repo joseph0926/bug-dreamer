@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "tx-original-error",
+  "invariantId": "tx.original-error-propagation",
+  "actors": ["checkout"],
+  "actions": [
+    {
+      "actionId": "tx.start",
+      "actor": "checkout",
+      "arguments": { "transactionId": "phase2-original-error", "timeoutMs": 5000, "transition": false },
+      "bind": { "name": "tx", "type": "tx-handle" }
+    },
+    {
+      "actionId": "tx.run",
+      "actor": "checkout",
+      "arguments": {
+        "tx": { "$binding": "tx" },
+        "outcome": "throw",
+        "value": null,
+        "errorName": "TypeError",
+        "errorMessage": "original-boom",
+        "log": null,
+        "retry": null
+      },
+      "bind": null
+    }
+  ]
+}

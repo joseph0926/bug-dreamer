@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "forward-binding",
+  "invariantId": "tx.successful-step-return",
+  "actors": ["checkout"],
+  "actions": [
+    {
+      "actionId": "tx.commit",
+      "actor": "checkout",
+      "arguments": { "tx": { "$binding": "later" } },
+      "bind": null
+    },
+    {
+      "actionId": "tx.start",
+      "actor": "checkout",
+      "arguments": { "transactionId": "later", "timeoutMs": 0, "transition": false },
+      "bind": { "name": "later", "type": "tx-handle" }
+    }
+  ]
+}

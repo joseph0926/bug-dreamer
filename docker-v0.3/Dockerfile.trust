@@ -1,0 +1,26 @@
+ARG CONTRACT_IMAGE=bug-dreamer-v03-contracts:f624b09f148c
+FROM ${CONTRACT_IMAGE}
+
+ARG CONTRACT_IMAGE_ID
+ARG EVALUATION_CONTRACT_DIGEST
+ARG PHASE2_CATALOG_SHA256
+ARG TRUST_HARNESS_SHA256
+
+LABEL org.bug-dreamer.contract-image-id=$CONTRACT_IMAGE_ID
+LABEL org.bug-dreamer.evaluation-contract-key=$EVALUATION_CONTRACT_DIGEST
+LABEL org.bug-dreamer.phase2-catalog-sha256=$PHASE2_CATALOG_SHA256
+LABEL org.bug-dreamer.trust-harness-sha256=$TRUST_HARNESS_SHA256
+
+USER root
+
+COPY harness-v0.3/trust/main.mjs /consumer/evaluator/main.mjs
+COPY src/v03-wire.mjs /consumer/evaluator/src/v03-wire.mjs
+COPY src/v03-spec.mjs /consumer/evaluator/src/v03-spec.mjs
+COPY src/v03-trust.mjs /consumer/evaluator/src/v03-trust.mjs
+COPY vendor/canonicalize /consumer/evaluator/node_modules/canonicalize
+COPY registrations/v0.3/phase2-catalog.json /registration/phase2-catalog.json
+
+USER node
+WORKDIR /consumer/evaluator
+
+ENTRYPOINT ["node", "/consumer/evaluator/main.mjs"]
