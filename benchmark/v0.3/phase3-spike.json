@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "bug-dreamer/v03-phase3-spike/v1",
+  "status": "registered",
+  "registeredOn": "2026-09-01",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "defect": {
+    "id": "tx-total-timeout-resets-per-step",
+    "module": "packages/tx",
+    "category": "timing",
+    "source": {
+      "path": "benchmark/manifest.json",
+      "frozen": true
+    },
+    "rationale": "The transaction-wide timeout is measured from each step's start instead of the transaction start. The identity-transformation baseline cannot advance time between steps, so the violation is unreachable without the time.advance operator, which makes this defect a clean discriminator for the spike."
+  },
+  "invariant": {
+    "id": "tx.total-timeout",
+    "plannedEvaluatorId": "tx.total-timeout/v1",
+    "sourceKind": "documentation",
+    "sourceRef": "packages/tx/README.md#timeout-protection",
+    "corroboratingRefs": [
+      "packages/tx/tests/transaction.test.ts#should-timeout-during-execution",
+      "packages/tx/tests/transaction.test.ts#should-include-elapsed-time-in-timeout-error"
+    ],
+    "normalizedObservedKind": "thrown-error",
+    "expectedErrorName": "TransactionTimeoutError",
+    "applicabilityPredicate": "total-virtual-time-advance-exceeds-transaction-timeout",
+    "catalogChange": "The Phase 3 catalog registers a per-invariant applicability predicate. The Phase 2 final-outcome map stays valid for the two Phase 2 invariants and is unchanged."
+  },
+  "operators": [
+    "time.advance/v1",
+    "schedule.release-order/v1",
+    "fault.step-outcome/v1"
+  ],
+  "primaryOperator": "time.advance/v1",
+  "arms": {
+    "baseline": {
+      "transformation": "identity",
+      "maxEvaluatedSpecs": 16
+    },
+    "operator": {
+      "transformation": "registered-operators",
+      "maxEvaluatedSpecs": 16
+    }
+  },
+  "evaluationBudget": {
+    "evaluationTimeoutMs": 30000,
+    "stdoutLimitBytes": 1048576,
+    "stderrLimitBytes": 1048576
+  },
+  "twoSidedCheck": {
+    "defectArtifact": "candidate-failure with a preserved violation identity",
+    "cleanArtifact": "pass",
+    "perPatchFtoP": true,
+    "replay": "five-of-five"
+  },
+  "verdictRule": {
+    "adopt": "At least one operator arm evaluation produces a preserved violation identity on the defect artifact that no baseline arm evaluation produces within the same maxEvaluatedSpecs budget, and that result passes the two-sided check, the per-patch F-to-P check, and five-of-five replay.",
+    "retire": "No operator arm evaluation changes any outcome relative to the baseline arm within the registered budgets."
+  },
+  "imageNamespace": "bug-dreamer-v03-spike",
+  "notes": [
+    "The defect artifact is packed from the pinned revision with only the registered manifest edit applied, through the same packed-consumer path as the clean Phase 1 artifact.",
+    "Virtual time is interpreter-owned fake timers inside the evaluator; the host wall-clock budget is unaffected by virtual advances."
+  ]
+}
