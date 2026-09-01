@@ -45,6 +45,19 @@ function executeRun(action, tx, observations, gatePromise) {
   })();
 }
 
+async function settleRun(pendingPromise, clock, label) {
+  let settled = false;
+  pendingPromise.then(() => {
+    settled = true;
+  });
+  for (;;) {
+    for (let hop = 0; hop < 8 && !settled; hop += 1) await clock.drainMicrotasks();
+    if (settled) return pendingPromise;
+    const advanced = await clock.advanceToNextTimer();
+    if (!advanced) throw new Error(`Execution is blocked without a pending virtual timer: ${label}`);
+  }
+}
+
 async function interpret(plan, clock) {
   const bindings = new Map();
   const observations = new Map();
@@ -71,7 +84,7 @@ async function interpret(plan, clock) {
       executedControls.add(index);
       for (const instanceId of control.instanceIds) {
         gates.get(instanceId).release();
-        await pendingRuns.get(instanceId);
+        await settleRun(pendingRuns.get(instanceId), clock, instanceId);
         await applyAdvances(instanceId);
       }
     }
@@ -102,7 +115,7 @@ async function interpret(plan, clock) {
         launched.add(action.instanceId);
         await releaseReady();
       } else {
-        await executeRun(action, tx, observations, null);
+        await settleRun(executeRun(action, tx, observations, null), clock, action.instanceId);
         await applyAdvances(action.instanceId);
       }
       continue;
@@ -178,12 +191,17 @@ async function extendCatalog(catalog) {
   let extensionBytes;
   try {
     extensionBytes = await readFile('/registration/phase3-operators.json');
-  } catch {
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
     return catalog;
   }
   const { validatePhase3OperatorCatalog } = await import('/consumer/evaluator/src/v03-operators.mjs');
   const extension = validatePhase3OperatorCatalog(parseJsonBytes(extensionBytes));
-  return { ...catalog, invariants: [...catalog.invariants, ...extension.invariants] };
+  return {
+    ...catalog,
+    invariants: [...catalog.invariants, ...extension.invariants],
+    operators: extension.operators,
+  };
 }
 
 export async function evaluateTrustedResult() {

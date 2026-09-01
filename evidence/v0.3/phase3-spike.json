@@ -2,7 +2,7 @@
   "schemaVersion": "bug-dreamer/phase3-spike-evidence/v1",
   "registration": {
     "path": "benchmark/v0.3/phase3-spike.json",
-    "sha256": "37663c70d1b52e1d26a274c0c9beddb8f06de8ddafbb696bdd3cce53b306bfbf"
+    "sha256": "1960d38ee4012068a65055efd14fe872323fffaa818f8d3a639a6a383c85b29d"
   },
   "manifestDefect": {
     "path": "benchmark/manifest.json",
@@ -16,7 +16,7 @@
   },
   "phase2TrustEvidence": {
     "path": "evidence/v0.3/phase2-trust.json",
-    "sha256": "f9faa8c1eccde2afa871448946c5c1d7593874dc67f71c79e6eb3eeb765eb40a"
+    "sha256": "35ca792e75053ef459e7d01a47e04e33eac4fd3578714b8f1439d6fa85f5249b"
   },
   "operatorCatalog": {
     "path": "registrations/v0.3/phase3-operators.json",
@@ -47,11 +47,11 @@
     },
     "cleanTrust": {
       "tag": "bug-dreamer-v03-trust:f624b09f148c",
-      "imageId": "sha256:f1f02543c4bb4fa72836d3887b3410d8f3023118645a32f6e5c5ebec3410c7cf"
+      "imageId": "sha256:a16c10982c1516ea3dcf7ca216c9f3b303d7f8977718254f38143baca1f8fc96"
     },
     "cleanSpike": {
       "tag": "bug-dreamer-v03-spike:f624b09f148c-clean",
-      "imageId": "sha256:43d98884f4b2f233769d6059338d2387d404f19bc26761fedd4432b0fcc473a2"
+      "imageId": "sha256:70d06f08b38e549834dfd87ad9258e2c820618b22cb0ace29ac9af0c21441e65"
     },
     "defectConsumer": {
       "tag": "bug-dreamer-v03-spike-consumer:f624b09f148c-tx-total-timeout-resets-per-step",
@@ -59,12 +59,18 @@
     },
     "defectTrust": {
       "tag": "bug-dreamer-v03-spike-trust:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:2895a44738cf8f7f7ca17d54db618c1bf1a5cf1bf1082d8eff5ece619300b721"
+      "imageId": "sha256:6f753008aac549b5c86af80011712e8ef30d79553c83117252a91f04af03e6ca"
     },
     "defectSpike": {
       "tag": "bug-dreamer-v03-spike:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:17cebccdce7aabdced5703a94c93f590424ebaec43ca48db3c095309593d6317"
+      "imageId": "sha256:5721085bee48bb64f1516cad9d9733a9635c5407162d4951ab869ffb7f128fd9"
     }
+  },
+  "defectConsumerLockfile": {
+    "sha256": "278d35a4654072359745f2c14c03127273a637a03ea0740d784419c8e90c2e65",
+    "changedIntegrityLines": [
+      388
+    ]
   },
   "defectBuildInputs": {
     "contractImageId": "sha256:8978c808b3165b8ee47fe9588ead983638f1c476be11f7bd9fc9a50b3d0dac8f",
@@ -72,10 +78,35 @@
     "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
     "defectId": "tx-total-timeout-resets-per-step",
     "catalogSha256": "fa49523d301b0a332293731a0b0662e93a7b7ffdc322e2a0f05196be9b69e4bd",
-    "prepareScriptSha256": "8dae31655176d29d992ffc58b76793c16bd3bec867a2c8075b00988102dab99d",
+    "consumerDockerfileSha256": "1fc2856fc0f1ed5273ce7943d3cb65df0799b90314134e1ef35f2acdf7a8c319",
+    "trustDockerfileSha256": "63e8b719da32fab591e14b55f92b35b68103f118d42afa27ff7e24d356ce0c00",
+    "harnessFiles": [
+      "harness-v0.3/trust/case-main.mjs",
+      "harness-v0.3/trust/evaluator.mjs",
+      "harness-v0.3/trust/main.mjs",
+      "harness-v0.3/trust/virtual-clock.mjs"
+    ],
+    "harnessSha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738",
+    "sourceFiles": [
+      "src/v03-wire.mjs",
+      "src/v03-spec.mjs",
+      "src/v03-trust.mjs"
+    ],
+    "sourceSha256": "9f38b464f790ef4bfe05b82ba5aba67ddd673e2f6744e0b1332887b6bb7dfa74",
+    "prepareScriptSha256": "064d547662c292b83ab8dadd21b07cc08e73bb4e91d7b38b0f366c75d5a9ff03",
     "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
   },
-  "defectEvaluationContractKey": "b42b541649cfd8a8bda19b3552e2350311991ed4895e6a8289852a704b27cf76",
+  "defectEvaluationContractKey": "450ed5ca01a51374ab8aa3f5fdb8ee7c92602779999075a85a1dc5b8240cc8b7",
+  "spikeBuildInputs": {
+    "registrationSha256": "1960d38ee4012068a65055efd14fe872323fffaa818f8d3a639a6a383c85b29d",
+    "spikeDockerfileSha256": "033e3036827996c67268a7fdfcbc6f758adf7463514094045c9d20ac6450b808",
+    "operatorModuleSha256": "1c7769144d69e59a6fbfc11393d98458ccde36d46caee0332101ec00de840596",
+    "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
+  },
+  "spikeContractKeys": {
+    "clean": "01314adba6d164f3a5afcaa8b3c6b062932804ffe2fb7ef6e6ebb82418d0d0a8",
+    "defect": "e18dda41c9715c2e19d9fb3e3b24f4fd33a8949dcd7b248dafa137c7fbb72c13"
+  },
   "executionBudget": {
     "evaluationTimeoutMs": 30000,
     "stdoutLimitBytes": 1048576,
@@ -83,11 +114,230 @@
     "recordedOutputBytes": 4096
   },
   "baseline": {
-    "evaluatedSpecs": 1,
-    "spec": {
-      "kind": "rejected-policy",
-      "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
-    }
+    "structuralRejection": {
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "spec": {
+        "kind": "rejected-policy",
+        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+      }
+    },
+    "specCases": {
+      "path": "contracts/v0.3/spec-cases.json",
+      "sha256": "16015b0a40c9c56da29a0b8e6b27e51e18481fbf3ff92f19ac7c937468983138"
+    },
+    "identityRuns": [
+      {
+        "seedPath": "contracts/v0.3/seeds/pass.json",
+        "seedSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
+        "specDigest": "62e38cbc735dc4da4a78ad0d4ab4eee439661721c3fbd28cd81f54e5cfd4abf2",
+        "planDigest": "44d86e0bf2b6d1e4c049bd735c8b6ecee2efa48794f315d42e797003673fb261",
+        "run": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 707
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"62e38cbc735dc4da4a78ad0d4ab4eee439661721c3fbd28cd81f54e5cfd4abf2\",\n  \"planDigest\": \"44d86e0bf2b6d1e4c049bd735c8b6ecee2efa48794f315d42e797003673fb261\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.successful-step-return\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"pass\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": {\n      \"zero\": 0,\n      \"empty\": \"\",\n      \"flag\": false,\n      \"items\": []\n    }\n  },\n  \"violationIdentity\": null,\n  \"payloadDigest\": \"9b5408f90b70f90614a03f526e0ee2960927c319e3e084f3101738089a3523c6\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "pass"
+            },
+            "trustedResultDigest": "9b5408f90b70f90614a03f526e0ee2960927c319e3e084f3101738089a3523c6",
+            "violationIdentity": null
+          }
+        }
+      },
+      {
+        "seedPath": "contracts/v0.3/seeds/candidate.json",
+        "seedSha256": "74550adfd1333c4f32399d706b25b56ad0161b863579ec1f2c11118e9eed0d4e",
+        "specDigest": "61991d05065be2f50d505f27ecb4bb3e324e843a07899bf03deb9608faa0c972",
+        "planDigest": "3bf8921e93af442dfc6f658af98fd5ed6a6e9a885775777a017eb55503bdeea9",
+        "run": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 1035
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"61991d05065be2f50d505f27ecb4bb3e324e843a07899bf03deb9608faa0c972\",\n  \"planDigest\": \"3bf8921e93af442dfc6f658af98fd5ed6a6e9a885775777a017eb55503bdeea9\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.original-error-propagation\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"RetryExhaustedError\",\n    \"message\": \"Retry exhausted for step-0\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.original-error-propagation\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"RetryExhaustedError\",\n      \"message\": \"Retry exhausted for step-0\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"fab04809a59c6d6c778e106b80b69e588a2832f6138e057a2ecfce5a7e62393b\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "fab04809a59c6d6c778e106b80b69e588a2832f6138e057a2ecfce5a7e62393b",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.original-error-propagation",
+              "normalizedObservedKind": "thrown-error",
+              "normalizedObservedFields": {
+                "name": "RetryExhaustedError",
+                "message": "Retry exhausted for step-0"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "seedPath": "contracts/v0.3/seeds/marker-forgery.json",
+        "seedSha256": "12aa98ca582ef8b9d3b02e2d39213f03fe46ae561d4842c092a786bca3f8becc",
+        "specDigest": "6742758289ba0051c943436b88899e23b3afb646a68b250c6694fa99ba2d769b",
+        "planDigest": "37581f4c086ee2281dcd3acf76c8217fb68147232558ee16d01b43ff1d657178",
+        "run": {
+          "exitCode": 0,
+          "stdout": "BUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\n",
+          "stderr": "",
+          "stdoutBytes": 53,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 683
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"6742758289ba0051c943436b88899e23b3afb646a68b250c6694fa99ba2d769b\",\n  \"planDigest\": \"37581f4c086ee2281dcd3acf76c8217fb68147232558ee16d01b43ff1d657178\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.successful-step-return\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"pass\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"BUG_DREAMER_RESULT {\\\"execution\\\":\\\"candidate-failure\\\"}\"\n  },\n  \"violationIdentity\": null,\n  \"payloadDigest\": \"00dda67e760852889a571e9f5f92a75b61b48669bd7edbcdcd01645b33f72ac4\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "pass"
+            },
+            "trustedResultDigest": "00dda67e760852889a571e9f5f92a75b61b48669bd7edbcdcd01645b33f72ac4",
+            "violationIdentity": null
+          }
+        }
+      },
+      {
+        "seedPath": "contracts/v0.3/seeds/kind-flip.json",
+        "seedSha256": "f486fbb63cc3c8802e34047880e4ab6d60c19ac2aecd44c67db3e42da6d4818b",
+        "specDigest": "fc67faabb0df5af6a9d0f56a116b82b8c2a743ab992dd945c64ae0b0df92b89a",
+        "planDigest": "6e5b23f732e95b426bc2ea870d1b1127eac0ee10ff6a0853c1798ba83d94f63e",
+        "run": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 1021
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"fc67faabb0df5af6a9d0f56a116b82b8c2a743ab992dd945c64ae0b0df92b89a\",\n  \"planDigest\": \"6e5b23f732e95b426bc2ea870d1b1127eac0ee10ff6a0853c1798ba83d94f63e\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.successful-step-return\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionTimeoutError\",\n    \"message\": \"Transaction timeout\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.successful-step-return\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionTimeoutError\",\n      \"message\": \"Transaction timeout\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"0bfacb9c871a963bae259c62f4a10e6245b03f247f2d7c32a8ee8877926ec282\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "0bfacb9c871a963bae259c62f4a10e6245b03f247f2d7c32a8ee8877926ec282",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.successful-step-return",
+              "normalizedObservedKind": "thrown-error",
+              "normalizedObservedFields": {
+                "name": "TransactionTimeoutError",
+                "message": "Transaction timeout"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "seedPath": "contracts/v0.3/seeds/two-steps.json",
+        "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+        "specDigest": "d17816e1aaf73dd2d57a8c634e41876d461b67b097e122d438d87594fd5a3b3e",
+        "planDigest": "a15c0809c03a594c72dfd79c5744ca7c0cea809c866bfc0da233fc29c7a9d0a8",
+        "run": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 638
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"d17816e1aaf73dd2d57a8c634e41876d461b67b097e122d438d87594fd5a3b3e\",\n  \"planDigest\": \"a15c0809c03a594c72dfd79c5744ca7c0cea809c866bfc0da233fc29c7a9d0a8\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.successful-step-return\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"pass\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"second-step\"\n  },\n  \"violationIdentity\": null,\n  \"payloadDigest\": \"6307a114f2e2af20ddb2abd50524d46978987e1c24c24840dd5e5e52bfa71283\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "pass"
+            },
+            "trustedResultDigest": "6307a114f2e2af20ddb2abd50524d46978987e1c24c24840dd5e5e52bfa71283",
+            "violationIdentity": null
+          }
+        }
+      },
+      {
+        "seedPath": "contracts/v0.3/seeds/retry-delay.json",
+        "seedSha256": "ecc784b7a28c26923b7545748a084d7798abc360c72f3f7dd43026ac940f739d",
+        "specDigest": "5306c5cb966d9d810a471f8e5d3cdf30f3b2a4481b83212dd14faf77d1afefe9",
+        "planDigest": "105f648c60c2d515f12cb7b443c64a37f547e41acb9608184d30702bf9b788f4",
+        "run": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 1035
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"5306c5cb966d9d810a471f8e5d3cdf30f3b2a4481b83212dd14faf77d1afefe9\",\n  \"planDigest\": \"105f648c60c2d515f12cb7b443c64a37f547e41acb9608184d30702bf9b788f4\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.original-error-propagation\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"RetryExhaustedError\",\n    \"message\": \"Retry exhausted for step-0\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.original-error-propagation\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"RetryExhaustedError\",\n      \"message\": \"Retry exhausted for step-0\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"b3469af63f921a45e7b240c7caa88c583e5dc83838ea9f0da23eecd6cc29b5f2\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "b3469af63f921a45e7b240c7caa88c583e5dc83838ea9f0da23eecd6cc29b5f2",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.original-error-propagation",
+              "normalizedObservedKind": "thrown-error",
+              "normalizedObservedFields": {
+                "name": "RetryExhaustedError",
+                "message": "Retry exhausted for step-0"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      }
+    ],
+    "evaluatedSpecs": 7
   },
   "arms": [
     {
@@ -323,23 +573,160 @@
     {
       "operatorId": "schedule.release-order/v1",
       "requestPath": "contracts/v0.3/requests/spike-release-order.json",
-      "requestSha256": "602398ac1aa10483ff1424012b31445304ff85a0c7cf62923320e70f031f4127",
-      "rejection": {
-        "kind": "rejected-policy",
-        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
-      }
+      "requestSha256": "316e610b5cce2a0dde51cf9ececb7ca12b044c3cf1ca976260d967bd0677fe6f",
+      "cleanSpecDigest": "d30f76da1c61c88092928f86b72fb391d666cf627caa5181eacae52c7795c81e",
+      "cleanPlanDigest": "ff31e5f287ab8b402756a21c2d9fae17c17ce150b82dd7aa8fdf5d1b7cf9bdd0",
+      "defectSpecDigest": "a12ec1e01656d6dad12d6e4e63d0d89a94b51e37e1f30f636b0dedfeb42d7746",
+      "defectPlanDigest": "92946b117f4a99cd06fe815ecde5f2c35aa7525d4d604ed00ad5bacae7e23eaf",
+      "cleanRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 1039
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"d30f76da1c61c88092928f86b72fb391d666cf627caa5181eacae52c7795c81e\",\n  \"planDigest\": \"ff31e5f287ab8b402756a21c2d9fae17c17ce150b82dd7aa8fdf5d1b7cf9bdd0\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is running\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is running\"\n    },\n    \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\"\n  },\n  \"payloadDigest\": \"6ee1c26d531151432740fee8d6c2ac319b45be98cca8130bffb17c60b669dfa8\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "candidate-failure"
+          },
+          "trustedResultDigest": "6ee1c26d531151432740fee8d6c2ac319b45be98cca8130bffb17c60b669dfa8",
+          "violationIdentity": {
+            "invariantRegistrationId": "tx.total-timeout",
+            "normalizedObservedKind": "thrown-error",
+            "normalizedObservedFields": {
+              "name": "TransactionStateError",
+              "message": "Cannot add step: transaction is running"
+            },
+            "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
+          }
+        }
+      },
+      "defectRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 1039
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"a12ec1e01656d6dad12d6e4e63d0d89a94b51e37e1f30f636b0dedfeb42d7746\",\n  \"planDigest\": \"92946b117f4a99cd06fe815ecde5f2c35aa7525d4d604ed00ad5bacae7e23eaf\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is running\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is running\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"3656c74477005c9b49edeb282e8503b0c2d704d85846c27b812eed7b0e87e4e0\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "candidate-failure"
+          },
+          "trustedResultDigest": "3656c74477005c9b49edeb282e8503b0c2d704d85846c27b812eed7b0e87e4e0",
+          "violationIdentity": {
+            "invariantRegistrationId": "tx.total-timeout",
+            "normalizedObservedKind": "thrown-error",
+            "normalizedObservedFields": {
+              "name": "TransactionStateError",
+              "message": "Cannot add step: transaction is running"
+            },
+            "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+          }
+        }
+      },
+      "twoSided": false
     },
     {
       "operatorId": "fault.step-outcome/v1",
       "requestPath": "contracts/v0.3/requests/spike-fault.json",
-      "requestSha256": "243f99252c6b5c0fd7dbb3ec61f13a4da87cc4d1d0caafa694b78720a46d396f",
-      "rejection": {
-        "kind": "rejected-policy",
-        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
-      }
+      "requestSha256": "59ccfcc128dbbfaea5eab3a00e7727c2653356848c5183d8be9561b2434b55cf",
+      "cleanSpecDigest": "18cac7d8f130d89956547d2613712ca2424fb486b696e8c572c13e15c75fee6d",
+      "cleanPlanDigest": "2abd414cc60e5874900a7d588ba9e354ca43af07f3d8d5fc27509c131d7f315d",
+      "defectSpecDigest": "6b57af4976662e575b0b53c6e3b81a7a9e559c82b49c3abacf798c8168d4f167",
+      "defectPlanDigest": "4c2eba47659595c690fa12a88f8b22f14fd9e7ecea90d16fc4de421eedf7ef51",
+      "cleanRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 1047
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"18cac7d8f130d89956547d2613712ca2424fb486b696e8c572c13e15c75fee6d\",\n  \"planDigest\": \"2abd414cc60e5874900a7d588ba9e354ca43af07f3d8d5fc27509c131d7f315d\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is rolled-back\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is rolled-back\"\n    },\n    \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\"\n  },\n  \"payloadDigest\": \"1588d531485dd95c904046380320176d7db014182bf2e060b9d897220144e315\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "candidate-failure"
+          },
+          "trustedResultDigest": "1588d531485dd95c904046380320176d7db014182bf2e060b9d897220144e315",
+          "violationIdentity": {
+            "invariantRegistrationId": "tx.total-timeout",
+            "normalizedObservedKind": "thrown-error",
+            "normalizedObservedFields": {
+              "name": "TransactionStateError",
+              "message": "Cannot add step: transaction is rolled-back"
+            },
+            "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
+          }
+        }
+      },
+      "defectRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 1047
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"6b57af4976662e575b0b53c6e3b81a7a9e559c82b49c3abacf798c8168d4f167\",\n  \"planDigest\": \"4c2eba47659595c690fa12a88f8b22f14fd9e7ecea90d16fc4de421eedf7ef51\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is rolled-back\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is rolled-back\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"daebc9c9d1c74980770597b9b7a8aec4267cfabbe844adb31c7f8530e0be9368\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "candidate-failure"
+          },
+          "trustedResultDigest": "daebc9c9d1c74980770597b9b7a8aec4267cfabbe844adb31c7f8530e0be9368",
+          "violationIdentity": {
+            "invariantRegistrationId": "tx.total-timeout",
+            "normalizedObservedKind": "thrown-error",
+            "normalizedObservedFields": {
+              "name": "TransactionStateError",
+              "message": "Cannot add step: transaction is rolled-back"
+            },
+            "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+          }
+        }
+      },
+      "twoSided": false
     }
   ],
-  "evaluatedSpecs": 9,
+  "evaluatedSpecs": {
+    "baseline": 7,
+    "operator": 11
+  },
   "verdict": "adopt",
   "adoptedOperatorId": "time.advance/v1"
 }

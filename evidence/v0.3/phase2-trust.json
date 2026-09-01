@@ -11,18 +11,18 @@
     "sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
     "catalogVersion": "firsttx-phase2-f624b09-v1"
   },
-  "evaluationContractKey": "c01f591366042e56136fbbf40809cc74354a9eeebc58f93ba7caf27ddb021696",
+  "evaluationContractKey": "b43a868cc9c2244bac95859bb1b3e157b82c97c0e4290a62d35b94aff1254449",
   "image": {
     "tag": "bug-dreamer-v03-trust:f624b09f148c",
-    "imageId": "sha256:f1f02543c4bb4fa72836d3887b3410d8f3023118645a32f6e5c5ebec3410c7cf",
+    "imageId": "sha256:a16c10982c1516ea3dcf7ca216c9f3b303d7f8977718254f38143baca1f8fc96",
     "contractImageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
     "labels": {
       "org.bug-dreamer.contract-image-id": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
-      "org.bug-dreamer.evaluation-contract-key": "c01f591366042e56136fbbf40809cc74354a9eeebc58f93ba7caf27ddb021696",
+      "org.bug-dreamer.evaluation-contract-key": "b43a868cc9c2244bac95859bb1b3e157b82c97c0e4290a62d35b94aff1254449",
       "org.bug-dreamer.phase2-catalog-sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
       "org.bug-dreamer.registration-sha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
       "org.bug-dreamer.target-revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
-      "org.bug-dreamer.trust-harness-sha256": "0524f024fd5bc873e9b1672daabe337cf298e9331ab1b39a838285fa0638a757"
+      "org.bug-dreamer.trust-harness-sha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738"
     }
   },
   "buildInputs": {
@@ -36,15 +36,15 @@
       "harness-v0.3/trust/main.mjs",
       "harness-v0.3/trust/virtual-clock.mjs"
     ],
-    "harnessSha256": "0524f024fd5bc873e9b1672daabe337cf298e9331ab1b39a838285fa0638a757",
+    "harnessSha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738",
     "sourceFiles": [
       "src/v03-wire.mjs",
       "src/v03-spec.mjs",
       "src/v03-trust.mjs"
     ],
-    "sourceSha256": "382b73fad8f838589f59e165c046a5a8b7df1461d623a322c5259ea87b3c5de9",
+    "sourceSha256": "9f38b464f790ef4bfe05b82ba5aba67ddd673e2f6744e0b1332887b6bb7dfa74",
     "catalogSha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
-    "prepareScriptSha256": "cc7c8927068da54e11631acdaa9826e7d4f43aa89aadac399f294577919b0a46",
+    "prepareScriptSha256": "ec45287b65d03069396ab2b6b3f2b4813a7a026cc81e5d2c83aed4b56f1b6bc5",
     "executionBudget": {
       "evaluationTimeoutMs": 30000,
       "stdoutLimitBytes": 1048576,
@@ -244,6 +244,46 @@
           "normalizedObservedFields": {
             "name": "TransactionTimeoutError",
             "message": "Transaction timeout"
+          },
+          "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
+        }
+      }
+    },
+    {
+      "id": "retry-delay",
+      "seedPath": "contracts/v0.3/seeds/retry-delay.json",
+      "seedSha256": "ecc784b7a28c26923b7545748a084d7798abc360c72f3f7dd43026ac940f739d",
+      "mode": "valid",
+      "command": [
+        "/consumer/evaluator/main.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutBytes": 0,
+      "stderrBytes": 0,
+      "timedOut": false,
+      "outputTruncated": false,
+      "resultEntries": [
+        {
+          "name": "result.json",
+          "type": "regular",
+          "size": 1035
+        }
+      ],
+      "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"6108098fc2c863fdbe0472763b8784bb82c8a03b6fcdcb0358e70bf7c1cac2a4\",\n  \"planDigest\": \"730e21dfe77b95e828d08bd699eaabb5a68e07b6cdd2637c1d215995471b57ff\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.original-error-propagation\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"RetryExhaustedError\",\n    \"message\": \"Retry exhausted for step-0\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.original-error-propagation\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"RetryExhaustedError\",\n      \"message\": \"Retry exhausted for step-0\"\n    },\n    \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\"\n  },\n  \"payloadDigest\": \"16d9bd736f54ee4d4068bee55c35600155d4c9e0be0b4b8e2c047ec0618f8f11\"\n}\n",
+      "classification": {
+        "evaluator": "evaluated",
+        "execution": {
+          "status": "candidate-failure"
+        },
+        "trustedResultDigest": "16d9bd736f54ee4d4068bee55c35600155d4c9e0be0b4b8e2c047ec0618f8f11",
+        "violationIdentity": {
+          "invariantRegistrationId": "tx.original-error-propagation",
+          "normalizedObservedKind": "thrown-error",
+          "normalizedObservedFields": {
+            "name": "RetryExhaustedError",
+            "message": "Retry exhausted for step-0"
           },
           "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
         }

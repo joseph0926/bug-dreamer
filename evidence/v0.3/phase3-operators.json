@@ -12,7 +12,7 @@
   },
   "cases": {
     "path": "contracts/v0.3/operator-cases.json",
-    "sha256": "671d34cbf029e00ea53bc86567d6adf69737bc43693aae3154e1ea73076c58a8"
+    "sha256": "2e0bb9fb3acd64f3a6875408df9b8f8f0a1fae536cbec75a3585c6acda933314"
   },
   "positive": [
     {
@@ -139,11 +139,46 @@
       "expectedMessage": "Transformation request length is invalid"
     },
     {
-      "type": "chain-tamper",
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/negative-seventeen.json",
+      "requestSha256": "c8c82659be0bceda030d66396b7b8793547b3773acd3b414b1213ef9baac4195",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "Transformation request length is invalid"
+    },
+    {
+      "type": "spec-tamper",
       "positiveIndex": 1,
+      "mutation": "chain",
       "expectedKind": "rejected-policy",
       "observedKind": "rejected-policy",
       "expectedMessage": "breaks the transformation digest chain"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "arguments",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "does not reproduce its recorded state"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "registrationDigest",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "registration digest mismatch"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "operatorId",
+      "expectedKind": "rejected-catalog",
+      "observedKind": "rejected-catalog",
+      "expectedMessage": "operator is not registered"
     }
   ]
 }

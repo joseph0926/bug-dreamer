@@ -256,6 +256,7 @@ async function main() {
       { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
       { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
       { id: 'kind-flip', seed: 'contracts/v0.3/seeds/kind-flip.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
+      { id: 'retry-delay', seed: 'contracts/v0.3/seeds/retry-delay.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
       { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
       { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
       { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },

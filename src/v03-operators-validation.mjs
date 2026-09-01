@@ -98,22 +98,34 @@ export async function buildOperatorEvidence(repositoryRoot) {
         observedKind: observed.kind,
         expectedMessage: fixture.expectedMessage,
       });
-    } else if (fixture.type === 'chain-tamper') {
+    } else if (fixture.type === 'spec-tamper') {
       const base = cases.positive[fixture.positiveIndex];
-      assert(base !== undefined, `Chain-tamper case references a missing positive case: ${fixture.positiveIndex}`);
+      assert(base !== undefined, `Spec-tamper case references a missing positive case: ${fixture.positiveIndex}`);
       const { spec } = await buildPositiveSpec(repositoryRoot, base, catalog, operatorCatalog);
-      assert(spec.transformations.length >= 2, 'Chain-tamper case requires a multi-record transformation chain');
       const tampered = structuredClone(spec);
-      tampered.transformations[0].afterDigest = '0'.repeat(64);
+      if (fixture.mutation === 'chain') {
+        assert(spec.transformations.length >= 2, 'Chain tamper requires a multi-record transformation chain');
+        tampered.transformations[1].beforeDigest = '0'.repeat(64);
+      } else if (fixture.mutation === 'arguments') {
+        assert(tampered.transformations[0].operatorId === 'time.advance/v1', 'Argument tamper requires a time.advance record');
+        tampered.transformations[0].arguments = { ...tampered.transformations[0].arguments, advanceMs: tampered.transformations[0].arguments.advanceMs === 1 ? 2 : 1 };
+      } else if (fixture.mutation === 'registrationDigest') {
+        tampered.transformations[0].operatorRegistrationDigest = 'f'.repeat(64);
+      } else if (fixture.mutation === 'operatorId') {
+        tampered.transformations[0].operatorId = 'evil.rewrite/v1';
+      } else {
+        fail(`Unknown spec-tamper mutation: ${fixture.mutation}`);
+      }
       try {
         validateNightmareSpec(tampered, catalog);
-        fail('Chain-tamper case was accepted');
+        fail(`Spec-tamper case was accepted: ${fixture.mutation}`);
       } catch (error) {
         observed = rejection(error);
       }
       negative.push({
         type: fixture.type,
         positiveIndex: fixture.positiveIndex,
+        mutation: fixture.mutation,
         expectedKind: fixture.expectedKind,
         observedKind: observed.kind,
         expectedMessage: fixture.expectedMessage,

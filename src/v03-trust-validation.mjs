@@ -29,6 +29,7 @@ const CASE_DEFINITIONS = [
   { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
   { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'pass' },
   { id: 'kind-flip', seed: 'contracts/v0.3/seeds/kind-flip.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
+  { id: 'retry-delay', seed: 'contracts/v0.3/seeds/retry-delay.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
   { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), evaluator: 'evaluator-error', execution: 'unrunnable' },
   { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), evaluator: 'evaluator-error', execution: 'unrunnable' },
   { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), evaluator: 'evaluator-error', execution: 'unrunnable' },
@@ -204,6 +205,8 @@ export async function validateTrustContracts(repositoryRoot) {
   assert(evidence.cases.find((item) => item.id === 'early-exit').stderr.includes(MARKER), 'Early-exit stderr marker fixture is absent');
   const kindFlip = evidence.cases.find((item) => item.id === 'kind-flip');
   assert(kindFlip.classification.violationIdentity !== null && kindFlip.classification.violationIdentity.normalizedObservedKind === 'thrown-error', 'Kind-flip case did not record the actual thrown-error observation');
+  const retryDelay = evidence.cases.find((item) => item.id === 'retry-delay');
+  assert(retryDelay.timedOut === false && retryDelay.classification.violationIdentity !== null && retryDelay.classification.violationIdentity.normalizedObservedFields.name === 'RetryExhaustedError', 'Retry-delay case did not exhaust retries deterministically under the virtual clock');
   assert(evidence.cases.find((item) => item.id === 'timeout').classification.execution.reason === 'evaluator-timeout', 'Timeout case reason changed');
   assert(evidence.cases.find((item) => item.id === 'log-overflow').classification.execution.reason === 'evaluator-log-limit', 'Log-overflow case reason changed');
   return {

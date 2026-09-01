@@ -189,6 +189,46 @@ function validateScheduleControl(control, actions, index) {
   fail('rejected-catalog', `${label} kind is not registered: ${control.kind}`);
 }
 
+export const OPERATOR_REGISTRATION_DOMAIN = 'bug-dreamer/operator-registration/v1';
+
+export function applyOperatorRecord(registration, args, state) {
+  if (registration.id === 'time.advance/v1') {
+    strictKeys(args, ['afterInstanceId', 'advanceMs'], [], 'time.advance arguments');
+    assert(Number.isSafeInteger(args.advanceMs), 'rejected-schema', 'time.advance advanceMs must be a safe integer');
+    assert(args.advanceMs >= registration.bounds.advanceMsMin && args.advanceMs <= registration.bounds.advanceMsMax, 'rejected-policy', 'time.advance advanceMs is outside the registered bounds');
+    assert(state.actions.some((action) => action.instanceId === args.afterInstanceId), 'rejected-policy', `time.advance references an unknown action instance: ${args.afterInstanceId}`);
+    state.scheduleControls.push({ kind: 'virtual-time-advance', afterInstanceId: args.afterInstanceId, advanceMs: args.advanceMs });
+    return;
+  }
+  if (registration.id === 'schedule.release-order/v1') {
+    strictKeys(args, ['instanceIds'], [], 'schedule.release-order arguments');
+    assert(Array.isArray(args.instanceIds) && args.instanceIds.length >= registration.bounds.minInstanceIds, 'rejected-schema', 'schedule.release-order requires at least two instance IDs');
+    assert(new Set(args.instanceIds).size === args.instanceIds.length, 'rejected-schema', 'schedule.release-order instance IDs must be distinct');
+    for (const instanceId of args.instanceIds) {
+      assert(state.actions.some((action) => action.instanceId === instanceId && action.actionId === 'tx.run'), 'rejected-policy', `schedule.release-order references a non-run action instance: ${instanceId}`);
+    }
+    state.scheduleControls.push({ kind: 'completion-release-order', instanceIds: args.instanceIds });
+    return;
+  }
+  if (registration.id === 'fault.step-outcome/v1') {
+    strictKeys(args, ['targetInstanceId', 'outcome', 'value', 'errorName', 'errorMessage'], [], 'fault.step-outcome arguments');
+    const target = state.actions.find((action) => action.instanceId === args.targetInstanceId);
+    assert(target !== undefined && target.actionId === 'tx.run', 'rejected-policy', `fault.step-outcome must target a tx.run instance: ${args.targetInstanceId}`);
+    assert(['return', 'throw'].includes(args.outcome), 'rejected-schema', 'fault.step-outcome outcome is invalid');
+    target.arguments = {
+      tx: target.arguments.tx,
+      outcome: args.outcome,
+      value: args.value,
+      errorName: args.errorName,
+      errorMessage: args.errorMessage,
+      log: target.arguments.log,
+      retry: target.arguments.retry,
+    };
+    return;
+  }
+  fail('rejected-catalog', `Operator has no registered application: ${registration.id}`);
+}
+
 export function validatePhase2Catalog(catalog) {
   strictKeys(catalog, ['schemaVersion', 'catalogVersion', 'target', 'actions', 'invariants', 'fixtures'], [], 'Phase 2 catalog', 'rejected-catalog');
   assert(catalog.schemaVersion === 'bug-dreamer/phase2-catalog/v1', 'rejected-catalog', 'Unexpected Phase 2 catalog schemaVersion');
@@ -407,15 +447,22 @@ export function validateNightmareSpec(spec, catalog) {
       if (registration.bindingOutputType !== null) transformedBindings.set(action.bind.name, action.bind.type);
     }
     for (const [index, control] of spec.scheduleControls.entries()) validateScheduleControl(control, spec.transformedActions, index);
-    let previousDigest = stateDigest(spec.baseActions, []);
+    assert(Array.isArray(catalog.operators) && catalog.operators.length > 0, 'rejected-catalog', 'Transformed spec requires registered operators');
+    const replayState = { actions: structuredClone(spec.baseActions), scheduleControls: [] };
+    let previousDigest = stateDigest(replayState.actions, replayState.scheduleControls);
     for (const [index, record] of spec.transformations.entries()) {
       strictKeys(record, ['operatorId', 'operatorRegistrationDigest', 'arguments', 'beforeDigest', 'afterDigest'], [], `Transformation ${index}`);
-      assert(typeof record.operatorId === 'string' && record.operatorId.endsWith('/v1'), 'rejected-schema', `Transformation ${index} operator id is invalid`);
-      assert(validSha(record.operatorRegistrationDigest) && validSha(record.beforeDigest) && validSha(record.afterDigest), 'rejected-schema', `Transformation ${index} digest is invalid`);
+      const registration = catalog.operators.find((item) => item.id === record.operatorId);
+      assert(registration !== undefined, 'rejected-catalog', `Transformation operator is not registered: ${record.operatorId}`);
+      assert(record.operatorRegistrationDigest === domainDigest(OPERATOR_REGISTRATION_DOMAIN, registration), 'rejected-policy', `Transformation ${index} registration digest mismatch`);
+      assert(validSha(record.beforeDigest) && validSha(record.afterDigest), 'rejected-schema', `Transformation ${index} digest is invalid`);
       assert(record.beforeDigest === previousDigest, 'rejected-policy', `Transformation ${index} breaks the transformation digest chain`);
-      previousDigest = record.afterDigest;
+      applyOperatorRecord(registration, record.arguments, replayState);
+      const replayedDigest = stateDigest(replayState.actions, replayState.scheduleControls);
+      assert(record.afterDigest === replayedDigest, 'rejected-policy', `Transformation ${index} does not reproduce its recorded state`);
+      previousDigest = replayedDigest;
     }
-    assert(previousDigest === stateDigest(spec.transformedActions, spec.scheduleControls), 'rejected-policy', 'Final transformation digest does not cover the transformed state');
+    assert(canonicalJson(replayState.actions) === canonicalJson(spec.transformedActions) && canonicalJson(replayState.scheduleControls) === canonicalJson(spec.scheduleControls), 'rejected-policy', 'Transformed state does not match the replayed transformations');
   }
   validateInvariantApplicability(invariant, spec.transformedActions, spec.scheduleControls, 'NightmareSpec');
   assert(Array.isArray(spec.fixtures) && spec.fixtures.length <= WIRE_LIMITS.fixtures, 'rejected-schema', 'NightmareSpec fixture count is invalid');

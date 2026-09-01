@@ -7,7 +7,7 @@
   },
   "cases": {
     "path": "contracts/v0.3/spec-cases.json",
-    "sha256": "8fdc386cb1ecf951d974a79c3fcddc99888750ae4df7120b7fda715229ece23e"
+    "sha256": "16015b0a40c9c56da29a0b8e6b27e51e18481fbf3ff92f19ac7c937468983138"
   },
   "canonicalizer": {
     "standard": "RFC 8785 JCS",
@@ -59,6 +59,15 @@
       "planDigest": "25b8efb40115bceadc6e78090275ebb28c398b10c68818a6a17a57b37725bed7",
       "actionCount": 4,
       "fixtureCount": 2
+    },
+    {
+      "path": "contracts/v0.3/seeds/retry-delay.json",
+      "sourceSha256": "ecc784b7a28c26923b7545748a084d7798abc360c72f3f7dd43026ac940f739d",
+      "seedDigest": "d896c87b1a4336458ff8e207e72d4867110821717f63d81b366b93d088cfb9cf",
+      "specDigest": "6108098fc2c863fdbe0472763b8784bb82c8a03b6fcdcb0358e70bf7c1cac2a4",
+      "planDigest": "730e21dfe77b95e828d08bd699eaabb5a68e07b6cdd2637c1d215995471b57ff",
+      "actionCount": 2,
+      "fixtureCount": 1
     }
   ],
   "negative": [

@@ -62,10 +62,39 @@
       "expectedMessage": "Transformation request length is invalid"
     },
     {
-      "type": "chain-tamper",
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/negative-seventeen.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "Transformation request length is invalid"
+    },
+    {
+      "type": "spec-tamper",
       "positiveIndex": 1,
+      "mutation": "chain",
       "expectedKind": "rejected-policy",
       "expectedMessage": "breaks the transformation digest chain"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "arguments",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "does not reproduce its recorded state"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "registrationDigest",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "registration digest mismatch"
+    },
+    {
+      "type": "spec-tamper",
+      "positiveIndex": 0,
+      "mutation": "operatorId",
+      "expectedKind": "rejected-catalog",
+      "expectedMessage": "operator is not registered"
     }
   ]
 }

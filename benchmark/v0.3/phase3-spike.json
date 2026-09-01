@@ -36,11 +36,13 @@
   "arms": {
     "baseline": {
       "transformation": "identity",
+      "universe": "every registered positive seed in contracts/v0.3/spec-cases.json executed on the defect artifact, plus the structural rejection of the registered spike seed",
       "maxEvaluatedSpecs": 16
     },
     "operator": {
       "transformation": "registered-operators",
-      "maxEvaluatedSpecs": 16
+      "maxEvaluatedSpecs": 16,
+      "note": "The schedule.release-order and fault.step-outcome requests compose the registered time.advance so each operator's distinct effect is measured on an applicable executed spec."
     }
   },
   "evaluationBudget": {
@@ -55,8 +57,8 @@
     "replay": "five-of-five"
   },
   "verdictRule": {
-    "adopt": "At least one operator arm evaluation produces a preserved violation identity on the defect artifact that no baseline arm evaluation produces within the same maxEvaluatedSpecs budget, and that result passes the two-sided check, the per-patch F-to-P check, and five-of-five replay.",
-    "retire": "No operator arm evaluation changes any outcome relative to the baseline arm within the registered budgets."
+    "adopt": "The invariant's precondition is unreachable under the identity transformation, witnessed by the recorded structural rejection of the registered spike seed; every executed identity baseline seed produces no violation identity equal to the operator candidate on the defect artifact; and at least one operator arm produces a preserved violation identity on the defect artifact that passes the two-sided check, the per-patch F-to-P check, and five-of-five replay.",
+    "retire": "No operator arm achieves such a candidate within the registered budgets."
   },
   "imageNamespace": "bug-dreamer-v03-spike",
   "notes": [

@@ -5,7 +5,8 @@
     "contracts/v0.3/seeds/candidate.json",
     "contracts/v0.3/seeds/marker-forgery.json",
     "contracts/v0.3/seeds/kind-flip.json",
-    "contracts/v0.3/seeds/two-steps.json"
+    "contracts/v0.3/seeds/two-steps.json",
+    "contracts/v0.3/seeds/retry-delay.json"
   ],
   "negative": [
     {

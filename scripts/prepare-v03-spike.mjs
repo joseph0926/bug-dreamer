@@ -15,7 +15,7 @@ import {
   specDigest,
 } from '../src/v03-spec.mjs';
 import { EXECUTION_BUDGET, classifyTrustedResult, readTrustedResultChannel } from '../src/v03-trust.mjs';
-import { domainDigest } from '../src/v03-wire.mjs';
+import { canonicalJson, domainDigest, parseJsonBytes } from '../src/v03-wire.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const registrationPath = path.join(repositoryRoot, 'benchmark/v0.3/phase3-spike.json');
@@ -32,7 +32,20 @@ const operatorArmRequests = [
 ];
 const harnessFiles = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const sourceFiles = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
+const operatorModuleFile = 'src/v03-operators.mjs';
+const specCasesPath = 'contracts/v0.3/spec-cases.json';
 const productionCommand = ['/consumer/evaluator/main.mjs'];
+
+async function aggregateFiles(root, relativePaths) {
+  const digest = createHash('sha256');
+  for (const relativePath of [...relativePaths].sort()) {
+    digest.update(relativePath);
+    digest.update('\0');
+    digest.update(await readFile(path.join(root, relativePath)));
+    digest.update('\0');
+  }
+  return digest.digest('hex');
+}
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
@@ -283,6 +296,21 @@ async function main() {
       }
     }
 
+    const lockfileRun = await run('docker', ['run', '--rm', ...ISOLATION_ARGS, '--entrypoint', 'cat', defectConsumerTag, '/consumer/pnpm-lock.yaml']);
+    if (lockfileRun.exitCode !== 0) throw new Error(`Defect consumer lockfile extraction failed: ${lockfileRun.stderr}`);
+    const registeredLockfile = (await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'))).toString('utf8');
+    const stripIntegrity = (text) => text.replaceAll(/integrity: sha512-[A-Za-z0-9+/=]+/gu, 'integrity: <sha512>');
+    if (stripIntegrity(lockfileRun.stdout) !== stripIntegrity(registeredLockfile)) {
+      throw new Error('Defect consumer lockfile changed outside first-party integrity values');
+    }
+    const registeredLockfileLines = registeredLockfile.split('\n');
+    const changedIntegrityLines = lockfileRun.stdout.split('\n')
+      .map((line, index) => (line === registeredLockfileLines[index] ? null : index + 1))
+      .filter((line) => line !== null);
+    if (changedIntegrityLines.length === 0 || changedIntegrityLines.length > 8) {
+      throw new Error(`Defect consumer lockfile changed an unexpected number of lines: ${changedIntegrityLines.length}`);
+    }
+
     const baseCatalogJson = JSON.parse(catalogBytes.toString('utf8'));
     baseCatalogJson.target.artifactSha256 = defectArtifactDigest;
     const defectCatalogBytes = Buffer.from(`${JSON.stringify(baseCatalogJson, null, 2)}\n`);
@@ -317,6 +345,12 @@ async function main() {
       targetArtifactDigest: defectArtifactDigest,
       defectId: defect.id,
       catalogSha256: sha256(defectCatalogBytes),
+      consumerDockerfileSha256: sha256(await readFile(consumerDockerfilePath)),
+      trustDockerfileSha256: sha256(await readFile(path.join(repositoryRoot, 'docker-v0.3/Dockerfile.trust'))),
+      harnessFiles,
+      harnessSha256: await aggregateFiles(repositoryRoot, harnessFiles),
+      sourceFiles,
+      sourceSha256: await aggregateFiles(repositoryRoot, sourceFiles),
       prepareScriptSha256: sha256(await readFile(prepareScriptPath)),
       operatorCatalogSha256: sha256(operatorBytes),
     };
@@ -327,7 +361,7 @@ async function main() {
       '--build-arg', `CONTRACT_IMAGE_ID=${defectConsumerId}`,
       '--build-arg', `EVALUATION_CONTRACT_DIGEST=${defectEvaluationContractKey}`,
       '--build-arg', `PHASE2_CATALOG_SHA256=${defectBuildInputs.catalogSha256}`,
-      '--build-arg', `TRUST_HARNESS_SHA256=none`,
+      '--build-arg', `TRUST_HARNESS_SHA256=${defectBuildInputs.harnessSha256}`,
       '--file', path.join(trustContext, 'docker-v0.3/Dockerfile.trust'),
       trustContext,
     ]);
@@ -342,11 +376,22 @@ async function main() {
       cp(path.join(repositoryRoot, 'docker-v0.3/Dockerfile.spike'), path.join(spikeContext, 'docker-v0.3/Dockerfile.spike')),
     ]);
     const spikeRegistrationDigest = sha256(registrationBytes);
-    for (const [tag, base] of [[cleanSpikeTag, cleanTrustTag], [defectSpikeTag, defectTrustTag]]) {
+    const defectTrustImageId = await imageId(defectTrustTag);
+    const spikeBuildInputs = {
+      registrationSha256: spikeRegistrationDigest,
+      spikeDockerfileSha256: sha256(await readFile(path.join(repositoryRoot, 'docker-v0.3/Dockerfile.spike'))),
+      operatorModuleSha256: sha256(await readFile(path.join(repositoryRoot, operatorModuleFile))),
+      operatorCatalogSha256: sha256(operatorBytes),
+    };
+    const spikeContractKeys = {
+      clean: domainDigest('bug-dreamer/spike-contract/v1', { ...spikeBuildInputs, baseImageId: cleanTrustId }),
+      defect: domainDigest('bug-dreamer/spike-contract/v1', { ...spikeBuildInputs, baseImageId: defectTrustImageId }),
+    };
+    for (const [tag, base, key] of [[cleanSpikeTag, cleanTrustTag, spikeContractKeys.clean], [defectSpikeTag, defectTrustTag, spikeContractKeys.defect]]) {
       await dockerBuild([
         '--tag', tag,
         '--build-arg', `BASE_IMAGE=${base}`,
-        '--build-arg', `SPIKE_CONTRACT_DIGEST=${spikeRegistrationDigest}`,
+        '--build-arg', `SPIKE_CONTRACT_DIGEST=${key}`,
         '--file', path.join(spikeContext, 'docker-v0.3/Dockerfile.spike'),
         spikeContext,
       ]);
@@ -354,13 +399,36 @@ async function main() {
 
     const seedBytes = await readFile(path.join(repositoryRoot, seedPath));
     const cleanSeed = parseNightmareSeed(seedBytes, cleanCatalog);
-    let baseline;
+    let structuralRejection;
     try {
       buildNightmareSpec(cleanSeed, cleanCatalog);
       throw new Error('Baseline identity spec was unexpectedly accepted');
     } catch (error) {
-      baseline = { evaluatedSpecs: 1, spec: rejectionRecord(error) };
+      structuralRejection = rejectionRecord(error);
     }
+    const specCasesBytes = await readFile(path.join(repositoryRoot, specCasesPath));
+    const specCases = parseJsonBytes(specCasesBytes);
+    const identityRuns = [];
+    for (const relativePath of specCases.positive) {
+      const baselineSeedBytes = await readFile(path.join(repositoryRoot, relativePath));
+      const baselineSeed = parseNightmareSeed(baselineSeedBytes, defectCatalog);
+      const baselineSpec = buildNightmareSpec(baselineSeed, defectCatalog);
+      const baselinePlan = buildExecutionPlan(baselineSpec, defectCatalog);
+      identityRuns.push({
+        seedPath: relativePath,
+        seedSha256: sha256(baselineSeedBytes),
+        specDigest: specDigest(baselineSpec, defectCatalog),
+        planDigest: planDigest(baselinePlan, baselineSpec, defectCatalog),
+        run: await executeSpec(defectSpikeTag, baselineSpec, baselinePlan, defectCatalog, temporaryRoot, `baseline-${identityRuns.length}`),
+      });
+    }
+    const baseline = {
+      structuralRejection: { seedPath, spec: structuralRejection },
+      specCases: { path: specCasesPath, sha256: sha256(specCasesBytes) },
+      identityRuns,
+      evaluatedSpecs: 1 + identityRuns.length,
+    };
+    if (baseline.evaluatedSpecs > registration.arms.baseline.maxEvaluatedSpecs) throw new Error('Baseline arm exceeded its registered budget');
 
     const arms = [];
     let adopted = null;
@@ -406,8 +474,18 @@ async function main() {
       arms.push(record);
     }
 
-    const evaluatedSpecs = arms.reduce((sum, record) => sum + (record.rejection !== undefined ? 1 : 2 + (record.repeatRuns?.length ?? 0)), 0);
-    if (evaluatedSpecs > registration.arms.operator.maxEvaluatedSpecs) throw new Error('Operator arm exceeded its registered budget');
+    const operatorEvaluatedSpecs = arms.reduce((sum, record) => sum + (record.rejection !== undefined ? 1 : 2 + (record.repeatRuns?.length ?? 0)), 0);
+    if (operatorEvaluatedSpecs > registration.arms.operator.maxEvaluatedSpecs) throw new Error('Operator arm exceeded its registered budget');
+    if (adopted !== null) {
+      const adoptedArm = arms.find((record) => record.operatorId === adopted);
+      const adoptedIdentity = canonicalJson(adoptedArm.defectRun.classification.violationIdentity);
+      for (const identityRun of baseline.identityRuns) {
+        const identity = identityRun.run.classification.violationIdentity;
+        if (identity !== null && canonicalJson(identity) === adoptedIdentity) {
+          throw new Error(`Baseline identity run reproduced the operator candidate: ${identityRun.seedPath}`);
+        }
+      }
+    }
     const verdict = adopted !== null ? 'adopt' : 'retire';
 
     const receipt = {
@@ -431,12 +509,18 @@ async function main() {
         defectTrust: { tag: defectTrustTag, imageId: await imageId(defectTrustTag) },
         defectSpike: { tag: defectSpikeTag, imageId: await imageId(defectSpikeTag) },
       },
+      defectConsumerLockfile: {
+        sha256: sha256(lockfileRun.stdout),
+        changedIntegrityLines,
+      },
       defectBuildInputs,
       defectEvaluationContractKey,
+      spikeBuildInputs,
+      spikeContractKeys,
       executionBudget: EXECUTION_BUDGET,
       baseline,
       arms,
-      evaluatedSpecs,
+      evaluatedSpecs: { baseline: baseline.evaluatedSpecs, operator: operatorEvaluatedSpecs },
       verdict,
       adoptedOperatorId: adopted,
     };

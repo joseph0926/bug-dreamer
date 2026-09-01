@@ -39,8 +39,8 @@ async function context(seedPath) {
 
 test('validates all recorded isolated trust cases and their immutable inputs', async () => {
   const result = await validateTrustContracts(repositoryRoot);
-  assert.equal(result.caseCount, 10);
-  assert.equal(result.candidateCount, 2);
+  assert.equal(result.caseCount, 11);
+  assert.equal(result.candidateCount, 3);
   assert.equal(result.evaluatorErrorCount, 6);
 });
 

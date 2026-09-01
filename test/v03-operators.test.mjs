@@ -27,7 +27,7 @@ async function readRequest(relativePath) {
 test('validates all recorded operator cases against the registered catalog', async () => {
   const result = await validateOperatorContracts(repositoryRoot);
   assert.equal(result.positiveCaseCount, 4);
-  assert.equal(result.negativeCaseCount, 7);
+  assert.equal(result.negativeCaseCount, 11);
 });
 
 test('builds a chained time advance with an anchored transformation digest chain', async () => {
@@ -67,7 +67,28 @@ test('accepts the maximum registered advance and rejects a tampered final digest
   assert.equal(spec.scheduleControls[0].advanceMs, 86400000);
   const tampered = structuredClone(spec);
   tampered.transformations[0].afterDigest = '0'.repeat(64);
-  assert.throws(() => validateNightmareSpec(tampered, catalog), /Final transformation digest/u);
+  assert.throws(() => validateNightmareSpec(tampered, catalog), /does not reproduce its recorded state/u);
+});
+
+test('rejects forged operator identities and argument records at spec validation', async () => {
+  const { catalog, operatorCatalog } = await context();
+  const seed = await readSeed('contracts/v0.3/seeds/total-timeout.json', catalog);
+  const request = await readRequest('contracts/v0.3/requests/time-advance.json');
+  const spec = buildTransformedSpec(seed, request, catalog, operatorCatalog);
+
+  const forged = structuredClone(spec);
+  forged.transformations[0].operatorId = 'evil.rewrite/v1';
+  forged.transformations[0].operatorRegistrationDigest = 'a'.repeat(64);
+  forged.transformations[0].arguments = { anything: true };
+  assert.throws(() => validateNightmareSpec(forged, catalog), /operator is not registered/u);
+
+  const mismatchedArguments = structuredClone(spec);
+  mismatchedArguments.transformations[0].arguments = { afterInstanceId: 'action-0002', advanceMs: 1 };
+  assert.throws(() => validateNightmareSpec(mismatchedArguments, catalog), /does not reproduce its recorded state/u);
+
+  const forgedRegistration = structuredClone(spec);
+  forgedRegistration.transformations[0].operatorRegistrationDigest = 'f'.repeat(64);
+  assert.throws(() => validateNightmareSpec(forgedRegistration, catalog), /registration digest mismatch/u);
 });
 
 test('rejects an identity spec for an invariant that requires virtual-time advances', async () => {
