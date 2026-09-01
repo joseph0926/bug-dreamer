@@ -3,30 +3,30 @@
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "phase1Evidence": {
     "path": "evidence/v0.3/phase1-contracts.json",
-    "sha256": "c0fe4336066a563433b5131e753da803f3d20767ed371cfa7ff44b137d587949",
-    "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5"
+    "sha256": "8107cb1152d872ef135411e73f54f518a604fa05ca91a58a9cec1b011dfec473",
+    "imageId": "sha256:219a3a0a3d321057487042fa1a5d08cb87d5e5cbb70b01b585e4eb194d47ffe8"
   },
   "catalog": {
     "path": "registrations/v0.3/phase2-catalog.json",
     "sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
     "catalogVersion": "firsttx-phase2-f624b09-v1"
   },
-  "evaluationContractKey": "b43a868cc9c2244bac95859bb1b3e157b82c97c0e4290a62d35b94aff1254449",
+  "evaluationContractKey": "0c08c61bbef849abb799afffb717e72779b3a7427165389e475326061b67064f",
   "image": {
     "tag": "bug-dreamer-v03-trust:f624b09f148c",
-    "imageId": "sha256:a16c10982c1516ea3dcf7ca216c9f3b303d7f8977718254f38143baca1f8fc96",
-    "contractImageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
+    "imageId": "sha256:d1b99a24a4549edd4ab0b4beb9e1b548e38a6e8ebaf380f620bb8aa730ef04ba",
+    "contractImageId": "sha256:219a3a0a3d321057487042fa1a5d08cb87d5e5cbb70b01b585e4eb194d47ffe8",
     "labels": {
-      "org.bug-dreamer.contract-image-id": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
-      "org.bug-dreamer.evaluation-contract-key": "b43a868cc9c2244bac95859bb1b3e157b82c97c0e4290a62d35b94aff1254449",
+      "org.bug-dreamer.contract-image-id": "sha256:219a3a0a3d321057487042fa1a5d08cb87d5e5cbb70b01b585e4eb194d47ffe8",
+      "org.bug-dreamer.evaluation-contract-key": "0c08c61bbef849abb799afffb717e72779b3a7427165389e475326061b67064f",
       "org.bug-dreamer.phase2-catalog-sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
       "org.bug-dreamer.registration-sha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
       "org.bug-dreamer.target-revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
-      "org.bug-dreamer.trust-harness-sha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738"
+      "org.bug-dreamer.trust-harness-sha256": "1a21611ac102494be49d4bf9bf2285661fa67638b53955417e964aa15834e548"
     }
   },
   "buildInputs": {
-    "contractImageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
+    "contractImageId": "sha256:219a3a0a3d321057487042fa1a5d08cb87d5e5cbb70b01b585e4eb194d47ffe8",
     "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
     "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed",
     "dockerfileSha256": "63e8b719da32fab591e14b55f92b35b68103f118d42afa27ff7e24d356ce0c00",
@@ -36,15 +36,15 @@
       "harness-v0.3/trust/main.mjs",
       "harness-v0.3/trust/virtual-clock.mjs"
     ],
-    "harnessSha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738",
+    "harnessSha256": "1a21611ac102494be49d4bf9bf2285661fa67638b53955417e964aa15834e548",
     "sourceFiles": [
       "src/v03-wire.mjs",
       "src/v03-spec.mjs",
       "src/v03-trust.mjs"
     ],
-    "sourceSha256": "9f38b464f790ef4bfe05b82ba5aba67ddd673e2f6744e0b1332887b6bb7dfa74",
+    "sourceSha256": "98f765199147cb5b9288dd98d4ede8cf1e6684ebfe8f2337df48e003008b7b5a",
     "catalogSha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
-    "prepareScriptSha256": "ec45287b65d03069396ab2b6b3f2b4813a7a026cc81e5d2c83aed4b56f1b6bc5",
+    "prepareScriptSha256": "002bcc8fb2f1a25eb2bfd3480e3969e756cb585129a1d1dbefa62aa8d44f9857",
     "executionBudget": {
       "evaluationTimeoutMs": 30000,
       "stdoutLimitBytes": 1048576,
@@ -120,6 +120,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -152,6 +153,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -192,6 +194,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -224,6 +227,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -264,6 +268,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -306,6 +311,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [],
       "rawResult": null,
       "classification": {
@@ -336,6 +342,7 @@
       "stderrBytes": 53,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -372,6 +379,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -408,6 +416,7 @@
       "stderrBytes": 53,
       "timedOut": false,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [],
       "rawResult": null,
       "classification": {
@@ -438,6 +447,7 @@
       "stderrBytes": 0,
       "timedOut": true,
       "outputTruncated": false,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",
@@ -474,6 +484,7 @@
       "stderrBytes": 0,
       "timedOut": false,
       "outputTruncated": true,
+      "cleanupError": null,
       "resultEntries": [
         {
           "name": "result.json",

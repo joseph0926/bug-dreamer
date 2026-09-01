@@ -145,20 +145,35 @@ function validateActionArguments(actionId, args, bindings) {
   fail('rejected-catalog', `Unknown action: ${actionId}`);
 }
 
+function causalAdvanceAnchors(actions, scheduleControls, producerIndex, finalRunIndex) {
+  const gated = new Set(scheduleControls
+    .filter((control) => control.kind === 'completion-release-order')
+    .flatMap((control) => control.instanceIds));
+  const anchors = new Set();
+  for (let index = producerIndex; index < finalRunIndex; index += 1) {
+    const { instanceId } = actions[index];
+    if (instanceId === undefined || gated.has(instanceId)) continue;
+    anchors.add(instanceId);
+  }
+  return anchors;
+}
+
 function validateInvariantApplicability(invariant, actions, scheduleControls, label) {
-  const finalRun = actions.findLast((action) => action.actionId === 'tx.run');
-  assert(finalRun !== undefined, 'rejected-policy', `${label} invariant requires a tx.run action: ${invariant.id}`);
+  const finalRunIndex = actions.findLastIndex((action) => action.actionId === 'tx.run');
+  assert(finalRunIndex !== -1, 'rejected-policy', `${label} invariant requires a tx.run action: ${invariant.id}`);
+  const finalRun = actions[finalRunIndex];
   const expectedOutcome = invariant.applicability === undefined
     ? OUTCOME_BY_OBSERVED_KIND[invariant.normalizedObservedKind]
     : invariant.applicability.finalRunOutcome;
   assert(finalRun.arguments.outcome === expectedOutcome, 'rejected-policy', `${label} invariant is not applicable to the final tx.run outcome: ${invariant.id}`);
   if (scheduleControls === null || invariant.applicability?.requires !== 'virtual-advance-past-timeout') return;
+  const producerIndex = actions.findIndex((action) => action.actionId === 'tx.start' && action.bind !== null && action.bind.name === finalRun.arguments.tx.$binding);
+  assert(producerIndex !== -1, 'rejected-policy', `${label} invariant requires the final tx.run transaction producer: ${invariant.id}`);
+  const anchors = causalAdvanceAnchors(actions, scheduleControls, producerIndex, finalRunIndex);
   const totalAdvanceMs = scheduleControls
-    .filter((control) => control.kind === 'virtual-time-advance')
+    .filter((control) => control.kind === 'virtual-time-advance' && anchors.has(control.afterInstanceId))
     .reduce((sum, control) => sum + control.advanceMs, 0);
-  const producer = actions.find((action) => action.actionId === 'tx.start' && action.bind !== null && action.bind.name === finalRun.arguments.tx.$binding);
-  assert(producer !== undefined, 'rejected-policy', `${label} invariant requires the final tx.run transaction producer: ${invariant.id}`);
-  assert(totalAdvanceMs > producer.arguments.timeoutMs, 'rejected-policy', `${label} total virtual-time advance must exceed the transaction timeout: ${invariant.id}`);
+  assert(totalAdvanceMs > actions[producerIndex].arguments.timeoutMs, 'rejected-policy', `${label} total virtual-time advance must exceed the transaction timeout: ${invariant.id}`);
 }
 
 export function stateDigest(actions, scheduleControls) {

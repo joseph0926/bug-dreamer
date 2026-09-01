@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { firstPartyEntryBlocks, lockfileSection } from './v03-contracts.mjs';
 import { buildTransformedSpec, loadPhase3Catalog } from './v03-operators.mjs';
 import { resolveContainedPath } from './v03-paths.mjs';
 import {
@@ -19,9 +20,11 @@ const EVIDENCE_PATH = 'evidence/v0.3/phase3-spike.json';
 const REGISTRATION_PATH = 'benchmark/v0.3/phase3-spike.json';
 const MANIFEST_PATH = 'benchmark/manifest.json';
 const SPEC_CASES_PATH = 'contracts/v0.3/spec-cases.json';
+const PACKAGE_REGISTRATION_PATH = 'registrations/v0.3/packages.json';
+const CONSUMER_LOCKFILE_PATH = 'registrations/v0.3/consumer-lock.yaml';
 const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const SOURCE_FILES = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
-const RUN_RECORD_KEYS = ['exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'resultEntries', 'rawResult', 'classification'];
+const RUN_RECORD_KEYS = ['exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'cleanupError', 'resultEntries', 'rawResult', 'classification'];
 const OPERATOR_ARM_REQUESTS = [
   { operatorId: 'time.advance/v1', requestPath: 'contracts/v0.3/requests/time-advance.json' },
   { operatorId: 'schedule.release-order/v1', requestPath: 'contracts/v0.3/requests/spike-release-order.json' },
@@ -73,10 +76,48 @@ async function aggregateFiles(repositoryRoot, relativePaths) {
   return digest.digest('hex');
 }
 
+function targetEntryLineRange(lockfileText, targetKey) {
+  const section = lockfileSection(lockfileText, 'packages:', 'snapshots:');
+  const block = firstPartyEntryBlocks(section).find((item) => item.key === targetKey);
+  assert(block !== undefined, `Registered consumer lockfile has no first-party entry for the target module: ${targetKey}`);
+  const blockIndex = lockfileText.indexOf(block.body, lockfileText.indexOf(section));
+  assert(blockIndex >= 0, `Registered consumer lockfile entry is not locatable: ${targetKey}`);
+  const startLine = lockfileText.slice(0, blockIndex).split('\n').length;
+  const bodyLines = block.body.split('\n');
+  let entryLines = 1;
+  while (entryLines < bodyLines.length && !/^ {2}\S/u.test(bodyLines[entryLines])) entryLines += 1;
+  while (entryLines > 1 && bodyLines[entryLines - 1].trim() === '') entryLines -= 1;
+  return { startLine, endLine: startLine + entryLines - 1 };
+}
+
+function parseResolutionLine(line) {
+  return /^(?<prefix> {4}resolution: \{integrity: )(?<integrity>sha512-[A-Za-z0-9+/=]+)(?<suffix>[^\n]*)$/u.exec(line)?.groups;
+}
+
+function validateDefectConsumerLockfile(record, registeredLockfile, targetKey) {
+  strictKeys(record, ['sha256', 'changedIntegrity'], 'Spike defect consumer lockfile');
+  const change = record.changedIntegrity;
+  strictKeys(change, ['line', 'packageKey', 'registered', 'defect'], 'Spike defect consumer lockfile change');
+  assert(change.packageKey === targetKey, `Spike defect lockfile change is not the registered target tarball entry: ${change.packageKey}`);
+  const lines = registeredLockfile.split('\n');
+  assert(Number.isInteger(change.line) && change.line >= 1 && change.line <= lines.length, 'Spike defect lockfile change line is out of range');
+  const { startLine, endLine } = targetEntryLineRange(registeredLockfile, targetKey);
+  assert(change.line >= startLine && change.line <= endLine, `Spike defect lockfile changed line ${change.line} outside the target tarball entry`);
+  const registered = parseResolutionLine(lines[change.line - 1]);
+  assert(registered !== undefined, `Spike defect lockfile change line is not a tarball integrity value: ${change.line}`);
+  assert(registered.integrity === change.registered, 'Spike defect lockfile registered integrity does not match the registration');
+  assert(/^sha512-[A-Za-z0-9+/=]+$/u.test(change.defect), 'Spike defect lockfile integrity value is malformed');
+  assert(change.defect !== change.registered, 'Spike defect consumer lockfile kept the clean target integrity value');
+  const rebuilt = [...lines];
+  rebuilt[change.line - 1] = `${registered.prefix}${change.defect}${registered.suffix}`;
+  assert(sha256(rebuilt.join('\n')) === record.sha256, 'Spike defect consumer lockfile digest does not match the reconstructed lockfile');
+}
+
 function assertRunRecord(recorded, label) {
   strictKeys(recorded, RUN_RECORD_KEYS, `Spike run record ${label}`);
   assert(recorded.exitCode === null || Number.isInteger(recorded.exitCode), `Spike run exit code is invalid: ${label}`);
   assert(typeof recorded.timedOut === 'boolean' && typeof recorded.outputTruncated === 'boolean', `Spike run execution flags are invalid: ${label}`);
+  assert(recorded.cleanupError === null, `Spike run container cleanup failed: ${label}`);
   assert(!(recorded.timedOut && recorded.outputTruncated), `Spike run reports both a timeout and a truncation: ${label}`);
   for (const stream of ['stdout', 'stderr']) {
     const observedBytes = recorded[`${stream}Bytes`];
@@ -167,9 +208,17 @@ export async function validateSpikeReplay(repositoryRoot) {
   }
   const dockerfileSource = (await readContainedFile(evidence.consumerDockerfilePatch.file)).toString('utf8');
   const patchedConsumerDockerfile = applyEdit(dockerfileSource, evidence.consumerDockerfilePatch);
-  assert(Array.isArray(evidence.defectConsumerLockfile.changedIntegrityLines)
-    && evidence.defectConsumerLockfile.changedIntegrityLines.length >= 1
-    && evidence.defectConsumerLockfile.changedIntegrityLines.length <= 8, 'Spike defect lockfile diff record is out of bounds');
+  const [packageRegistrationBytes, registeredLockfileBytes] = await Promise.all([
+    readRepoFile(PACKAGE_REGISTRATION_PATH),
+    readRepoFile(CONSUMER_LOCKFILE_PATH),
+  ]);
+  const targetPackage = JSON.parse(packageRegistrationBytes.toString('utf8')).packages.find((item) => item.id === cleanCatalog.target.moduleId);
+  assert(targetPackage !== undefined, `Target module is not registered: ${cleanCatalog.target.moduleId}`);
+  validateDefectConsumerLockfile(
+    evidence.defectConsumerLockfile,
+    registeredLockfileBytes.toString('utf8'),
+    `${targetPackage.packageName}@file:../artifacts/${targetPackage.id}.tgz`,
+  );
   assert(canonicalJson(evidence.executionBudget) === canonicalJson(EXECUTION_BUDGET), 'Spike execution budget mismatch');
 
   const baseCatalogJson = JSON.parse(catalogBytes.toString('utf8'));

@@ -16,6 +16,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { createCaseRunner } from '../src/v03-runner.mjs';
 import {
   buildExecutionPlan,
   buildNightmareSpec,
@@ -84,69 +85,40 @@ function caseCommand(mode) {
   return ['/consumer/evaluator/case-main.mjs', '--mode', mode];
 }
 
-function normalizedRunArgs(args, inputDirectory, resultDirectory, imageTag, command, containerName) {
+function normalizedRunArgs(args, inputDirectory, resultDirectory, imageId, command, containerName) {
   const normalized = args.slice(0, args.length - command.length).map((argument) => {
     if (argument === `type=bind,source=${inputDirectory},target=/input,readonly`) return '<input-mount>';
     if (argument === `type=bind,source=${resultDirectory},target=/result`) return '<result-mount>';
-    if (argument === imageTag) return '<image>';
+    if (argument === imageId) return '<image>';
     if (argument === containerName) return '<container-name>';
     return argument;
   });
   return [...normalized, '<command>'];
 }
 
-function runCase(args, containerName) {
-  const { evaluationTimeoutMs, stdoutLimitBytes, stderrLimitBytes, recordedOutputBytes } = EXECUTION_BUDGET;
-  return new Promise((resolve, reject) => {
-    const child = spawn('docker', args, { stdio: ['ignore', 'pipe', 'pipe'] });
-    const streams = {
-      stdout: { limit: stdoutLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
-      stderr: { limit: stderrLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
-    };
-    let timedOut = false;
-    let outputTruncated = false;
-    let stopped = false;
-    const stop = () => {
-      if (stopped) return;
-      stopped = true;
-      spawn('docker', ['rm', '--force', containerName], { stdio: 'ignore' });
-    };
-    const timer = setTimeout(() => {
-      timedOut = true;
-      stop();
-    }, evaluationTimeoutMs);
-    const collect = (name) => (chunk) => {
-      const stream = streams[name];
-      stream.bytes += chunk.length;
-      if (stream.recordedBytes < recordedOutputBytes) {
-        const slice = chunk.subarray(0, recordedOutputBytes - stream.recordedBytes);
-        stream.recorded.push(slice);
-        stream.recordedBytes += slice.length;
-      }
-      if (stream.bytes > stream.limit) {
-        outputTruncated = true;
-        stop();
-      }
-    };
-    child.stdout.on('data', collect('stdout'));
-    child.stderr.on('data', collect('stderr'));
-    child.once('error', (error) => {
-      clearTimeout(timer);
-      reject(error);
-    });
-    child.once('close', (exitCode) => {
-      clearTimeout(timer);
-      resolve({
-        exitCode,
-        stdout: Buffer.concat(streams.stdout.recorded).toString('utf8'),
-        stderr: Buffer.concat(streams.stderr.recorded).toString('utf8'),
-        stdoutBytes: streams.stdout.bytes,
-        stderrBytes: streams.stderr.bytes,
-        timedOut,
-        outputTruncated,
-      });
-    });
-  });
+const runCase = createCaseRunner({ spawn, budget: EXECUTION_BUDGET });
+
+async function inspectImage(reference, format) {
+  const inspection = await run('docker', ['image', 'inspect', reference, '--format', format]);
+  if (inspection.exitCode !== 0) throw new Error(inspection.stderr.trim());
+  return inspection.stdout.trim();
+}
+
+async function resolveImageId(reference) {
+  const imageId = await inspectImage(reference, '{{.Id}}');
+  if (!/^sha256:[0-9a-f]{64}$/.test(imageId)) throw new Error(`Image ID is invalid: ${reference}`);
+  return imageId;
+}
+
+async function assertBuiltFrom(childReference, baseImageId, label) {
+  const [childLayers, baseLayers] = await Promise.all([
+    inspectImage(childReference, '{{json .RootFS.Layers}}').then((value) => JSON.parse(value)),
+    inspectImage(baseImageId, '{{json .RootFS.Layers}}').then((value) => JSON.parse(value)),
+  ]);
+  const descends = baseLayers.length > 0
+    && baseLayers.length <= childLayers.length
+    && baseLayers.every((layer, index) => layer === childLayers[index]);
+  if (!descends) throw new Error(`${label} was not built from the recorded base image ID`);
 }
 
 async function readCanonicalizerIntegrity(lockfilePath) {
@@ -169,9 +141,7 @@ async function main() {
   if (revision.exitCode !== 0) throw new Error(revision.stderr.trim());
   if (revision.stdout.trim() !== catalog.target.targetRevision) throw new Error(`Target HEAD must be ${catalog.target.targetRevision}`);
   const contractImageTag = contractEvidence.image.tag;
-  const contractImage = await run('docker', ['image', 'inspect', contractImageTag, '--format', '{{.Id}}']);
-  if (contractImage.exitCode !== 0) throw new Error(contractImage.stderr.trim());
-  if (contractImage.stdout.trim() !== contractEvidence.image.imageId) throw new Error('Phase 1 image tag does not match recorded evidence');
+  if (await resolveImageId(contractImageTag) !== contractEvidence.image.imageId) throw new Error('Phase 1 image tag does not match recorded evidence');
 
   const canonicalizeRoot = await realpath(path.join(repositoryRoot, 'node_modules/canonicalize'));
   const canonicalizeFiles = (await listFiles(canonicalizeRoot)).filter((file) => file.split(path.sep)[0] !== 'node_modules');
@@ -243,12 +213,12 @@ async function main() {
     process.stderr.write(build.stderr);
     if (build.exitCode !== 0) throw new Error('Phase 2 evaluator image build failed');
 
-    const [imageInspection, labelInspection] = await Promise.all([
-      run('docker', ['image', 'inspect', imageTag, '--format', '{{.Id}}']),
-      run('docker', ['image', 'inspect', imageTag, '--format', '{{json .Config.Labels}}']),
+    const [imageId, labelJson] = await Promise.all([
+      resolveImageId(imageTag),
+      inspectImage(imageTag, '{{json .Config.Labels}}'),
     ]);
-    if (imageInspection.exitCode !== 0 || labelInspection.exitCode !== 0) throw new Error('Phase 2 evaluator image inspection failed');
-    const labels = JSON.parse(labelInspection.stdout);
+    await assertBuiltFrom(imageId, contractEvidence.image.imageId, 'Phase 2 evaluator image');
+    const labels = JSON.parse(labelJson);
     if (labels['org.bug-dreamer.evaluation-contract-key'] !== evaluationContractKey) throw new Error('Evaluator image contract label mismatch');
 
     const caseDefinitions = [
@@ -308,10 +278,10 @@ async function main() {
         `type=bind,source=${inputDirectory},target=/input,readonly`,
         '--mount',
         `type=bind,source=${resultDirectory},target=/result`,
-        imageTag,
+        imageId,
         ...definition.command,
       ];
-      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageTag, definition.command, containerName);
+      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageId, definition.command, containerName);
       dockerRunArgsTemplate ??= normalizedArgs;
       if (JSON.stringify(normalizedArgs) !== JSON.stringify(dockerRunArgsTemplate)) throw new Error('Trust cases use different isolation arguments');
       const execution = await runCase(dockerRunArgs, containerName);
@@ -341,6 +311,7 @@ async function main() {
         stderrBytes: execution.stderrBytes,
         timedOut: execution.timedOut,
         outputTruncated: execution.outputTruncated,
+        cleanupError: execution.cleanupError,
         resultEntries,
         rawResult: resultBytes === null ? null : resultBytes.toString('utf8'),
         classification,
@@ -363,7 +334,7 @@ async function main() {
       evaluationContractKey,
       image: {
         tag: imageTag,
-        imageId: imageInspection.stdout.trim(),
+        imageId,
         contractImageId: contractEvidence.image.imageId,
         labels,
       },

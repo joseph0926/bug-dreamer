@@ -5,7 +5,10 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { firstPartyEntryBlocks, lockfileSection } from '../src/v03-contracts.mjs';
 import { buildTransformedSpec, loadPhase3Catalog } from '../src/v03-operators.mjs';
+import { assertNoSymlinkAncestors, resolveContainedPath } from '../src/v03-paths.mjs';
+import { createCaseRunner } from '../src/v03-runner.mjs';
 import {
   V03SpecError,
   buildExecutionPlan,
@@ -70,63 +73,11 @@ function run(command, args, options = {}) {
   });
 }
 
-function runCase(args, containerName) {
-  const { evaluationTimeoutMs, stdoutLimitBytes, stderrLimitBytes, recordedOutputBytes } = EXECUTION_BUDGET;
-  return new Promise((resolve, reject) => {
-    const child = spawn('docker', args, { stdio: ['ignore', 'pipe', 'pipe'] });
-    const streams = {
-      stdout: { limit: stdoutLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
-      stderr: { limit: stderrLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
-    };
-    let timedOut = false;
-    let outputTruncated = false;
-    let stopped = false;
-    const stop = () => {
-      if (stopped) return;
-      stopped = true;
-      spawn('docker', ['rm', '--force', containerName], { stdio: 'ignore' });
-    };
-    const timer = setTimeout(() => {
-      timedOut = true;
-      stop();
-    }, evaluationTimeoutMs);
-    const collect = (name) => (chunk) => {
-      const stream = streams[name];
-      stream.bytes += chunk.length;
-      if (stream.recordedBytes < recordedOutputBytes) {
-        const slice = chunk.subarray(0, recordedOutputBytes - stream.recordedBytes);
-        stream.recorded.push(slice);
-        stream.recordedBytes += slice.length;
-      }
-      if (stream.bytes > stream.limit) {
-        outputTruncated = true;
-        stop();
-      }
-    };
-    child.stdout.on('data', collect('stdout'));
-    child.stderr.on('data', collect('stderr'));
-    child.once('error', (error) => {
-      clearTimeout(timer);
-      reject(error);
-    });
-    child.once('close', (exitCode) => {
-      clearTimeout(timer);
-      resolve({
-        exitCode,
-        stdout: Buffer.concat(streams.stdout.recorded).toString('utf8'),
-        stderr: Buffer.concat(streams.stderr.recorded).toString('utf8'),
-        stdoutBytes: streams.stdout.bytes,
-        stderrBytes: streams.stderr.bytes,
-        timedOut,
-        outputTruncated,
-      });
-    });
-  });
-}
+const runCase = createCaseRunner({ spawn, budget: EXECUTION_BUDGET });
 
 const ISOLATION_ARGS = ['--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--pids-limit', '128', '--memory', '512m', '--cpus', '1', '--tmpfs', '/tmp:rw,noexec,nosuid,size=64m'];
 
-async function executeSpec(imageTag, spec, plan, catalog, workRoot, label) {
+async function executeSpec(imageId, spec, plan, catalog, workRoot, label) {
   const caseRoot = path.join(workRoot, `run-${label}-${randomUUID()}`);
   const inputDirectory = path.join(caseRoot, 'input');
   const resultDirectory = path.join(caseRoot, 'result');
@@ -140,7 +91,7 @@ async function executeSpec(imageTag, spec, plan, catalog, workRoot, label) {
     'run', '--rm', '--name', containerName, ...ISOLATION_ARGS,
     '--mount', `type=bind,source=${inputDirectory},target=/input,readonly`,
     '--mount', `type=bind,source=${resultDirectory},target=/result`,
-    imageTag,
+    imageId,
     ...productionCommand,
   ];
   const execution = await runCase(dockerRunArgs, containerName);
@@ -162,6 +113,7 @@ async function executeSpec(imageTag, spec, plan, catalog, workRoot, label) {
     stderrBytes: execution.stderrBytes,
     timedOut: execution.timedOut,
     outputTruncated: execution.outputTruncated,
+    cleanupError: execution.cleanupError,
     resultEntries,
     rawResult: resultBytes === null ? null : resultBytes.toString('utf8'),
     classification,
@@ -209,10 +161,85 @@ async function dockerBuild(args) {
   if (build.exitCode !== 0) throw new Error(`Docker build failed:\n${build.stderr.slice(-4000)}`);
 }
 
-async function imageId(tag) {
-  const inspection = await run('docker', ['image', 'inspect', tag, '--format', '{{.Id}}']);
+async function inspectImage(reference, format) {
+  const inspection = await run('docker', ['image', 'inspect', reference, '--format', format]);
   if (inspection.exitCode !== 0) throw new Error(inspection.stderr.trim());
   return inspection.stdout.trim();
+}
+
+async function imageId(reference) {
+  const id = await inspectImage(reference, '{{.Id}}');
+  if (!/^sha256:[0-9a-f]{64}$/.test(id)) throw new Error(`Image ID is invalid: ${reference}`);
+  return id;
+}
+
+async function assertBuiltFrom(childReference, baseImageId, label) {
+  const [childLayers, baseLayers] = await Promise.all([
+    inspectImage(childReference, '{{json .RootFS.Layers}}').then((value) => JSON.parse(value)),
+    inspectImage(baseImageId, '{{json .RootFS.Layers}}').then((value) => JSON.parse(value)),
+  ]);
+  const descends = baseLayers.length > 0
+    && baseLayers.length <= childLayers.length
+    && baseLayers.every((layer, index) => layer === childLayers[index]);
+  if (!descends) throw new Error(`${label} was not built from the recorded base image ID`);
+}
+
+function lineNumberAt(source, offset) {
+  let line = 1;
+  for (let index = 0; index < offset; index += 1) {
+    if (source[index] === '\n') line += 1;
+  }
+  return line;
+}
+
+function targetEntryLineRange(lockfileText, targetKey) {
+  const sectionStart = lockfileText.indexOf('packages:\n');
+  if (sectionStart < 0) throw new Error('Consumer lockfile has no packages section');
+  const section = lockfileSection(lockfileText, 'packages:', 'snapshots:');
+  const blocks = firstPartyEntryBlocks(section);
+  const bodyLength = blocks.reduce((sum, block) => sum + block.body.length, 0);
+  let offset = sectionStart + section.length - bodyLength;
+  for (const block of blocks) {
+    if (block.key === targetKey) {
+      const startLine = lineNumberAt(lockfileText, offset);
+      const bodyLines = block.body.split('\n');
+      let entryLines = 1;
+      while (entryLines < bodyLines.length && !/^ {2}\S/u.test(bodyLines[entryLines])) entryLines += 1;
+      return { startLine, endLine: startLine + entryLines - 1 };
+    }
+    offset += block.body.length;
+  }
+  throw new Error(`Consumer lockfile has no first-party entry for the target module: ${targetKey}`);
+}
+
+function parseResolutionLine(line) {
+  return /^(?<prefix> {4}resolution: \{integrity: )(?<integrity>sha512-[A-Za-z0-9+/=]+)(?<suffix>[^\n]*)$/u.exec(line)?.groups;
+}
+
+function compareDefectLockfile(registeredLockfile, defectLockfile, targetKey) {
+  const registeredLines = registeredLockfile.split('\n');
+  const defectLines = defectLockfile.split('\n');
+  if (defectLines.length !== registeredLines.length) throw new Error('Defect consumer lockfile line count changed');
+  const changedIntegrityLines = registeredLines
+    .map((line, index) => (line === defectLines[index] ? null : index + 1))
+    .filter((line) => line !== null);
+  if (changedIntegrityLines.length !== 1) {
+    throw new Error(`Defect consumer lockfile changed an unexpected number of lines: ${changedIntegrityLines.length}`);
+  }
+  const [changedLine] = changedIntegrityLines;
+  const { startLine, endLine } = targetEntryLineRange(registeredLockfile, targetKey);
+  if (changedLine < startLine || changedLine > endLine) {
+    throw new Error(`Defect consumer lockfile changed line ${changedLine} outside the target tarball entry`);
+  }
+  const registered = parseResolutionLine(registeredLines[changedLine - 1]);
+  const rebuilt = parseResolutionLine(defectLines[changedLine - 1]);
+  if (registered === undefined || rebuilt === undefined) {
+    throw new Error(`Defect consumer lockfile changed a line that is not a tarball integrity value: ${changedLine}`);
+  }
+  if (registered.suffix !== rebuilt.suffix) {
+    throw new Error(`Defect consumer lockfile changed a resolution field other than integrity: ${changedLine}`);
+  }
+  return { line: changedLine, packageKey: targetKey, registered: registered.integrity, defect: rebuilt.integrity };
 }
 
 async function main() {
@@ -257,7 +284,8 @@ async function main() {
     await mkdir(targetDestination, { recursive: true });
     await archiveTarget(targetPath, targetDestination, registration.targetRevision);
     for (const edit of defect.edits) {
-      const filePath = path.join(targetDestination, edit.file);
+      const filePath = resolveContainedPath(targetDestination, edit.file);
+      await assertNoSymlinkAncestors(targetDestination, filePath);
       await writeFile(filePath, applyEdit(await readFile(filePath, 'utf8'), edit));
     }
     await cp(path.join(repositoryRoot, 'docker-v0.3'), path.join(consumerContext, 'docker-v0.3'), { recursive: true });
@@ -273,7 +301,12 @@ async function main() {
     await mkdir(path.join(consumerContext, 'registrations/v0.3'), { recursive: true });
     await cp(path.join(repositoryRoot, 'registrations/v0.3/packages.json'), path.join(consumerContext, 'registrations/v0.3/packages.json'));
     await cp(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), path.join(consumerContext, 'registrations/v0.3/consumer-lock.yaml'));
-    const registrationSha256 = sha256(await readFile(path.join(repositoryRoot, 'registrations/v0.3/packages.json')));
+    const packageRegistrationBytes = await readFile(path.join(repositoryRoot, 'registrations/v0.3/packages.json'));
+    const packageRegistration = JSON.parse(packageRegistrationBytes.toString('utf8'));
+    const targetPackage = packageRegistration.packages.find((item) => item.id === cleanCatalog.target.moduleId);
+    if (targetPackage === undefined) throw new Error(`Target module is not registered: ${cleanCatalog.target.moduleId}`);
+    const targetLockfileKey = `${targetPackage.packageName}@file:../artifacts/${targetPackage.id}.tgz`;
+    const registrationSha256 = sha256(packageRegistrationBytes);
     await dockerBuild([
       '--tag', defectConsumerTag,
       '--build-arg', `TARGET_REVISION=${registration.targetRevision}`,
@@ -284,7 +317,7 @@ async function main() {
     const defectConsumerId = await imageId(defectConsumerTag);
 
     const digestScript = 'const { createHash } = require("node:crypto"); const { readFileSync } = require("node:fs"); const ids = ["shared", "tx", "local-first", "prepaint"]; console.log(JSON.stringify(Object.fromEntries(ids.map((id) => [id, createHash("sha256").update(readFileSync(`/artifacts/${id}.tgz`)).digest("hex")]))));';
-    const digestRun = await run('docker', ['run', '--rm', ...ISOLATION_ARGS, '--entrypoint', 'node', defectConsumerTag, '-e', digestScript]);
+    const digestRun = await run('docker', ['run', '--rm', ...ISOLATION_ARGS, '--entrypoint', 'node', defectConsumerId, '-e', digestScript]);
     if (digestRun.exitCode !== 0) throw new Error(`Defect artifact digest probe failed: ${digestRun.stdout}\n${digestRun.stderr}`);
     const defectTarballDigests = JSON.parse(digestRun.stdout.trim().split('\n').filter(Boolean).at(-1));
     const defectArtifactDigest = defectTarballDigests[cleanCatalog.target.moduleId];
@@ -296,20 +329,10 @@ async function main() {
       }
     }
 
-    const lockfileRun = await run('docker', ['run', '--rm', ...ISOLATION_ARGS, '--entrypoint', 'cat', defectConsumerTag, '/consumer/pnpm-lock.yaml']);
+    const lockfileRun = await run('docker', ['run', '--rm', ...ISOLATION_ARGS, '--entrypoint', 'cat', defectConsumerId, '/consumer/pnpm-lock.yaml']);
     if (lockfileRun.exitCode !== 0) throw new Error(`Defect consumer lockfile extraction failed: ${lockfileRun.stderr}`);
     const registeredLockfile = (await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'))).toString('utf8');
-    const stripIntegrity = (text) => text.replaceAll(/integrity: sha512-[A-Za-z0-9+/=]+/gu, 'integrity: <sha512>');
-    if (stripIntegrity(lockfileRun.stdout) !== stripIntegrity(registeredLockfile)) {
-      throw new Error('Defect consumer lockfile changed outside first-party integrity values');
-    }
-    const registeredLockfileLines = registeredLockfile.split('\n');
-    const changedIntegrityLines = lockfileRun.stdout.split('\n')
-      .map((line, index) => (line === registeredLockfileLines[index] ? null : index + 1))
-      .filter((line) => line !== null);
-    if (changedIntegrityLines.length === 0 || changedIntegrityLines.length > 8) {
-      throw new Error(`Defect consumer lockfile changed an unexpected number of lines: ${changedIntegrityLines.length}`);
-    }
+    const changedIntegrity = compareDefectLockfile(registeredLockfile, lockfileRun.stdout, targetLockfileKey);
 
     const baseCatalogJson = JSON.parse(catalogBytes.toString('utf8'));
     baseCatalogJson.target.artifactSha256 = defectArtifactDigest;
@@ -377,6 +400,7 @@ async function main() {
     ]);
     const spikeRegistrationDigest = sha256(registrationBytes);
     const defectTrustImageId = await imageId(defectTrustTag);
+    await assertBuiltFrom(defectTrustImageId, defectConsumerId, 'Defect trust image');
     const spikeBuildInputs = {
       registrationSha256: spikeRegistrationDigest,
       spikeDockerfileSha256: sha256(await readFile(path.join(repositoryRoot, 'docker-v0.3/Dockerfile.spike'))),
@@ -387,14 +411,24 @@ async function main() {
       clean: domainDigest('bug-dreamer/spike-contract/v1', { ...spikeBuildInputs, baseImageId: cleanTrustId }),
       defect: domainDigest('bug-dreamer/spike-contract/v1', { ...spikeBuildInputs, baseImageId: defectTrustImageId }),
     };
-    for (const [tag, base, key] of [[cleanSpikeTag, cleanTrustTag, spikeContractKeys.clean], [defectSpikeTag, defectTrustTag, spikeContractKeys.defect]]) {
+    const spikeImageIds = {};
+    for (const [name, tag, baseTag, baseImageId, key] of [
+      ['clean', cleanSpikeTag, cleanTrustTag, cleanTrustId, spikeContractKeys.clean],
+      ['defect', defectSpikeTag, defectTrustTag, defectTrustImageId, spikeContractKeys.defect],
+    ]) {
       await dockerBuild([
         '--tag', tag,
-        '--build-arg', `BASE_IMAGE=${base}`,
+        '--build-arg', `BASE_IMAGE=${baseTag}`,
+        '--build-arg', `BASE_IMAGE_ID=${baseImageId}`,
         '--build-arg', `SPIKE_CONTRACT_DIGEST=${key}`,
         '--file', path.join(spikeContext, 'docker-v0.3/Dockerfile.spike'),
         spikeContext,
       ]);
+      spikeImageIds[name] = await imageId(tag);
+      await assertBuiltFrom(spikeImageIds[name], baseImageId, `${name} spike image`);
+      const spikeLabels = JSON.parse(await inspectImage(spikeImageIds[name], '{{json .Config.Labels}}'));
+      if (spikeLabels['org.bug-dreamer.base-image-id'] !== baseImageId) throw new Error(`${name} spike image base label mismatch`);
+      if (spikeLabels['org.bug-dreamer.spike-contract-key'] !== key) throw new Error(`${name} spike image contract label mismatch`);
     }
 
     const seedBytes = await readFile(path.join(repositoryRoot, seedPath));
@@ -419,7 +453,7 @@ async function main() {
         seedSha256: sha256(baselineSeedBytes),
         specDigest: specDigest(baselineSpec, defectCatalog),
         planDigest: planDigest(baselinePlan, baselineSpec, defectCatalog),
-        run: await executeSpec(defectSpikeTag, baselineSpec, baselinePlan, defectCatalog, temporaryRoot, `baseline-${identityRuns.length}`),
+        run: await executeSpec(spikeImageIds.defect, baselineSpec, baselinePlan, defectCatalog, temporaryRoot, `baseline-${identityRuns.length}`),
       });
     }
     const baseline = {
@@ -456,15 +490,15 @@ async function main() {
       record.cleanPlanDigest = planDigest(cleanPlan, cleanSpec, cleanCatalog);
       record.defectSpecDigest = specDigest(defectSpec, defectCatalog);
       record.defectPlanDigest = planDigest(defectPlan, defectSpec, defectCatalog);
-      record.cleanRun = await executeSpec(cleanSpikeTag, cleanSpec, cleanPlan, cleanCatalog, temporaryRoot, `clean-${entry.operatorId.replaceAll(/[^a-z0-9]+/gu, '-')}`);
-      record.defectRun = await executeSpec(defectSpikeTag, defectSpec, defectPlan, defectCatalog, temporaryRoot, `defect-${entry.operatorId.replaceAll(/[^a-z0-9]+/gu, '-')}`);
+      record.cleanRun = await executeSpec(spikeImageIds.clean, cleanSpec, cleanPlan, cleanCatalog, temporaryRoot, `clean-${entry.operatorId.replaceAll(/[^a-z0-9]+/gu, '-')}`);
+      record.defectRun = await executeSpec(spikeImageIds.defect, defectSpec, defectPlan, defectCatalog, temporaryRoot, `defect-${entry.operatorId.replaceAll(/[^a-z0-9]+/gu, '-')}`);
       record.twoSided = record.defectRun.classification.execution.status === 'candidate-failure'
         && record.defectRun.classification.violationIdentity !== null
         && record.cleanRun.classification.execution.status === 'pass';
       if (record.twoSided) {
         const repeatRuns = [];
         for (let attempt = 0; attempt < 5; attempt += 1) {
-          repeatRuns.push(await executeSpec(defectSpikeTag, defectSpec, defectPlan, defectCatalog, temporaryRoot, `repeat-${attempt}`));
+          repeatRuns.push(await executeSpec(spikeImageIds.defect, defectSpec, defectPlan, defectCatalog, temporaryRoot, `repeat-${attempt}`));
         }
         const identities = repeatRuns.map((item) => JSON.stringify(item.classification.violationIdentity));
         record.repeatRuns = repeatRuns;
@@ -504,14 +538,14 @@ async function main() {
       images: {
         cleanConsumer: { tag: contractEvidence.image.tag, imageId: contractEvidence.image.imageId },
         cleanTrust: { tag: cleanTrustTag, imageId: cleanTrustId },
-        cleanSpike: { tag: cleanSpikeTag, imageId: await imageId(cleanSpikeTag) },
+        cleanSpike: { tag: cleanSpikeTag, imageId: spikeImageIds.clean },
         defectConsumer: { tag: defectConsumerTag, imageId: defectConsumerId },
-        defectTrust: { tag: defectTrustTag, imageId: await imageId(defectTrustTag) },
-        defectSpike: { tag: defectSpikeTag, imageId: await imageId(defectSpikeTag) },
+        defectTrust: { tag: defectTrustTag, imageId: defectTrustImageId },
+        defectSpike: { tag: defectSpikeTag, imageId: spikeImageIds.defect },
       },
       defectConsumerLockfile: {
         sha256: sha256(lockfileRun.stdout),
-        changedIntegrityLines,
+        changedIntegrity,
       },
       defectBuildInputs,
       defectEvaluationContractKey,

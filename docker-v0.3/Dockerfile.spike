@@ -2,8 +2,10 @@ ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
 ARG SPIKE_CONTRACT_DIGEST
+ARG BASE_IMAGE_ID
 
 LABEL org.bug-dreamer.spike-contract-key=$SPIKE_CONTRACT_DIGEST
+LABEL org.bug-dreamer.base-image-id=$BASE_IMAGE_ID
 
 USER root
 

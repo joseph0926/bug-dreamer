@@ -9,6 +9,7 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 const registrationPath = path.join(repositoryRoot, 'registrations/v0.3/packages.json');
 const consumerLockfilePath = path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml');
 const evidencePath = path.join(repositoryRoot, 'evidence/v0.3/phase1-contracts.json');
+const auditPath = path.join(repositoryRoot, 'history/v0.3-public-boundary.json');
 const prepareScriptPath = path.join(repositoryRoot, 'scripts/prepare-v03-contracts.mjs');
 
 function sha256(value) {
@@ -129,6 +130,8 @@ async function main() {
 
     const inspection = await run('docker', ['image', 'inspect', imageTag, '--format', '{{.Id}}']);
     if (inspection.exitCode !== 0) throw new Error(inspection.stderr.trim());
+    const imageId = inspection.stdout.trim();
+    if (!/^sha256:[0-9a-f]{64}$/.test(imageId)) throw new Error('Phase 1 consumer image ID is invalid');
     const dockerRunArgs = [
       'run',
       '--rm',
@@ -147,7 +150,7 @@ async function main() {
       '1',
       '--tmpfs',
       '/tmp:rw,noexec,nosuid,size=64m',
-      imageTag,
+      imageId,
     ];
     const execution = await run('docker', dockerRunArgs);
     process.stderr.write(execution.stderr);
@@ -165,7 +168,7 @@ async function main() {
       sourceManifests,
       image: {
         tag: imageTag,
-        imageId: inspection.stdout.trim(),
+        imageId,
         baseImage: registration.baseImage,
       },
       buildInputs: {
@@ -178,7 +181,7 @@ async function main() {
         consumerLockfileSha256: sha256(await readFile(consumerLockfilePath)),
       },
       isolation: {
-        dockerRunArgs: dockerRunArgs.map((argument) => argument === imageTag ? '<image>' : argument),
+        dockerRunArgs: dockerRunArgs.map((argument) => argument === imageId ? '<image>' : argument),
         network: 'none',
         readOnlyRoot: true,
         capabilities: 'none',
@@ -191,7 +194,12 @@ async function main() {
       probe,
     };
     await mkdir(path.dirname(evidencePath), { recursive: true });
-    await writeFile(evidencePath, `${JSON.stringify(receipt, null, 2)}\n`);
+    const evidenceBytes = Buffer.from(`${JSON.stringify(receipt, null, 2)}\n`);
+    await writeFile(evidencePath, evidenceBytes);
+    const audit = JSON.parse(await readFile(auditPath, 'utf8'));
+    if (audit.evidence.path !== path.relative(repositoryRoot, evidencePath)) throw new Error('Public boundary audit evidence path changed');
+    audit.evidence.sha256 = sha256(evidenceBytes);
+    await writeFile(auditPath, `${JSON.stringify(audit, null, 2)}\n`);
     process.stdout.write(`${JSON.stringify({ status: 'ok', evidence: path.relative(repositoryRoot, evidencePath), image: imageTag })}\n`);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });

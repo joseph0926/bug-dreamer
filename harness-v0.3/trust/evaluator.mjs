@@ -11,7 +11,7 @@ import {
 } from '/consumer/evaluator/src/v03-spec.mjs';
 import { RESULT_DIGEST_DOMAIN, RESULT_SCHEMA_VERSION } from '/consumer/evaluator/src/v03-trust.mjs';
 import { canonicalJson, domainDigest, parseJsonBytes } from '/consumer/evaluator/src/v03-wire.mjs';
-import { createVirtualClock } from '/consumer/evaluator/virtual-clock.mjs';
+import { createVirtualClock, isEvaluatorInfrastructureError } from '/consumer/evaluator/virtual-clock.mjs';
 
 export const resultPath = '/result/result.json';
 
@@ -40,6 +40,7 @@ function executeRun(action, tx, observations, gatePromise) {
       const value = options === undefined ? await tx.run(step) : await tx.run(step, options);
       observations.set(action.instanceId, { kind: 'returned-value', fields: { value } });
     } catch (error) {
+      if (isEvaluatorInfrastructureError(error)) throw error;
       observations.set(action.instanceId, { kind: 'thrown-error', fields: { name: error.name, message: error.message } });
     }
   })();
@@ -47,9 +48,10 @@ function executeRun(action, tx, observations, gatePromise) {
 
 async function settleRun(pendingPromise, clock, label) {
   let settled = false;
-  pendingPromise.then(() => {
+  const markSettled = () => {
     settled = true;
-  });
+  };
+  pendingPromise.then(markSettled, markSettled);
   for (;;) {
     for (let hop = 0; hop < 8 && !settled; hop += 1) await clock.drainMicrotasks();
     if (settled) return pendingPromise;
@@ -58,7 +60,7 @@ async function settleRun(pendingPromise, clock, label) {
   }
 }
 
-async function interpret(plan, clock) {
+export async function interpret(plan, clock) {
   const bindings = new Map();
   const observations = new Map();
   const gatedIds = new Set(plan.scheduleControls
@@ -111,7 +113,9 @@ async function interpret(plan, clock) {
           release = resolve;
         });
         gates.set(action.instanceId, { release });
-        pendingRuns.set(action.instanceId, executeRun(action, tx, observations, gatePromise));
+        const pendingRun = executeRun(action, tx, observations, gatePromise);
+        pendingRun.catch(() => {});
+        pendingRuns.set(action.instanceId, pendingRun);
         launched.add(action.instanceId);
         await releaseReady();
       } else {
@@ -127,6 +131,7 @@ async function interpret(plan, clock) {
         await tx.commit();
         observations.set(action.instanceId, { kind: 'commit-result', fields: { status: 'resolved' } });
       } catch (error) {
+        if (isEvaluatorInfrastructureError(error)) throw error;
         observations.set(action.instanceId, { kind: 'commit-result', fields: { status: 'rejected', name: error.name } });
       }
       await applyAdvances(action.instanceId);

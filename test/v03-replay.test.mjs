@@ -57,7 +57,7 @@ test('accepts the recorded spike evidence through the mirrored repository root',
       adoptedOperatorId: 'time.advance/v1',
       armCount: 3,
       baselineRunCount: 6,
-      evaluatedSpecs: { baseline: 7, operator: 11 },
+      evaluatedSpecs: { baseline: 7, operator: 10 },
       defectId: 'tx-total-timeout-resets-per-step',
     });
   });
@@ -104,6 +104,37 @@ test('rejects a run that reports both a timeout and a truncation', async () => {
     const { run } = evidence.baseline.identityRuns[2];
     run.timedOut = true;
     run.outputTruncated = true;
+  });
+});
+
+test('rejects a defect consumer lockfile digest that does not match the reconstruction', async () => {
+  await rejectsReplay((evidence) => {
+    evidence.defectConsumerLockfile.sha256 = 'f'.repeat(64);
+  });
+});
+
+test('rejects a defect consumer lockfile change outside the target tarball entry', async () => {
+  const registeredLockfile = await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), 'utf8');
+  const lines = registeredLockfile.split('\n');
+  let thirdPartyLine = 0;
+  let header = '';
+  for (const [index, line] of lines.entries()) {
+    if (/^ {2}\S/u.test(line)) header = line;
+    else if (/^ {4}resolution: \{integrity: sha512-/u.test(line) && !header.includes('@firsttx/')) {
+      thirdPartyLine = index + 1;
+      break;
+    }
+  }
+  assert.ok(thirdPartyLine > 0, 'expected a third-party resolution line in the registered lockfile');
+  await rejectsReplay((evidence) => {
+    evidence.defectConsumerLockfile.changedIntegrity.line = thirdPartyLine;
+  });
+});
+
+test('rejects a tampered defect integrity value', async () => {
+  await rejectsReplay((evidence) => {
+    const { changedIntegrity } = evidence.defectConsumerLockfile;
+    changedIntegrity.defect = `sha512-${'A'.repeat(86)}==`;
   });
 });
 

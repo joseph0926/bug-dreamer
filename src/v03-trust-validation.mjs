@@ -165,7 +165,8 @@ export async function validateTrustContracts(repositoryRoot) {
   for (const definition of CASE_DEFINITIONS) {
     const recorded = evidence.cases.find((item) => item.id === definition.id);
     assert(recorded !== undefined, `Trust evidence case missing: ${definition.id}`);
-    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
+    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'cleanupError', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
+    assert(recorded.cleanupError === null, `Trust case container cleanup failed: ${definition.id}`);
     assert(recorded.seedPath === definition.seed && recorded.mode === definition.mode, `Trust case input changed: ${definition.id}`);
     assert(JSON.stringify(recorded.command) === JSON.stringify(definition.command), `Trust case entrypoint changed: ${definition.id}`);
     assert(recorded.timedOut === (definition.id === 'timeout'), `Trust case timeout flag changed: ${definition.id}`);

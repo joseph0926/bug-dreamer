@@ -163,3 +163,105 @@ test('rejects actor and action counts above the v1 limits', async () => {
   actions.actions = Array.from({ length: 65 }, () => structuredClone(seed.actions[0]));
   assert.throws(() => validateNightmareSeed(actions, catalog), /action count/u);
 });
+
+function seedBytes(actions) {
+  return Buffer.from(JSON.stringify({
+    schemaVersion: 'bug-dreamer/nightmare-seed/v1',
+    catalogVersion: 'firsttx-phase2-f624b09-v1',
+    id: 'tx-total-timeout-causal',
+    invariantId: 'tx.total-timeout',
+    actors: ['checkout'],
+    actions,
+  }));
+}
+
+function startAction(transactionId, bindName, timeoutMs) {
+  return {
+    actionId: 'tx.start',
+    actor: 'checkout',
+    arguments: { transactionId, timeoutMs, transition: false },
+    bind: { name: bindName, type: 'tx-handle' },
+  };
+}
+
+function runAction(bindName) {
+  return {
+    actionId: 'tx.run',
+    actor: 'checkout',
+    arguments: {
+      tx: { $binding: bindName },
+      outcome: 'return',
+      value: null,
+      errorName: null,
+      errorMessage: null,
+      log: null,
+      retry: null,
+    },
+    bind: null,
+  };
+}
+
+function advanceRequest(...entries) {
+  return {
+    schemaVersion: 'bug-dreamer/transformation-request/v1',
+    transformations: entries.map(([afterInstanceId, advanceMs]) => ({
+      operatorId: 'time.advance/v1',
+      arguments: { afterInstanceId, advanceMs },
+    })),
+  };
+}
+
+test('counts only virtual-time advances on the causal prefix of the final tx.run', async () => {
+  const { loadPhase3Catalog, buildTransformedSpec } = await import('../src/v03-operators.mjs');
+  const { catalog, operatorCatalog } = await loadPhase3Catalog(repositoryRoot);
+  const build = (seed, request) => buildTransformedSpec(seed, request, catalog, operatorCatalog);
+  const inapplicable = /total virtual-time advance must exceed the transaction timeout/u;
+
+  const single = parseNightmareSeed(seedBytes([
+    startAction('causal-single', 'tx', 5000),
+    runAction('tx'),
+    runAction('tx'),
+  ]), catalog);
+
+  assert.throws(() => build(single, advanceRequest(['action-0003', 5001])), inapplicable);
+  assert.throws(() => build(single, advanceRequest(['action-0002', 3000], ['action-0003', 5000])), inapplicable);
+  assert.equal(build(single, advanceRequest(['action-0002', 6000], ['action-0003', 99999])).scheduleControls.length, 2);
+  assert.equal(build(single, advanceRequest(['action-0001', 6000])).scheduleControls.length, 1);
+
+  const twoTransactions = parseNightmareSeed(seedBytes([
+    startAction('causal-other', 'other', 5000),
+    runAction('other'),
+    startAction('causal-final', 'tx', 5000),
+    runAction('tx'),
+  ]), catalog);
+
+  assert.throws(() => build(twoTransactions, advanceRequest(['action-0001', 6000])), inapplicable);
+  assert.throws(() => build(twoTransactions, advanceRequest(['action-0002', 6000])), inapplicable);
+  assert.equal(build(twoTransactions, advanceRequest(['action-0003', 6000])).scheduleControls.length, 1);
+
+  const releaseOnly = {
+    schemaVersion: 'bug-dreamer/transformation-request/v1',
+    transformations: [
+      { operatorId: 'schedule.release-order/v1', arguments: { instanceIds: ['action-0002', 'action-0003'] } },
+    ],
+  };
+  assert.throws(() => build(single, releaseOnly), inapplicable);
+
+  const gatedAdvance = {
+    schemaVersion: 'bug-dreamer/transformation-request/v1',
+    transformations: [
+      { operatorId: 'schedule.release-order/v1', arguments: { instanceIds: ['action-0002', 'action-0003'] } },
+      { operatorId: 'time.advance/v1', arguments: { afterInstanceId: 'action-0002', advanceMs: 6000 } },
+    ],
+  };
+  assert.throws(() => build(single, gatedAdvance), inapplicable);
+});
+
+test('keeps the registered time-advance request applicable to the total-timeout invariant', async () => {
+  const { loadPhase3Catalog, buildTransformedSpec } = await import('../src/v03-operators.mjs');
+  const { catalog, operatorCatalog } = await loadPhase3Catalog(repositoryRoot);
+  const seed = await readSeed('contracts/v0.3/seeds/total-timeout.json', catalog);
+  const request = await readJson('contracts/v0.3/requests/time-advance.json');
+  const spec = buildTransformedSpec(seed, request, catalog, operatorCatalog);
+  assert.deepEqual(spec.scheduleControls, [{ kind: 'virtual-time-advance', afterInstanceId: 'action-0002', advanceMs: 6000 }]);
+});

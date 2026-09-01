@@ -1,17 +1,20 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
+import { inspectTarballMembers, parseTarListing } from '../harness-v0.3/probe-contracts.mjs';
 import {
   ContractValidationError,
   validateContracts,
   validateEvidence,
   validateFirstPartyLockfile,
+  validateForbiddenTokenReceipt,
   validatePublicBoundaryAudit,
   validateRegistration,
 } from '../src/v03-contracts.mjs';
@@ -184,4 +187,108 @@ test('contracts CLI succeeds and arbitrary options remain invalid usage', async 
     execFileAsync(process.execPath, ['scripts/validate-v03.mjs', 'contracts', '--target', 'elsewhere'], { cwd: repositoryRoot }),
     (error) => error.code === 2 && error.stderr.includes('Usage:'),
   );
+});
+
+function consumerReceipt(forbiddenTokens) {
+  return { forbiddenTokens, forbiddenTokensAbsent: forbiddenTokens.absent };
+}
+
+test('accepts a forbidden token receipt that inspected members and found no offender', () => {
+  const receipt = consumerReceipt({ absent: true, checkedMembers: 42, offenders: [] });
+  assert.deepEqual(validateForbiddenTokenReceipt(receipt).offenders, []);
+});
+
+test('rejects a forbidden token receipt that records an offender', () => {
+  const receipt = consumerReceipt({
+    absent: false,
+    checkedMembers: 42,
+    offenders: [{ artifact: 'tx', member: 'package/dist/index.js.map', token: 'sourcesContent' }],
+  });
+  assert.throws(() => validateForbiddenTokenReceipt(receipt), /Consumer forbidden token check failed/);
+});
+
+test('rejects a forbidden token verdict that contradicts its offenders', () => {
+  const receipt = consumerReceipt({
+    absent: true,
+    checkedMembers: 42,
+    offenders: [{ artifact: 'tx', member: 'package/src/transaction.ts', token: 'typescript-source' }],
+  });
+  receipt.forbiddenTokensAbsent = true;
+  assert.throws(() => validateForbiddenTokenReceipt(receipt), /not derived from its offenders/);
+});
+
+test('rejects a forbidden token receipt that inspected no member', () => {
+  const receipt = consumerReceipt({ absent: true, checkedMembers: 0, offenders: [] });
+  assert.throws(() => validateForbiddenTokenReceipt(receipt), /inspected no packed member/);
+});
+
+test('reads the member type and name from either tar listing format', () => {
+  const gnu = '-rw-r--r-- 0/0            1234 2026-01-01 00:00 package/index.js\n'
+    + 'drwxr-xr-x 0/0               0 2026-01-01 00:00 package/dist/\n'
+    + 'lrwxrwxrwx 0/0               0 2026-01-01 00:00 package/link.js -> /etc/passwd\n';
+  const bsd = '-rw-r--r--  0 user   staff      1234 Jan  1 00:00 package/index.js\n';
+  assert.deepEqual(parseTarListing(gnu), [
+    { type: '-', name: 'package/index.js' },
+    { type: 'd', name: 'package/dist/' },
+    { type: 'l', name: 'package/link.js' },
+  ]);
+  assert.deepEqual(parseTarListing(bsd), [{ type: '-', name: 'package/index.js' }]);
+  assert.deepEqual(parseTarListing(''), []);
+});
+
+async function packTarball(root, files, extraRoots = []) {
+  for (const [relativePath, content] of Object.entries(files)) {
+    const absolutePath = path.join(root, relativePath);
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, content);
+  }
+  const tarballPath = path.join(root, 'artifact.tgz');
+  await execFileAsync('tar', ['-czf', tarballPath, '-C', root, 'package', ...extraRoots], {
+    env: { ...process.env, COPYFILE_DISABLE: '1' },
+  });
+  return tarballPath;
+}
+
+async function withTemporaryRoot(body) {
+  const root = await mkdtemp(path.join(tmpdir(), 'bug-dreamer-tarball-'));
+  try {
+    return await body(root);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+test('accepts a packed tarball whose members are contained regular files', async () => {
+  const scan = await withTemporaryRoot(async (root) => {
+    const tarballPath = await packTarball(root, {
+      'package/package.json': '{"name":"@firsttx/tx"}\n',
+      'package/dist/index.js': 'export const run = () => 1;\n',
+      'package/dist/index.d.ts': 'export declare const run: () => number;\n',
+      'package/README.md': '# tx\n',
+    });
+    return inspectTarballMembers({ artifactId: 'tx', tarballPath, workspacePath: 'packages/tx' });
+  });
+  assert.deepEqual(scan.offenders, []);
+  assert.ok(scan.checkedMembers >= 4);
+});
+
+test('rejects packed members that leak build paths, sources, or link entries', async () => {
+  const offenders = await withTemporaryRoot(async (root) => {
+    await mkdir(path.join(root, 'package/dist'), { recursive: true });
+    await symlink('/etc/passwd', path.join(root, 'package/dist/link.js'));
+    const tarballPath = await packTarball(root, {
+      'package/package.json': '{"name":"@firsttx/tx"}\n',
+      'package/dist/index.js.map': '{"sources":["/target/packages/tx/src/transaction.ts"],"sourcesContent":["export {}"]}\n',
+      'package/src/transaction.ts': 'export const run = () => 1;\n',
+      'outside/notes.md': 'not part of the package\n',
+    }, ['outside']);
+    const scan = await inspectTarballMembers({ artifactId: 'tx', tarballPath, workspacePath: 'packages/tx' });
+    return scan.offenders;
+  });
+  const tokensFor = (member) => offenders.filter((item) => item.member.startsWith(member)).map((item) => item.token).sort();
+  assert.deepEqual(tokensFor('package/dist/index.js.map'), ['/target/', '/target/packages/tx/']);
+  assert.deepEqual(tokensFor('package/src/transaction.ts'), ['typescript-source']);
+  assert.deepEqual(tokensFor('package/dist/link.js'), ['member-type:l']);
+  assert.ok(tokensFor('outside/').length > 0 && tokensFor('outside/').every((token) => token === 'outside-package'));
+  assert.ok(offenders.every((item) => item.artifact === 'tx'));
 });

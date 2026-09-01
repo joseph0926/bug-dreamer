@@ -12,11 +12,11 @@
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "phase1Evidence": {
     "path": "evidence/v0.3/phase1-contracts.json",
-    "sha256": "c0fe4336066a563433b5131e753da803f3d20767ed371cfa7ff44b137d587949"
+    "sha256": "8107cb1152d872ef135411e73f54f518a604fa05ca91a58a9cec1b011dfec473"
   },
   "phase2TrustEvidence": {
     "path": "evidence/v0.3/phase2-trust.json",
-    "sha256": "35ca792e75053ef459e7d01a47e04e33eac4fd3578714b8f1439d6fa85f5249b"
+    "sha256": "edeb7120a9e687ce92ab8bd521e412c9f6bbbf877a67cba469d2d8b57cddbf3a"
   },
   "operatorCatalog": {
     "path": "registrations/v0.3/phase3-operators.json",
@@ -43,37 +43,40 @@
   "images": {
     "cleanConsumer": {
       "tag": "bug-dreamer-v03-contracts:f624b09f148c",
-      "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5"
+      "imageId": "sha256:219a3a0a3d321057487042fa1a5d08cb87d5e5cbb70b01b585e4eb194d47ffe8"
     },
     "cleanTrust": {
       "tag": "bug-dreamer-v03-trust:f624b09f148c",
-      "imageId": "sha256:a16c10982c1516ea3dcf7ca216c9f3b303d7f8977718254f38143baca1f8fc96"
+      "imageId": "sha256:d1b99a24a4549edd4ab0b4beb9e1b548e38a6e8ebaf380f620bb8aa730ef04ba"
     },
     "cleanSpike": {
       "tag": "bug-dreamer-v03-spike:f624b09f148c-clean",
-      "imageId": "sha256:70d06f08b38e549834dfd87ad9258e2c820618b22cb0ace29ac9af0c21441e65"
+      "imageId": "sha256:345124bb77b8dd06bce385ff3138e3a522450ccd4c577af1091b9dd8eeb44247"
     },
     "defectConsumer": {
       "tag": "bug-dreamer-v03-spike-consumer:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:8978c808b3165b8ee47fe9588ead983638f1c476be11f7bd9fc9a50b3d0dac8f"
+      "imageId": "sha256:6f2e3f3582f2f57759618cfcbdd5bdbd8242ee638325ca90af3957be81ab6f41"
     },
     "defectTrust": {
       "tag": "bug-dreamer-v03-spike-trust:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:6f753008aac549b5c86af80011712e8ef30d79553c83117252a91f04af03e6ca"
+      "imageId": "sha256:daafa44beaa4918d40afa03100e15cfca39dfb33a1450069b64dadbfc2828414"
     },
     "defectSpike": {
       "tag": "bug-dreamer-v03-spike:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:5721085bee48bb64f1516cad9d9733a9635c5407162d4951ab869ffb7f128fd9"
+      "imageId": "sha256:6c06e6a562bd339f0eecf309a74c7403ca90d6f38a12c04b1deb3803f0425657"
     }
   },
   "defectConsumerLockfile": {
     "sha256": "278d35a4654072359745f2c14c03127273a637a03ea0740d784419c8e90c2e65",
-    "changedIntegrityLines": [
-      388
-    ]
+    "changedIntegrity": {
+      "line": 388,
+      "packageKey": "@firsttx/tx@file:../artifacts/tx.tgz",
+      "registered": "sha512-Z2lE9qBEbFzUrGmuyiZmt0DdHPo10t6ljfqCv6IoLWVqr21FtD6ErU338hFb9dZUYaFaF5SW5pNJokFKNqeiOA==",
+      "defect": "sha512-9RnA5VUyR90RXiSTYg6pBDZD9vjzJ6pjJ9lBjxm15BULg5aOrcZRylIzKyaNfdnH1MJAxshGULTJmq8HDeZMSA=="
+    }
   },
   "defectBuildInputs": {
-    "contractImageId": "sha256:8978c808b3165b8ee47fe9588ead983638f1c476be11f7bd9fc9a50b3d0dac8f",
+    "contractImageId": "sha256:6f2e3f3582f2f57759618cfcbdd5bdbd8242ee638325ca90af3957be81ab6f41",
     "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
     "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
     "defectId": "tx-total-timeout-resets-per-step",
@@ -86,26 +89,26 @@
       "harness-v0.3/trust/main.mjs",
       "harness-v0.3/trust/virtual-clock.mjs"
     ],
-    "harnessSha256": "f2d2999764244d1f3198391b0eea05ccf5648120ba011e96f19578ea77d72738",
+    "harnessSha256": "1a21611ac102494be49d4bf9bf2285661fa67638b53955417e964aa15834e548",
     "sourceFiles": [
       "src/v03-wire.mjs",
       "src/v03-spec.mjs",
       "src/v03-trust.mjs"
     ],
-    "sourceSha256": "9f38b464f790ef4bfe05b82ba5aba67ddd673e2f6744e0b1332887b6bb7dfa74",
-    "prepareScriptSha256": "064d547662c292b83ab8dadd21b07cc08e73bb4e91d7b38b0f366c75d5a9ff03",
+    "sourceSha256": "98f765199147cb5b9288dd98d4ede8cf1e6684ebfe8f2337df48e003008b7b5a",
+    "prepareScriptSha256": "a19b59257eaf8374ff35d1414dd4e64e14319f2136bd90b888878754e5aeb645",
     "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
   },
-  "defectEvaluationContractKey": "450ed5ca01a51374ab8aa3f5fdb8ee7c92602779999075a85a1dc5b8240cc8b7",
+  "defectEvaluationContractKey": "501943b30cbee07c254b833e9b48865c3cb68a00bae87c57b6afd7cfa9bd0f3f",
   "spikeBuildInputs": {
     "registrationSha256": "1960d38ee4012068a65055efd14fe872323fffaa818f8d3a639a6a383c85b29d",
-    "spikeDockerfileSha256": "033e3036827996c67268a7fdfcbc6f758adf7463514094045c9d20ac6450b808",
+    "spikeDockerfileSha256": "8d46cc958d9cd1ebb7a836dc669960b556c1112aa557a7ab74f5b729ceb54ebd",
     "operatorModuleSha256": "1c7769144d69e59a6fbfc11393d98458ccde36d46caee0332101ec00de840596",
     "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
   },
   "spikeContractKeys": {
-    "clean": "01314adba6d164f3a5afcaa8b3c6b062932804ffe2fb7ef6e6ebb82418d0d0a8",
-    "defect": "e18dda41c9715c2e19d9fb3e3b24f4fd33a8949dcd7b248dafa137c7fbb72c13"
+    "clean": "c9f707207b6d05922a0c9e75d01a3e0108692045211dca1748cb4b0a9d2b9ac1",
+    "defect": "7a66982f2a8af5baccdc65bf59896e4d53dac32213b31eb77f2fbcb8d82c5e34"
   },
   "executionBudget": {
     "evaluationTimeoutMs": 30000,
@@ -139,6 +142,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -170,6 +174,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -209,6 +214,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -240,6 +246,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -279,6 +286,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -310,6 +318,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -356,6 +365,7 @@
         "stderrBytes": 0,
         "timedOut": false,
         "outputTruncated": false,
+        "cleanupError": null,
         "resultEntries": [
           {
             "name": "result.json",
@@ -381,6 +391,7 @@
         "stderrBytes": 0,
         "timedOut": false,
         "outputTruncated": false,
+        "cleanupError": null,
         "resultEntries": [
           {
             "name": "result.json",
@@ -415,6 +426,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -447,6 +459,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -479,6 +492,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -511,6 +525,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -543,6 +558,7 @@
           "stderrBytes": 0,
           "timedOut": false,
           "outputTruncated": false,
+          "cleanupError": null,
           "resultEntries": [
             {
               "name": "result.json",
@@ -574,77 +590,10 @@
       "operatorId": "schedule.release-order/v1",
       "requestPath": "contracts/v0.3/requests/spike-release-order.json",
       "requestSha256": "316e610b5cce2a0dde51cf9ececb7ca12b044c3cf1ca976260d967bd0677fe6f",
-      "cleanSpecDigest": "d30f76da1c61c88092928f86b72fb391d666cf627caa5181eacae52c7795c81e",
-      "cleanPlanDigest": "ff31e5f287ab8b402756a21c2d9fae17c17ce150b82dd7aa8fdf5d1b7cf9bdd0",
-      "defectSpecDigest": "a12ec1e01656d6dad12d6e4e63d0d89a94b51e37e1f30f636b0dedfeb42d7746",
-      "defectPlanDigest": "92946b117f4a99cd06fe815ecde5f2c35aa7525d4d604ed00ad5bacae7e23eaf",
-      "cleanRun": {
-        "exitCode": 0,
-        "stdout": "",
-        "stderr": "",
-        "stdoutBytes": 0,
-        "stderrBytes": 0,
-        "timedOut": false,
-        "outputTruncated": false,
-        "resultEntries": [
-          {
-            "name": "result.json",
-            "type": "regular",
-            "size": 1039
-          }
-        ],
-        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"d30f76da1c61c88092928f86b72fb391d666cf627caa5181eacae52c7795c81e\",\n  \"planDigest\": \"ff31e5f287ab8b402756a21c2d9fae17c17ce150b82dd7aa8fdf5d1b7cf9bdd0\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is running\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is running\"\n    },\n    \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\"\n  },\n  \"payloadDigest\": \"6ee1c26d531151432740fee8d6c2ac319b45be98cca8130bffb17c60b669dfa8\"\n}\n",
-        "classification": {
-          "evaluator": "evaluated",
-          "execution": {
-            "status": "candidate-failure"
-          },
-          "trustedResultDigest": "6ee1c26d531151432740fee8d6c2ac319b45be98cca8130bffb17c60b669dfa8",
-          "violationIdentity": {
-            "invariantRegistrationId": "tx.total-timeout",
-            "normalizedObservedKind": "thrown-error",
-            "normalizedObservedFields": {
-              "name": "TransactionStateError",
-              "message": "Cannot add step: transaction is running"
-            },
-            "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
-          }
-        }
-      },
-      "defectRun": {
-        "exitCode": 0,
-        "stdout": "",
-        "stderr": "",
-        "stdoutBytes": 0,
-        "stderrBytes": 0,
-        "timedOut": false,
-        "outputTruncated": false,
-        "resultEntries": [
-          {
-            "name": "result.json",
-            "type": "regular",
-            "size": 1039
-          }
-        ],
-        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"a12ec1e01656d6dad12d6e4e63d0d89a94b51e37e1f30f636b0dedfeb42d7746\",\n  \"planDigest\": \"92946b117f4a99cd06fe815ecde5f2c35aa7525d4d604ed00ad5bacae7e23eaf\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionStateError\",\n    \"message\": \"Cannot add step: transaction is running\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"thrown-error\",\n    \"normalizedObservedFields\": {\n      \"name\": \"TransactionStateError\",\n      \"message\": \"Cannot add step: transaction is running\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"3656c74477005c9b49edeb282e8503b0c2d704d85846c27b812eed7b0e87e4e0\"\n}\n",
-        "classification": {
-          "evaluator": "evaluated",
-          "execution": {
-            "status": "candidate-failure"
-          },
-          "trustedResultDigest": "3656c74477005c9b49edeb282e8503b0c2d704d85846c27b812eed7b0e87e4e0",
-          "violationIdentity": {
-            "invariantRegistrationId": "tx.total-timeout",
-            "normalizedObservedKind": "thrown-error",
-            "normalizedObservedFields": {
-              "name": "TransactionStateError",
-              "message": "Cannot add step: transaction is running"
-            },
-            "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
-          }
-        }
-      },
-      "twoSided": false
+      "rejection": {
+        "kind": "rejected-policy",
+        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+      }
     },
     {
       "operatorId": "fault.step-outcome/v1",
@@ -662,6 +611,7 @@
         "stderrBytes": 0,
         "timedOut": false,
         "outputTruncated": false,
+        "cleanupError": null,
         "resultEntries": [
           {
             "name": "result.json",
@@ -695,6 +645,7 @@
         "stderrBytes": 0,
         "timedOut": false,
         "outputTruncated": false,
+        "cleanupError": null,
         "resultEntries": [
           {
             "name": "result.json",
@@ -725,7 +676,7 @@
   ],
   "evaluatedSpecs": {
     "baseline": 7,
-    "operator": 11
+    "operator": 10
   },
   "verdict": "adopt",
   "adoptedOperatorId": "time.advance/v1"

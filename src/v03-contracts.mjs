@@ -60,14 +60,14 @@ function validSha(value) {
   return typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
 }
 
-function lockfileSection(source, start, end) {
+export function lockfileSection(source, start, end) {
   const startIndex = source.indexOf(`${start}\n`);
   const endIndex = end === undefined ? source.length : source.indexOf(`${end}\n`, startIndex + start.length);
   assert(startIndex >= 0 && endIndex >= 0, `Lockfile section missing: ${start}`);
   return source.slice(startIndex, endIndex);
 }
 
-function firstPartyEntryBlocks(source) {
+export function firstPartyEntryBlocks(source) {
   const matches = [...source.matchAll(/^  '(@firsttx\/[^']+)':(?: \{\})?\n/gm)];
   return matches.map((match, index) => ({
     key: match[1],
@@ -117,6 +117,20 @@ export function validateFirstPartyLockfile(lockfile, registration) {
     }
   }
   return true;
+}
+
+export function validateForbiddenTokenReceipt(consumer) {
+  const forbiddenTokens = consumer.forbiddenTokens;
+  strictKeys(forbiddenTokens, ['absent', 'checkedMembers', 'offenders'], 'Consumer forbidden token receipt');
+  assert(Number.isInteger(forbiddenTokens.checkedMembers) && forbiddenTokens.checkedMembers > 0, 'Consumer forbidden token scan inspected no packed member');
+  assert(Array.isArray(forbiddenTokens.offenders), 'Consumer forbidden token offenders must be an array');
+  for (const offender of forbiddenTokens.offenders) {
+    strictKeys(offender, ['artifact', 'member', 'token'], 'Consumer forbidden token offender');
+  }
+  assert(forbiddenTokens.absent === (forbiddenTokens.offenders.length === 0), 'Consumer forbidden token verdict is not derived from its offenders');
+  assert(consumer.forbiddenTokensAbsent === forbiddenTokens.absent, 'Consumer forbidden token summary disagrees with the scan');
+  assert(forbiddenTokens.offenders.length === 0, `Consumer forbidden token check failed: ${JSON.stringify(forbiddenTokens.offenders.slice(0, 4))}`);
+  return forbiddenTokens;
 }
 
 export function validateRegistration(registration) {
@@ -272,7 +286,7 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
     const actualSpecifiers = Object.keys(artifact.exports).sort().map((key) => key === '.' ? packageRegistration.packageName : `${packageRegistration.packageName}/${key.slice(2)}`);
     assert(JSON.stringify(actualSpecifiers) === JSON.stringify([...packageRegistration.allowedImportSpecifiers].sort()), `Artifact exports differ from registration: ${packageRegistration.id}`);
   }
-  strictKeys(probe.consumer, ['packageJsonSha256', 'packageJson', 'workspacePolicySha256', 'workspacePolicy', 'lockfileSha256', 'lockfile', 'forbiddenTokensAbsent', 'packageRealpaths', 'dependencyRealpaths'], 'Consumer receipt');
+  strictKeys(probe.consumer, ['packageJsonSha256', 'packageJson', 'workspacePolicySha256', 'workspacePolicy', 'lockfileSha256', 'lockfile', 'forbiddenTokens', 'forbiddenTokensAbsent', 'packageRealpaths', 'dependencyRealpaths'], 'Consumer receipt');
   assert(validSha(probe.consumer.packageJsonSha256) && validSha(probe.consumer.workspacePolicySha256) && validSha(probe.consumer.lockfileSha256), 'Consumer digest is invalid');
   assert(probe.consumer.packageJsonSha256 === sha256(`${JSON.stringify(probe.consumer.packageJson, null, 2)}\n`), 'Consumer package.json digest mismatch');
   assert(probe.consumer.workspacePolicySha256 === sha256(probe.consumer.workspacePolicy), 'Consumer workspace policy digest mismatch');
@@ -289,7 +303,7 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
     assert(probe.consumer.packageJson.dependencies[packageRegistration.packageName] === `file:/artifacts/${packageRegistration.id}.tgz`, `Consumer package is not tarball-pinned: ${packageRegistration.id}`);
     assert(probe.consumer.lockfile.includes(`${packageRegistration.id}.tgz`), `Consumer lockfile omits tarball: ${packageRegistration.id}`);
   }
-  assert(probe.consumer.forbiddenTokensAbsent === true, 'Consumer forbidden token check failed');
+  validateForbiddenTokenReceipt(probe.consumer);
   assert(Array.isArray(probe.consumer.packageRealpaths) && probe.consumer.packageRealpaths.length === 4, 'Consumer realpaths are incomplete');
   for (const packageRegistration of registration.packages) {
     const item = probe.consumer.packageRealpaths.find((entry) => entry.packageName === packageRegistration.packageName);

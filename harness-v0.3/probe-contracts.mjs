@@ -93,6 +93,45 @@ async function inspectArtifact(packageRegistration) {
   };
 }
 
+export const TEXT_MEMBER_EXTENSIONS = ['.js', '.mjs', '.cjs', '.d.ts', '.map', '.json', '.md'];
+
+export function parseTarListing(listing) {
+  return listing.split('\n').filter((line) => line.trim().length > 0).map((line) => {
+    const [entry] = line.split(' -> ');
+    const fields = entry.trim().split(/\s+/u);
+    const name = fields.at(-1);
+    assert(/^[-dlbcpsD]/u.test(line) && fields.length >= 6 && name.length > 0, `Unreadable tar listing entry: ${line}`);
+    return { type: line[0], name };
+  });
+}
+
+export async function inspectTarballMembers({ artifactId, tarballPath, workspacePath }) {
+  const tokens = [...new Set(['/target/', `/target/${workspacePath}/`])];
+  const members = parseTarListing((await execFileAsync('tar', ['-tvzf', tarballPath])).stdout);
+  const offenders = [];
+  for (const member of members) {
+    if (member.type !== '-' && member.type !== 'd') {
+      offenders.push({ artifact: artifactId, member: member.name, token: `member-type:${member.type}` });
+      continue;
+    }
+    if (!member.name.startsWith('package/')) {
+      offenders.push({ artifact: artifactId, member: member.name, token: 'outside-package' });
+      continue;
+    }
+    if (member.type === 'd') continue;
+    if (member.name.endsWith('.ts') && !member.name.endsWith('.d.ts')) {
+      offenders.push({ artifact: artifactId, member: member.name, token: 'typescript-source' });
+      continue;
+    }
+    if (!TEXT_MEMBER_EXTENSIONS.some((extension) => member.name.endsWith(extension))) continue;
+    const { stdout } = await execFileAsync('tar', ['-xOf', tarballPath, member.name], { maxBuffer: 64 * 1024 * 1024 });
+    for (const token of tokens) {
+      if (stdout.includes(token)) offenders.push({ artifact: artifactId, member: member.name, token });
+    }
+  }
+  return { checkedMembers: members.length, offenders };
+}
+
 async function probeAllowedImport(packageRegistration, specifier) {
   const module = await import(specifier);
   const requiredExports = specifier === packageRegistration.packageName ? packageRegistration.requiredRuntimeExports : [];
@@ -176,20 +215,6 @@ async function nightmare07(startTransaction) {
   return { id: 'nightmare-07', moduleId: 'tx', status: 'executed', importSpecifier: '@firsttx/tx', actions: ['startTransaction', 'run'], observed: { calls, outcome } };
 }
 
-const registration = JSON.parse(await readFile('/registration/packages.json', 'utf8'));
-const lockfile = await readFile('/consumer/pnpm-lock.yaml', 'utf8');
-const workspacePolicy = await readFile('/consumer/pnpm-workspace.yaml', 'utf8');
-const packageJson = JSON.parse(await readFile('/consumer/package.json', 'utf8'));
-const processStatus = await readFile('/proc/self/status', 'utf8');
-const effectiveCapabilities = /^CapEff:\s+(\S+)$/m.exec(processStatus)?.[1];
-const noNewPrivileges = /^NoNewPrivs:\s+(\S+)$/m.exec(processStatus)?.[1];
-const assignedNetworkInterfaces = Object.keys(networkInterfaces()).sort();
-const [pidsMax, memoryMax, cpuMax] = await Promise.all([
-  readFile('/sys/fs/cgroup/pids.max', 'utf8').then((value) => value.trim()),
-  readFile('/sys/fs/cgroup/memory.max', 'utf8').then((value) => value.trim()),
-  readFile('/sys/fs/cgroup/cpu.max', 'utf8').then((value) => value.trim()),
-]);
-
 async function absent(filePath) {
   try {
     await stat(filePath);
@@ -200,91 +225,120 @@ async function absent(filePath) {
   }
 }
 
-const targetSourceAbsent = await absent('/target');
-const dockerSocketAbsent = await absent('/var/run/docker.sock');
-let rootWriteRejected = false;
-try {
-  await writeFile('/consumer/.isolation-write-probe', 'forbidden');
-} catch (error) {
-  rootWriteRejected = error.code === 'EROFS';
-}
-assert(targetSourceAbsent, 'Final image contains target source');
-assert(dockerSocketAbsent, 'Final image exposes Docker socket');
-assert(rootWriteRejected, 'Final image root is writable');
-assert(JSON.stringify(assignedNetworkInterfaces) === JSON.stringify(['lo']), 'Container has a non-loopback assigned network interface');
-assert(effectiveCapabilities === '0000000000000000', 'Container has effective Linux capabilities');
-assert(noNewPrivileges === '1', 'Container allows new privileges');
-assert(pidsMax === '128', 'Container process limit differs from policy');
-assert(memoryMax === '536870912', 'Container memory limit differs from policy');
-assert(cpuMax === '100000 100000', 'Container CPU quota differs from policy');
+async function main() {
+  const registration = JSON.parse(await readFile('/registration/packages.json', 'utf8'));
+  const lockfile = await readFile('/consumer/pnpm-lock.yaml', 'utf8');
+  const workspacePolicy = await readFile('/consumer/pnpm-workspace.yaml', 'utf8');
+  const packageJson = JSON.parse(await readFile('/consumer/package.json', 'utf8'));
+  const processStatus = await readFile('/proc/self/status', 'utf8');
+  const effectiveCapabilities = /^CapEff:\s+(\S+)$/m.exec(processStatus)?.[1];
+  const noNewPrivileges = /^NoNewPrivs:\s+(\S+)$/m.exec(processStatus)?.[1];
+  const assignedNetworkInterfaces = Object.keys(networkInterfaces()).sort();
+  const [pidsMax, memoryMax, cpuMax] = await Promise.all([
+    readFile('/sys/fs/cgroup/pids.max', 'utf8').then((value) => value.trim()),
+    readFile('/sys/fs/cgroup/memory.max', 'utf8').then((value) => value.trim()),
+    readFile('/sys/fs/cgroup/cpu.max', 'utf8').then((value) => value.trim()),
+  ]);
 
-assert(!lockfile.includes('workspace:'), 'Consumer lockfile contains workspace protocol');
-assert(!lockfile.includes('link:'), 'Consumer lockfile contains link protocol');
-assert(!lockfile.includes('/target'), 'Consumer lockfile contains target source path');
-assert(!lockfile.includes('registry.npmjs.org/@firsttx/'), 'Consumer lockfile resolves a first-party registry package');
-assert(sha256(lockfile) === registration.consumerLockfile.sha256, 'Consumer lockfile differs from registration');
-assertFirstPartyLockfile(lockfile, registration);
-
-const artifacts = [];
-const publicImports = [];
-const privateImports = [];
-const packageRealpaths = [];
-const dependencyRealpaths = [];
-for (const packageRegistration of registration.packages) {
-  assert(packageJson.dependencies[packageRegistration.packageName] === `file:/artifacts/${packageRegistration.id}.tgz`, `Consumer dependency is not a tarball: ${packageRegistration.id}`);
-  assert(lockfile.includes(`${packageRegistration.id}.tgz`), `Consumer lockfile omits tarball: ${packageRegistration.id}`);
-  artifacts.push(await inspectArtifact(packageRegistration));
-  for (const specifier of packageRegistration.allowedImportSpecifiers) publicImports.push(await probeAllowedImport(packageRegistration, specifier));
-  for (const specifier of packageRegistration.privateImportSpecifiers) privateImports.push(await probePrivateImport(specifier));
-  const resolved = await realpath(`/consumer/node_modules/${packageRegistration.packageName}`);
-  assert(resolved.startsWith('/consumer/node_modules/.pnpm/'), `First-party package resolves outside consumer: ${packageRegistration.id}/${resolved}`);
-  packageRealpaths.push({ packageName: packageRegistration.packageName, realpath: resolved });
-  for (const dependencyName of packageRegistration.firstPartyDependencies) {
-    const dependencyPath = path.join(resolved, '..', '..', ...dependencyName.split('/'));
-    const dependencyRealpath = await realpath(dependencyPath);
-    const dependency = registration.packages.find((item) => item.packageName === dependencyName);
-    assert(dependencyRealpath.includes(`@firsttx+${dependency.id}@file+..+artifacts+${dependency.id}.tgz/`), `Target resolves a non-tarball first-party dependency: ${packageRegistration.id}/${dependencyName}`);
-    dependencyRealpaths.push({ ownerPackageName: packageRegistration.packageName, dependencyPackageName: dependencyName, realpath: dependencyRealpath });
+  const targetSourceAbsent = await absent('/target');
+  const dockerSocketAbsent = await absent('/var/run/docker.sock');
+  let rootWriteRejected = false;
+  try {
+    await writeFile('/consumer/.isolation-write-probe', 'forbidden');
+  } catch (error) {
+    rootWriteRejected = error.code === 'EROFS';
   }
+  assert(targetSourceAbsent, 'Final image contains target source');
+  assert(dockerSocketAbsent, 'Final image exposes Docker socket');
+  assert(rootWriteRejected, 'Final image root is writable');
+  assert(JSON.stringify(assignedNetworkInterfaces) === JSON.stringify(['lo']), 'Container has a non-loopback assigned network interface');
+  assert(effectiveCapabilities === '0000000000000000', 'Container has effective Linux capabilities');
+  assert(noNewPrivileges === '1', 'Container allows new privileges');
+  assert(pidsMax === '128', 'Container process limit differs from policy');
+  assert(memoryMax === '536870912', 'Container memory limit differs from policy');
+  assert(cpuMax === '100000 100000', 'Container CPU quota differs from policy');
+
+  assert(!lockfile.includes('workspace:'), 'Consumer lockfile contains workspace protocol');
+  assert(!lockfile.includes('link:'), 'Consumer lockfile contains link protocol');
+  assert(!lockfile.includes('/target'), 'Consumer lockfile contains target source path');
+  assert(!lockfile.includes('registry.npmjs.org/@firsttx/'), 'Consumer lockfile resolves a first-party registry package');
+  assert(sha256(lockfile) === registration.consumerLockfile.sha256, 'Consumer lockfile differs from registration');
+  assertFirstPartyLockfile(lockfile, registration);
+
+  const artifacts = [];
+  const forbiddenTokens = { absent: true, checkedMembers: 0, offenders: [] };
+  const publicImports = [];
+  const privateImports = [];
+  const packageRealpaths = [];
+  const dependencyRealpaths = [];
+  for (const packageRegistration of registration.packages) {
+    assert(packageJson.dependencies[packageRegistration.packageName] === `file:/artifacts/${packageRegistration.id}.tgz`, `Consumer dependency is not a tarball: ${packageRegistration.id}`);
+    assert(lockfile.includes(`${packageRegistration.id}.tgz`), `Consumer lockfile omits tarball: ${packageRegistration.id}`);
+    artifacts.push(await inspectArtifact(packageRegistration));
+    const scan = await inspectTarballMembers({
+      artifactId: packageRegistration.id,
+      tarballPath: `/artifacts/${packageRegistration.id}.tgz`,
+      workspacePath: packageRegistration.workspacePath,
+    });
+    forbiddenTokens.checkedMembers += scan.checkedMembers;
+    forbiddenTokens.offenders.push(...scan.offenders);
+    for (const specifier of packageRegistration.allowedImportSpecifiers) publicImports.push(await probeAllowedImport(packageRegistration, specifier));
+    for (const specifier of packageRegistration.privateImportSpecifiers) privateImports.push(await probePrivateImport(specifier));
+    const resolved = await realpath(`/consumer/node_modules/${packageRegistration.packageName}`);
+    assert(resolved.startsWith('/consumer/node_modules/.pnpm/'), `First-party package resolves outside consumer: ${packageRegistration.id}/${resolved}`);
+    packageRealpaths.push({ packageName: packageRegistration.packageName, realpath: resolved });
+    for (const dependencyName of packageRegistration.firstPartyDependencies) {
+      const dependencyPath = path.join(resolved, '..', '..', ...dependencyName.split('/'));
+      const dependencyRealpath = await realpath(dependencyPath);
+      const dependency = registration.packages.find((item) => item.packageName === dependencyName);
+      assert(dependencyRealpath.includes(`@firsttx+${dependency.id}@file+..+artifacts+${dependency.id}.tgz/`), `Target resolves a non-tarball first-party dependency: ${packageRegistration.id}/${dependencyName}`);
+      dependencyRealpaths.push({ ownerPackageName: packageRegistration.packageName, dependencyPackageName: dependencyName, realpath: dependencyRealpath });
+    }
+  }
+
+  forbiddenTokens.absent = forbiddenTokens.offenders.length === 0;
+
+  const tx = await import('@firsttx/tx');
+  const publicTraces = [
+    await nightmare01(tx.startTransaction),
+    await nightmare03(tx.startTransaction, tx.TransactionStateError),
+    await nightmare04(tx.startTransaction),
+    await nightmare07(tx.startTransaction),
+  ];
+
+  process.stdout.write(`${JSON.stringify({
+    schemaVersion: 'bug-dreamer/phase1-probe/v1',
+    registrationId: registration.registrationId,
+    targetRevision: registration.targetRevision,
+    packageManager: registration.packageManager,
+    isolationObserved: {
+      targetSourceAbsent,
+      dockerSocketAbsent,
+      rootWriteRejected,
+      assignedNetworkInterfaces,
+      effectiveCapabilities,
+      noNewPrivileges,
+      pidsMax,
+      memoryMax,
+      cpuMax,
+    },
+    artifacts,
+    consumer: {
+      packageJsonSha256: sha256(`${JSON.stringify(packageJson, null, 2)}\n`),
+      packageJson,
+      workspacePolicySha256: sha256(workspacePolicy),
+      workspacePolicy,
+      lockfileSha256: sha256(lockfile),
+      lockfile,
+      forbiddenTokens,
+      forbiddenTokensAbsent: forbiddenTokens.absent,
+      packageRealpaths,
+      dependencyRealpaths,
+    },
+    publicImports,
+    privateImports,
+    publicTraces,
+  })}\n`);
 }
 
-const tx = await import('@firsttx/tx');
-const publicTraces = [
-  await nightmare01(tx.startTransaction),
-  await nightmare03(tx.startTransaction, tx.TransactionStateError),
-  await nightmare04(tx.startTransaction),
-  await nightmare07(tx.startTransaction),
-];
-
-process.stdout.write(`${JSON.stringify({
-  schemaVersion: 'bug-dreamer/phase1-probe/v1',
-  registrationId: registration.registrationId,
-  targetRevision: registration.targetRevision,
-  packageManager: registration.packageManager,
-  isolationObserved: {
-    targetSourceAbsent,
-    dockerSocketAbsent,
-    rootWriteRejected,
-    assignedNetworkInterfaces,
-    effectiveCapabilities,
-    noNewPrivileges,
-    pidsMax,
-    memoryMax,
-    cpuMax,
-  },
-  artifacts,
-  consumer: {
-    packageJsonSha256: sha256(`${JSON.stringify(packageJson, null, 2)}\n`),
-    packageJson,
-    workspacePolicySha256: sha256(workspacePolicy),
-    workspacePolicy,
-    lockfileSha256: sha256(lockfile),
-    lockfile,
-    forbiddenTokensAbsent: true,
-    packageRealpaths,
-    dependencyRealpaths,
-  },
-  publicImports,
-  privateImports,
-  publicTraces,
-})}\n`);
+if (import.meta.main) await main();

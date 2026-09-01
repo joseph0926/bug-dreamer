@@ -1,3 +1,20 @@
+export class EvaluatorInfrastructureError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'EvaluatorInfrastructureError';
+  }
+}
+
+export function isEvaluatorInfrastructureError(value) {
+  let current = value;
+  for (let depth = 0; depth < 8 && current !== null && current !== undefined; depth += 1) {
+    if (current instanceof EvaluatorInfrastructureError) return true;
+    if (typeof current === 'object' && current.name === 'EvaluatorInfrastructureError') return true;
+    current = current.cause;
+  }
+  return false;
+}
+
 export function createVirtualClock(originMs) {
   let now = originMs;
   let nextHandle = 1;
@@ -65,10 +82,10 @@ export function createVirtualClock(originMs) {
         timers.delete(typeof handle === 'object' && handle !== null ? handle.virtualHandle : handle);
       };
       globalThis.setInterval = () => {
-        throw new Error('setInterval is not a registered virtual timer API');
+        throw new EvaluatorInfrastructureError('setInterval is not a registered virtual timer API');
       };
       globalThis.clearInterval = () => {
-        throw new Error('clearInterval is not a registered virtual timer API');
+        throw new EvaluatorInfrastructureError('clearInterval is not a registered virtual timer API');
       };
     },
     uninstall() {
