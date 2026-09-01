@@ -35,6 +35,11 @@
       "path": "contracts/v0.3/seeds/negative-binding-type.json",
       "expectedKind": "rejected-policy",
       "expectedMessage": "Binding type mismatch"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-invariant-outcome.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "not applicable to the final tx.run outcome"
     }
   ]
 }

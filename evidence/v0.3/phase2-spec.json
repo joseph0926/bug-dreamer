@@ -7,7 +7,7 @@
   },
   "cases": {
     "path": "contracts/v0.3/spec-cases.json",
-    "sha256": "60a0349eaa0d6056078366966ebbd2982003cdde61bcd8d103fa19fa2d8b8635"
+    "sha256": "0d99e7e68e87e394c41399941d71f20f26f299b5d0d7bbf53ced9bc7f50b3ce9"
   },
   "canonicalizer": {
     "standard": "RFC 8785 JCS",
@@ -85,6 +85,13 @@
       "expectedKind": "rejected-policy",
       "observedKind": "rejected-policy",
       "expectedMessage": "Binding type mismatch"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-invariant-outcome.json",
+      "sourceSha256": "7cf4151a42a72bff08e131dfaaa681395a7a6630f8907dcca7ecc46fd0a30fcc",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "not applicable to the final tx.run outcome"
     }
   ]
 }

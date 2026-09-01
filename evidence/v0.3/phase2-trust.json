@@ -3,58 +3,60 @@
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "phase1Evidence": {
     "path": "evidence/v0.3/phase1-contracts.json",
-    "sha256": "484f8bd6ae7a8c875e865c4f56780bfb3061e08fe0b09ac3d4344988419cdf92",
-    "imageId": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4"
+    "sha256": "c82e736961c39b9b114249af3cfbf261af67aed9f5cff11c73609ec9849ad82e",
+    "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5"
   },
   "catalog": {
     "path": "registrations/v0.3/phase2-catalog.json",
     "sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
     "catalogVersion": "firsttx-phase2-f624b09-v1"
   },
-  "evaluationContractKey": "cd771d537ddc737aa8d76d4345dcbc2fa842adba98ff6df3949bc76eb3ca2337",
+  "evaluationContractKey": "e6dd3baff345a7ba44ab5cee68c95400f978a7f7c83b30b75807071e5b075ac4",
   "image": {
     "tag": "bug-dreamer-v03-trust:f624b09f148c",
-    "imageId": "sha256:b54fbf9013b6b84d00c749efc1e8dc30c6c9b9083c0c83191577bf02a97aa8ab",
-    "contractImageId": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4",
+    "imageId": "sha256:a4358136bab93a688037d948a120d68188e8d5ee9882dbf0a3fefdcf4f4442f8",
+    "contractImageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
     "labels": {
-      "org.bug-dreamer.contract-image-id": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4",
-      "org.bug-dreamer.evaluation-contract-key": "cd771d537ddc737aa8d76d4345dcbc2fa842adba98ff6df3949bc76eb3ca2337",
+      "org.bug-dreamer.contract-image-id": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
+      "org.bug-dreamer.evaluation-contract-key": "e6dd3baff345a7ba44ab5cee68c95400f978a7f7c83b30b75807071e5b075ac4",
       "org.bug-dreamer.phase2-catalog-sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
       "org.bug-dreamer.registration-sha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
       "org.bug-dreamer.target-revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
-      "org.bug-dreamer.trust-harness-sha256": "b75b9089bd5c6f8957edba72d9634a40d2025264a090fca824ed1f539b8ccf94"
+      "org.bug-dreamer.trust-harness-sha256": "004eaf8ff1587170ca2655168e120737be8b6e16b20d0ff627a697d498e6e323"
     }
   },
   "buildInputs": {
-    "contractImageId": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4",
+    "contractImageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
     "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
     "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed",
-    "dockerfileSha256": "2c73d60cfabbb94ea971936b5df5882563b392ce4af41e5a8e86265d77120f35",
+    "dockerfileSha256": "0e4742eafbd41306e22ae29fb98d764cf3ece0302b7d30427e19d9bfffad67b3",
     "harnessFiles": [
+      "harness-v0.3/trust/case-main.mjs",
+      "harness-v0.3/trust/evaluator.mjs",
       "harness-v0.3/trust/main.mjs"
     ],
-    "harnessSha256": "b75b9089bd5c6f8957edba72d9634a40d2025264a090fca824ed1f539b8ccf94",
+    "harnessSha256": "004eaf8ff1587170ca2655168e120737be8b6e16b20d0ff627a697d498e6e323",
     "sourceFiles": [
       "src/v03-wire.mjs",
       "src/v03-spec.mjs",
       "src/v03-trust.mjs"
     ],
-    "sourceSha256": "6390078f540223461f68d250af3cec443073ad35c6f3f9703ad8567378906c6e",
+    "sourceSha256": "11761b1ddc2041980dd2d349858f806e2dcc1821e047e7889e26fcac68c39467",
     "catalogSha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
-    "prepareScriptSha256": "f182387f9f1da0e2b9148aadb14c07d75d9c948cfadd284286f4f6e4ab4d85dc",
+    "prepareScriptSha256": "6874bec88e0b7ffe539b67d7fb71cf9355bb432fc646c3420ea0e01259caced4",
     "canonicalizer": {
       "package": "canonicalize",
       "version": "4.0.0",
+      "integritySha512": "sha512-FEdXzwWs+N3rZqEqpqleiY9M1A6IAf9oo1zHFABnLW9FcJ/jzsu+G/Ks3Hq3FglmPKe80GeGBw8ZXLEnwPB0vQ==",
       "files": [
         "LICENSE",
         "README.md",
         "bin/canonicalize.js",
         "lib/canonicalize.d.ts",
         "lib/canonicalize.js",
-        "node_modules/.bin/canonicalize",
         "package.json"
       ],
-      "aggregateSha256": "bd24d44068373187a910d64bc55a82805463a7b6f12e1807ad359c1c9f67d418"
+      "aggregateSha256": "d1510ca180d90b4b8b9b762afccdde659d652340cd0befb358feca114e6140e5"
     }
   },
   "isolation": {
@@ -80,9 +82,8 @@
       "<input-mount>",
       "--mount",
       "<result-mount>",
-      "--env",
-      "BUG_DREAMER_TRUST_MODE=<mode>",
-      "<image>"
+      "<image>",
+      "<command>"
     ],
     "network": "none",
     "readOnlyRoot": true,
@@ -100,6 +101,9 @@
       "seedPath": "contracts/v0.3/seeds/pass.json",
       "seedSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
       "mode": "valid",
+      "command": [
+        "/consumer/evaluator/main.mjs"
+      ],
       "exitCode": 0,
       "stdout": "",
       "stderr": "",
@@ -125,6 +129,9 @@
       "seedPath": "contracts/v0.3/seeds/candidate.json",
       "seedSha256": "74550adfd1333c4f32399d706b25b56ad0161b863579ec1f2c11118e9eed0d4e",
       "mode": "valid",
+      "command": [
+        "/consumer/evaluator/main.mjs"
+      ],
       "exitCode": 0,
       "stdout": "",
       "stderr": "",
@@ -158,6 +165,9 @@
       "seedPath": "contracts/v0.3/seeds/marker-forgery.json",
       "seedSha256": "12aa98ca582ef8b9d3b02e2d39213f03fe46ae561d4842c092a786bca3f8becc",
       "mode": "valid",
+      "command": [
+        "/consumer/evaluator/main.mjs"
+      ],
       "exitCode": 0,
       "stdout": "BUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\n",
       "stderr": "",
@@ -183,6 +193,11 @@
       "seedPath": "contracts/v0.3/seeds/marker-forgery.json",
       "seedSha256": "12aa98ca582ef8b9d3b02e2d39213f03fe46ae561d4842c092a786bca3f8becc",
       "mode": "missing",
+      "command": [
+        "/consumer/evaluator/case-main.mjs",
+        "--mode",
+        "missing"
+      ],
       "exitCode": 0,
       "stdout": "BUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\nBUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\n",
       "stderr": "",
@@ -204,6 +219,11 @@
       "seedPath": "contracts/v0.3/seeds/pass.json",
       "seedSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
       "mode": "malformed",
+      "command": [
+        "/consumer/evaluator/case-main.mjs",
+        "--mode",
+        "malformed"
+      ],
       "exitCode": 0,
       "stdout": "",
       "stderr": "BUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\n",
@@ -231,6 +251,11 @@
       "seedPath": "contracts/v0.3/seeds/pass.json",
       "seedSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
       "mode": "wrong-digest",
+      "command": [
+        "/consumer/evaluator/case-main.mjs",
+        "--mode",
+        "wrong-digest"
+      ],
       "exitCode": 0,
       "stdout": "",
       "stderr": "",
@@ -258,6 +283,11 @@
       "seedPath": "contracts/v0.3/seeds/pass.json",
       "seedSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
       "mode": "early-exit",
+      "command": [
+        "/consumer/evaluator/case-main.mjs",
+        "--mode",
+        "early-exit"
+      ],
       "exitCode": 17,
       "stdout": "",
       "stderr": "BUG_DREAMER_RESULT {\"execution\":\"candidate-failure\"}\n",

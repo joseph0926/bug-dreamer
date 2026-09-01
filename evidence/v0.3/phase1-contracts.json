@@ -8,7 +8,7 @@
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "image": {
     "tag": "bug-dreamer-v03-contracts:f624b09f148c",
-    "imageId": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4",
+    "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
     "baseImage": "node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203"
   },
   "buildInputs": {

@@ -38,6 +38,10 @@ const INVARIANT_CONTRACTS = Object.freeze({
   },
 });
 const INVARIANT_IDS = Object.keys(INVARIANT_CONTRACTS);
+const OUTCOME_BY_OBSERVED_KIND = Object.freeze({
+  'thrown-error': 'throw',
+  'returned-value': 'return',
+});
 
 export class V03SpecError extends Error {
   constructor(kind, message) {
@@ -127,6 +131,12 @@ function validateActionArguments(actionId, args, bindings) {
     return;
   }
   fail('rejected-catalog', `Unknown action: ${actionId}`);
+}
+
+function validateInvariantApplicability(invariant, actions, label) {
+  const finalRun = actions.findLast((action) => action.actionId === 'tx.run');
+  assert(finalRun !== undefined, 'rejected-policy', `${label} invariant requires a tx.run action: ${invariant.id}`);
+  assert(finalRun.arguments.outcome === OUTCOME_BY_OBSERVED_KIND[invariant.normalizedObservedKind], 'rejected-policy', `${label} invariant is not applicable to the final tx.run outcome: ${invariant.id}`);
 }
 
 export function validatePhase2Catalog(catalog) {
@@ -219,6 +229,7 @@ export function validateNightmareSeed(seed, catalog) {
       bindings.set(action.bind.name, action.bind.type);
     }
   }
+  validateInvariantApplicability(invariant, seed.actions, 'NightmareSeed');
   return seed;
 }
 
@@ -301,7 +312,8 @@ export function validateNightmareSpec(spec, catalog) {
   assert(spec.schemaVersion === SPEC_SCHEMA_VERSION, 'rejected-schema', 'Unexpected NightmareSpec schemaVersion');
   assert(validSha(spec.seedDigest), 'rejected-schema', 'NightmareSpec seedDigest is invalid');
   assert(spec.targetRegistrationId === catalog.target.registrationId && spec.catalogVersion === catalog.catalogVersion, 'rejected-catalog', 'NightmareSpec registration mismatch');
-  assert(catalog.invariants.some((item) => item.id === spec.invariantRegistrationId), 'rejected-catalog', 'NightmareSpec invariant is not registered');
+  const invariant = catalog.invariants.find((item) => item.id === spec.invariantRegistrationId);
+  assert(invariant !== undefined, 'rejected-catalog', 'NightmareSpec invariant is not registered');
   assert(Array.isArray(spec.actors) && spec.actors.length > 0 && spec.actors.length <= WIRE_LIMITS.actors, 'rejected-schema', 'NightmareSpec actor count is invalid');
   unique(spec.actors, 'spec actor', 'rejected-schema');
   for (const actor of spec.actors) {
@@ -326,6 +338,7 @@ export function validateNightmareSpec(spec, catalog) {
       bindings.set(action.bind.name, action.bind.type);
     }
   }
+  validateInvariantApplicability(invariant, spec.baseActions, 'NightmareSpec');
   assert(Array.isArray(spec.transformations) && spec.transformations.length === 0, 'rejected-policy', 'Phase 2 transformations must be empty');
   assert(Array.isArray(spec.scheduleControls) && spec.scheduleControls.length === 0, 'rejected-policy', 'Phase 2 schedule controls must be empty');
   assert(Array.isArray(spec.fixtures) && spec.fixtures.length <= WIRE_LIMITS.fixtures, 'rejected-schema', 'NightmareSpec fixture count is invalid');

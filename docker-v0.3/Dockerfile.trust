@@ -13,7 +13,9 @@ LABEL org.bug-dreamer.trust-harness-sha256=$TRUST_HARNESS_SHA256
 
 USER root
 
+COPY harness-v0.3/trust/evaluator.mjs /consumer/evaluator/evaluator.mjs
 COPY harness-v0.3/trust/main.mjs /consumer/evaluator/main.mjs
+COPY harness-v0.3/trust/case-main.mjs /consumer/evaluator/case-main.mjs
 COPY src/v03-wire.mjs /consumer/evaluator/src/v03-wire.mjs
 COPY src/v03-spec.mjs /consumer/evaluator/src/v03-spec.mjs
 COPY src/v03-trust.mjs /consumer/evaluator/src/v03-trust.mjs
@@ -23,4 +25,5 @@ COPY registrations/v0.3/phase2-catalog.json /registration/phase2-catalog.json
 USER node
 WORKDIR /consumer/evaluator
 
-ENTRYPOINT ["node", "/consumer/evaluator/main.mjs"]
+ENTRYPOINT ["node"]
+CMD ["/consumer/evaluator/main.mjs"]

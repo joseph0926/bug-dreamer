@@ -16,16 +16,22 @@ const CONTRACT_EVIDENCE_PATH = 'evidence/v0.3/phase1-contracts.json';
 const CATALOG_PATH = 'registrations/v0.3/phase2-catalog.json';
 const PREPARE_PATH = 'scripts/prepare-v03-trust.mjs';
 const DOCKERFILE_PATH = 'docker-v0.3/Dockerfile.trust';
-const HARNESS_FILES = ['harness-v0.3/trust/main.mjs'];
+const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs'];
 const SOURCE_FILES = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
+const PRODUCTION_COMMAND = ['/consumer/evaluator/main.mjs'];
+
+function caseCommand(mode) {
+  return ['/consumer/evaluator/case-main.mjs', '--mode', mode];
+}
+
 const CASE_DEFINITIONS = [
-  { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', evaluator: 'evaluated', execution: 'pass' },
-  { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', evaluator: 'evaluated', execution: 'candidate-failure' },
-  { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', evaluator: 'evaluated', execution: 'pass' },
-  { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', evaluator: 'evaluator-error', execution: 'unrunnable' },
-  { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', evaluator: 'evaluator-error', execution: 'unrunnable' },
-  { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', evaluator: 'evaluator-error', execution: 'unrunnable' },
-  { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'pass' },
+  { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
+  { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'pass' },
+  { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', command: caseCommand('early-exit'), evaluator: 'evaluator-error', execution: 'unrunnable' },
 ];
 const MARKER = 'BUG_DREAMER_RESULT {"execution":"candidate-failure"}';
 
@@ -78,8 +84,15 @@ function expectedDockerArgs() {
   return [
     'run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
     '--pids-limit', '128', '--memory', '512m', '--cpus', '1', '--tmpfs', '/tmp:rw,noexec,nosuid,size=64m',
-    '--mount', '<input-mount>', '--mount', '<result-mount>', '--env', 'BUG_DREAMER_TRUST_MODE=<mode>', '<image>',
+    '--mount', '<input-mount>', '--mount', '<result-mount>', '<image>', '<command>',
   ];
+}
+
+async function readCanonicalizerIntegrity(repositoryRoot) {
+  const lockfile = await readFile(path.join(repositoryRoot, 'pnpm-lock.yaml'), 'utf8');
+  const match = lockfile.match(/^ {2}canonicalize@4\.0\.0:\r?\n {4}resolution: \{integrity: (sha512-[A-Za-z0-9+/=]+)\}/mu);
+  assert(match !== null, 'canonicalize@4.0.0 integrity is missing from pnpm-lock.yaml');
+  return match[1];
 }
 
 export async function validateTrustContracts(repositoryRoot) {
@@ -100,7 +113,7 @@ export async function validateTrustContracts(repositoryRoot) {
   assert(evidence.catalog.path === CATALOG_PATH && evidence.catalog.sha256 === sha256(catalogBytes) && evidence.catalog.catalogVersion === catalog.catalogVersion, 'Trust evidence catalog mismatch');
 
   const canonicalizeRoot = await realpath(path.join(repositoryRoot, 'node_modules/canonicalize'));
-  const canonicalizeFiles = await listFiles(canonicalizeRoot);
+  const canonicalizeFiles = (await listFiles(canonicalizeRoot)).filter((file) => file.split(path.sep)[0] !== 'node_modules');
   const expectedBuildInputs = {
     contractImageId: contractEvidence.image.imageId,
     targetRevision: catalog.target.targetRevision,
@@ -115,6 +128,7 @@ export async function validateTrustContracts(repositoryRoot) {
     canonicalizer: {
       package: 'canonicalize',
       version: '4.0.0',
+      integritySha512: await readCanonicalizerIntegrity(repositoryRoot),
       files: canonicalizeFiles,
       aggregateSha256: await aggregateFiles(canonicalizeRoot, canonicalizeFiles),
     },
@@ -145,8 +159,9 @@ export async function validateTrustContracts(repositoryRoot) {
   for (const definition of CASE_DEFINITIONS) {
     const recorded = evidence.cases.find((item) => item.id === definition.id);
     assert(recorded !== undefined, `Trust evidence case missing: ${definition.id}`);
-    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'exitCode', 'stdout', 'stderr', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
+    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
     assert(recorded.seedPath === definition.seed && recorded.mode === definition.mode, `Trust case input changed: ${definition.id}`);
+    assert(JSON.stringify(recorded.command) === JSON.stringify(definition.command), `Trust case entrypoint changed: ${definition.id}`);
     const seedBytes = await readFile(path.join(repositoryRoot, definition.seed));
     assert(recorded.seedSha256 === sha256(seedBytes), `Trust case seed digest mismatch: ${definition.id}`);
     const seed = parseNightmareSeed(seedBytes, catalog);

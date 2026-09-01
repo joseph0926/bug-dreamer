@@ -31,8 +31,9 @@ const prepareScriptPath = path.join(repositoryRoot, 'scripts/prepare-v03-trust.m
 const contractEvidencePath = path.join(repositoryRoot, 'evidence/v0.3/phase1-contracts.json');
 const dockerfilePath = path.join(repositoryRoot, 'docker-v0.3/Dockerfile.trust');
 const catalogPath = path.join(repositoryRoot, 'registrations/v0.3/phase2-catalog.json');
-const harnessFiles = ['harness-v0.3/trust/main.mjs'];
+const harnessFiles = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs'];
 const sourceFiles = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
+const productionCommand = ['/consumer/evaluator/main.mjs'];
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
@@ -79,14 +80,25 @@ async function listFiles(root, prefix = '') {
   return files.sort();
 }
 
-function normalizedRunArgs(args, inputDirectory, resultDirectory, imageTag, mode) {
-  return args.map((argument) => {
+function caseCommand(mode) {
+  return ['/consumer/evaluator/case-main.mjs', '--mode', mode];
+}
+
+function normalizedRunArgs(args, inputDirectory, resultDirectory, imageTag, command) {
+  const normalized = args.slice(0, args.length - command.length).map((argument) => {
     if (argument === `type=bind,source=${inputDirectory},target=/input,readonly`) return '<input-mount>';
     if (argument === `type=bind,source=${resultDirectory},target=/result`) return '<result-mount>';
-    if (argument === `BUG_DREAMER_TRUST_MODE=${mode}`) return 'BUG_DREAMER_TRUST_MODE=<mode>';
     if (argument === imageTag) return '<image>';
     return argument;
   });
+  return [...normalized, '<command>'];
+}
+
+async function readCanonicalizerIntegrity(lockfilePath) {
+  const lockfile = await readFile(lockfilePath, 'utf8');
+  const match = lockfile.match(/^ {2}canonicalize@4\.0\.0:\r?\n {4}resolution: \{integrity: (sha512-[A-Za-z0-9+/=]+)\}/mu);
+  if (match === null) throw new Error('canonicalize@4.0.0 integrity is missing from pnpm-lock.yaml');
+  return match[1];
 }
 
 async function main() {
@@ -107,7 +119,7 @@ async function main() {
   if (contractImage.stdout.trim() !== contractEvidence.image.imageId) throw new Error('Phase 1 image tag does not match recorded evidence');
 
   const canonicalizeRoot = await realpath(path.join(repositoryRoot, 'node_modules/canonicalize'));
-  const canonicalizeFiles = await listFiles(canonicalizeRoot);
+  const canonicalizeFiles = (await listFiles(canonicalizeRoot)).filter((file) => file.split(path.sep)[0] !== 'node_modules');
   const buildInputs = {
     contractImageId: contractEvidence.image.imageId,
     targetRevision: catalog.target.targetRevision,
@@ -122,6 +134,7 @@ async function main() {
     canonicalizer: {
       package: 'canonicalize',
       version: '4.0.0',
+      integritySha512: await readCanonicalizerIntegrity(path.join(repositoryRoot, 'pnpm-lock.yaml')),
       files: canonicalizeFiles,
       aggregateSha256: await aggregateFiles(canonicalizeRoot, canonicalizeFiles),
     },
@@ -139,10 +152,14 @@ async function main() {
     ]);
     await Promise.all([
       cp(dockerfilePath, path.join(temporaryRoot, 'docker-v0.3/Dockerfile.trust')),
-      cp(path.join(repositoryRoot, harnessFiles[0]), path.join(temporaryRoot, harnessFiles[0])),
+      ...harnessFiles.map((relativePath) => cp(path.join(repositoryRoot, relativePath), path.join(temporaryRoot, relativePath))),
       ...sourceFiles.map((relativePath) => cp(path.join(repositoryRoot, relativePath), path.join(temporaryRoot, relativePath))),
       cp(catalogPath, path.join(temporaryRoot, 'registrations/v0.3/phase2-catalog.json')),
-      cp(canonicalizeRoot, path.join(temporaryRoot, 'vendor/canonicalize'), { recursive: true }),
+      ...canonicalizeFiles.map(async (relativePath) => {
+        const destination = path.join(temporaryRoot, 'vendor/canonicalize', relativePath);
+        await mkdir(path.dirname(destination), { recursive: true });
+        await cp(path.join(canonicalizeRoot, relativePath), destination);
+      }),
     ]);
 
     const build = await run('docker', [
@@ -179,13 +196,13 @@ async function main() {
     if (labels['org.bug-dreamer.evaluation-contract-key'] !== evaluationContractKey) throw new Error('Evaluator image contract label mismatch');
 
     const caseDefinitions = [
-      { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
-      { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
-      { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
-      { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
-      { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
-      { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
-      { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
+      { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
+      { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
+      { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', command: caseCommand('early-exit'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
     ];
     const caseResults = [];
     let dockerRunArgsTemplate;
@@ -228,11 +245,10 @@ async function main() {
         `type=bind,source=${inputDirectory},target=/input,readonly`,
         '--mount',
         `type=bind,source=${resultDirectory},target=/result`,
-        '--env',
-        `BUG_DREAMER_TRUST_MODE=${definition.mode}`,
         imageTag,
+        ...definition.command,
       ];
-      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageTag, definition.mode);
+      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageTag, definition.command);
       dockerRunArgsTemplate ??= normalizedArgs;
       if (JSON.stringify(normalizedArgs) !== JSON.stringify(dockerRunArgsTemplate)) throw new Error('Trust cases use different isolation arguments');
       const execution = await run('docker', dockerRunArgs);
@@ -246,6 +262,7 @@ async function main() {
         seedPath: definition.seed,
         seedSha256: sha256(seedBytes),
         mode: definition.mode,
+        command: definition.command,
         exitCode: execution.exitCode,
         stdout: execution.stdout,
         stderr: execution.stderr,
