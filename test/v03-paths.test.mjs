@@ -81,6 +81,6 @@ test('accepts a symlink-free path and rejects symlinked ancestors and leaves', a
     await assert.rejects(assertNoSymlinkAncestors(repoRoot, path.join(base, 'outside.json')), PathContainmentError);
     await assert.rejects(assertNoSymlinkAncestors(repoRoot, 'real/inner/file.json'), PathContainmentError);
   } finally {
-    await rm(base, { recursive: true, force: true });
+    await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 });

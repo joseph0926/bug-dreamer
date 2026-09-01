@@ -50,6 +50,8 @@ function temporaryGit(temporaryRoot) {
     '-c', 'user.email=history-test@example.invalid',
     '-c', 'user.name=history test',
     '-c', 'commit.gpgsign=false',
+    '-c', 'gc.auto=0',
+    '-c', 'maintenance.auto=false',
   ];
   return async (args) => {
     const { stdout } = await execFileAsync('git', [...configuration, ...args], { cwd: temporaryRoot });
@@ -151,7 +153,7 @@ test('rejects a replay result reference for a different scenario', async () => {
     const live = [{ ...recorded.results[0], scenario: 'expected.test.ts' }];
     await assert.rejects(validateRecordedReplayResult(temporaryRoot, image, live), /differs from the live replay/);
   } finally {
-    await rm(temporaryRoot, { recursive: true, force: true });
+    await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 });
 
@@ -199,7 +201,7 @@ test('rejects a history manifest whose baseline moved off the frozen v0.2 comple
       error instanceof HistoryValidationError && /baseline commit is not the frozen v0.2 completion commit/i.test(error.message)
     ));
   } finally {
-    await rm(temporaryRoot, { recursive: true, force: true });
+    await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 });
 
@@ -210,7 +212,7 @@ test('rejects a symlink in a frozen path directory chain', async () => {
     await symlink(path.join(temporaryRoot, 'real-harness'), path.join(temporaryRoot, 'harness'), 'dir');
     await assert.rejects(validateDirectoryChain(temporaryRoot, 'harness/entrypoint.mjs'), /not a real directory/);
   } finally {
-    await rm(temporaryRoot, { recursive: true, force: true });
+    await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 });
 
