@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const registrationPath = path.join(repositoryRoot, 'registrations/v0.3/packages.json');
+const consumerLockfilePath = path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml');
 const evidencePath = path.join(repositoryRoot, 'evidence/v0.3/phase1-contracts.json');
+const prepareScriptPath = path.join(repositoryRoot, 'scripts/prepare-v03-contracts.mjs');
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
@@ -90,6 +92,7 @@ async function main() {
     await cp(path.join(repositoryRoot, 'harness-v0.3'), path.join(temporaryRoot, 'harness-v0.3'), { recursive: true });
     await mkdir(path.join(temporaryRoot, 'registrations/v0.3'), { recursive: true });
     await cp(registrationPath, path.join(temporaryRoot, 'registrations/v0.3/packages.json'));
+    await cp(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), path.join(temporaryRoot, 'registrations/v0.3/consumer-lock.yaml'));
 
     const build = await run('docker', [
       'build',
@@ -112,7 +115,7 @@ async function main() {
 
     const inspection = await run('docker', ['image', 'inspect', imageTag, '--format', '{{.Id}}']);
     if (inspection.exitCode !== 0) throw new Error(inspection.stderr.trim());
-    const execution = await run('docker', [
+    const dockerRunArgs = [
       'run',
       '--rm',
       '--network',
@@ -131,7 +134,8 @@ async function main() {
       '--tmpfs',
       '/tmp:rw,noexec,nosuid,size=64m',
       imageTag,
-    ]);
+    ];
+    const execution = await run('docker', dockerRunArgs);
     process.stderr.write(execution.stderr);
     if (execution.exitCode !== 0) throw new Error(`Phase 1 consumer probe failed: ${execution.stdout}`);
     const outputLines = execution.stdout.trim().split('\n').filter(Boolean);
@@ -155,8 +159,11 @@ async function main() {
           'harness-v0.3/create-consumer.mjs',
           'harness-v0.3/probe-contracts.mjs',
         ]),
+        prepareScriptSha256: sha256(await readFile(prepareScriptPath)),
+        consumerLockfileSha256: sha256(await readFile(consumerLockfilePath)),
       },
       isolation: {
+        dockerRunArgs: dockerRunArgs.map((argument) => argument === imageTag ? '<image>' : argument),
         network: 'none',
         readOnlyRoot: true,
         capabilities: 'none',

@@ -11,6 +11,7 @@ import {
   ContractValidationError,
   validateContracts,
   validateEvidence,
+  validateFirstPartyLockfile,
   validatePublicBoundaryAudit,
   validateRegistration,
 } from '../src/v03-contracts.mjs';
@@ -69,14 +70,60 @@ test('rejects a registry-like first-party realpath', async () => {
   await assert.rejects(validateEvidence(repositoryRoot, validateRegistration(registration), evidence), /outside clean consumer/);
 });
 
-test('rejects workspace protocol even when the tampered lockfile digest matches', async () => {
+test('rejects workspace protocol in a first-party lockfile', async () => {
+  const registration = validateRegistration(await readJson('registrations/v0.3/packages.json'));
+  const lockfile = await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), 'utf8');
+  assert.throws(() => validateFirstPartyLockfile(`${lockfile}\nworkspace:packages/tx\n`, registration), /workspace protocol/);
+});
+
+test('rejects a registry-resolved first-party package', async () => {
+  const registration = validateRegistration(await readJson('registrations/v0.3/packages.json'));
+  const lockfile = await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), 'utf8');
+  const tampered = lockfile.replace(
+    '\nsnapshots:\n',
+    "\n  '@firsttx/shared@0.3.2':\n    resolution: {integrity: sha512-invalid}\n\nsnapshots:\n",
+  );
+  assert.throws(() => validateFirstPartyLockfile(tampered, registration), /non-tarball first-party package/);
+});
+
+test('rejects a target snapshot that resolves shared by version', async () => {
+  const registration = validateRegistration(await readJson('registrations/v0.3/packages.json'));
+  const lockfile = await readFile(path.join(repositoryRoot, 'registrations/v0.3/consumer-lock.yaml'), 'utf8');
+  const tampered = lockfile.replace(
+    "      '@firsttx/shared': file:../artifacts/shared.tgz",
+    "      '@firsttx/shared': 0.3.2",
+  );
+  assert.throws(() => validateFirstPartyLockfile(tampered, registration), /Transitive first-party tarball missing/);
+});
+
+test('rejects an extra clean-consumer dependency', async () => {
   const [registration, evidence] = await Promise.all([
     readJson('registrations/v0.3/packages.json'),
     readJson('evidence/v0.3/phase1-contracts.json'),
   ]);
-  evidence.probe.consumer.lockfile += '\nworkspace:packages/tx\n';
-  evidence.probe.consumer.lockfileSha256 = createHash('sha256').update(evidence.probe.consumer.lockfile).digest('hex');
-  await assert.rejects(validateEvidence(repositoryRoot, validateRegistration(registration), evidence), /workspace protocol/);
+  evidence.probe.consumer.packageJson.dependencies.unregistered = '1.0.0';
+  evidence.probe.consumer.packageJsonSha256 = createHash('sha256')
+    .update(`${JSON.stringify(evidence.probe.consumer.packageJson, null, 2)}\n`)
+    .digest('hex');
+  await assert.rejects(validateEvidence(repositoryRoot, validateRegistration(registration), evidence), /Consumer dependency set differs/);
+});
+
+test('rejects a receipt produced by an unbound preparation runner', async () => {
+  const [registration, evidence] = await Promise.all([
+    readJson('registrations/v0.3/packages.json'),
+    readJson('evidence/v0.3/phase1-contracts.json'),
+  ]);
+  evidence.buildInputs.prepareScriptSha256 = '0'.repeat(64);
+  await assert.rejects(validateEvidence(repositoryRoot, validateRegistration(registration), evidence), /Prepare runner digest mismatch/);
+});
+
+test('rejects isolation arguments that differ from the receipt contract', async () => {
+  const [registration, evidence] = await Promise.all([
+    readJson('registrations/v0.3/packages.json'),
+    readJson('evidence/v0.3/phase1-contracts.json'),
+  ]);
+  evidence.isolation.dockerRunArgs.splice(2, 2);
+  await assert.rejects(validateEvidence(repositoryRoot, validateRegistration(registration), evidence), /Isolation receipt changed/);
 });
 
 test('rejects a private import that unexpectedly succeeds', async () => {
@@ -106,6 +153,28 @@ test('rejects a public classification without its matching packed trace', async 
   ]);
   audit.records[0].evidenceJsonPointer = '/probe/publicTraces/1';
   await assert.rejects(validatePublicBoundaryAudit(repositoryRoot, validateRegistration(registration), evidence, audit), /Public trace evidence mismatch/);
+});
+
+test('rejects an internal audit pointer bound to another module', async () => {
+  const [registration, evidence, audit] = await Promise.all([
+    readJson('registrations/v0.3/packages.json'),
+    readJson('evidence/v0.3/phase1-contracts.json'),
+    readJson('history/v0.3-public-boundary.json'),
+  ]);
+  const record = audit.records.find((item) => item.id === 'nightmare-05');
+  record.importSpecifier = '@firsttx/tx/errors';
+  record.evidenceJsonPointer = '/probe/privateImports/2';
+  await assert.rejects(validatePublicBoundaryAudit(repositoryRoot, validateRegistration(registration), evidence, audit), /Internal import is not registered for module/);
+});
+
+test('rejects a public trace whose observed behavior no longer matches the audit', async () => {
+  const [registration, evidence, audit] = await Promise.all([
+    readJson('registrations/v0.3/packages.json'),
+    readJson('evidence/v0.3/phase1-contracts.json'),
+    readJson('history/v0.3-public-boundary.json'),
+  ]);
+  evidence.probe.publicTraces[0].observed.events = [];
+  await assert.rejects(validatePublicBoundaryAudit(repositoryRoot, validateRegistration(registration), evidence, audit), /Public trace observation mismatch/);
 });
 
 test('contracts CLI succeeds and arbitrary options remain invalid usage', async () => {

@@ -3,12 +3,33 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const REGISTRATION_PATH = 'registrations/v0.3/packages.json';
+const CONSUMER_LOCKFILE_PATH = 'registrations/v0.3/consumer-lock.yaml';
 const EVIDENCE_PATH = 'evidence/v0.3/phase1-contracts.json';
 const AUDIT_PATH = 'history/v0.3-public-boundary.json';
 const TARGET_REVISION = 'f624b09f148c3368a51807f48d3237db20cef9c6';
 const PACKAGE_NAMES = ['@firsttx/local-first', '@firsttx/prepaint', '@firsttx/shared', '@firsttx/tx'];
 const PUBLIC_TRACE_IDS = ['nightmare-01', 'nightmare-03', 'nightmare-04', 'nightmare-07'];
 const HISTORICAL_IDS = Array.from({ length: 7 }, (_, index) => `nightmare-0${index + 1}`);
+const EXPECTED_DOCKER_RUN_ARGS = [
+  'run',
+  '--rm',
+  '--network',
+  'none',
+  '--read-only',
+  '--cap-drop',
+  'ALL',
+  '--security-opt',
+  'no-new-privileges',
+  '--pids-limit',
+  '128',
+  '--memory',
+  '512m',
+  '--cpus',
+  '1',
+  '--tmpfs',
+  '/tmp:rw,noexec,nosuid,size=64m',
+  '<image>',
+];
 
 export class ContractValidationError extends Error {}
 
@@ -39,6 +60,65 @@ function validSha(value) {
   return typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
 }
 
+function lockfileSection(source, start, end) {
+  const startIndex = source.indexOf(`${start}\n`);
+  const endIndex = end === undefined ? source.length : source.indexOf(`${end}\n`, startIndex + start.length);
+  assert(startIndex >= 0 && endIndex >= 0, `Lockfile section missing: ${start}`);
+  return source.slice(startIndex, endIndex);
+}
+
+function firstPartyEntryBlocks(source) {
+  const matches = [...source.matchAll(/^  '(@firsttx\/[^']+)':(?: \{\})?\n/gm)];
+  return matches.map((match, index) => ({
+    key: match[1],
+    body: source.slice(match.index, matches[index + 1]?.index ?? source.length),
+  }));
+}
+
+function expectedWorkspacePolicy(registration) {
+  const allowBuilds = registration.consumerBuildPolicy.allowBuilds.map((name) => `  ${name}: true`);
+  const overrides = registration.packages.map((item) => `  '${item.packageName}': file:/artifacts/${item.id}.tgz`);
+  return `allowBuilds:\n${allowBuilds.join('\n')}\noverrides:\n${overrides.join('\n')}\n`;
+}
+
+function isTarballRealpath(value, packageRegistration) {
+  if (typeof value !== 'string') return false;
+  const prefix = '/consumer/node_modules/.pnpm/';
+  const suffix = `/node_modules/${packageRegistration.packageName}`;
+  if (!value.startsWith(prefix) || !value.endsWith(suffix)) return false;
+  const storeEntry = value.slice(prefix.length, -suffix.length);
+  const tarballLocator = `@firsttx+${packageRegistration.id}@file+..+artifacts+${packageRegistration.id}.tgz`;
+  return storeEntry === tarballLocator || storeEntry.startsWith(`${tarballLocator}_`);
+}
+
+export function validateFirstPartyLockfile(lockfile, registration) {
+  assert(typeof lockfile === 'string' && lockfile.length > 0, 'Consumer lockfile is empty');
+  assert(!lockfile.includes('workspace:'), 'Consumer lockfile contains workspace protocol');
+  assert(!lockfile.includes('link:'), 'Consumer lockfile contains link protocol');
+  assert(!lockfile.includes('/target'), 'Consumer lockfile contains target source path');
+  const importer = lockfileSection(lockfile, 'importers:', 'packages:');
+  const packages = firstPartyEntryBlocks(lockfileSection(lockfile, 'packages:', 'snapshots:'));
+  const snapshots = firstPartyEntryBlocks(lockfileSection(lockfile, 'snapshots:'));
+  const expectedKeys = registration.packages.map((item) => `${item.packageName}@file:../artifacts/${item.id}.tgz`).sort();
+  assert(JSON.stringify(packages.map((item) => item.key).sort()) === JSON.stringify(expectedKeys), 'Consumer lockfile contains a non-tarball first-party package');
+
+  for (const packageRegistration of registration.packages) {
+    const absoluteLocator = `file:/artifacts/${packageRegistration.id}.tgz`;
+    const locator = `file:../artifacts/${packageRegistration.id}.tgz`;
+    assert(importer.includes(`specifier: ${absoluteLocator}`) && importer.includes(`version: ${locator}`), `Consumer importer is not tarball-pinned: ${packageRegistration.id}`);
+    const packageEntry = packages.find((item) => item.key === `${packageRegistration.packageName}@${locator}`);
+    assert(packageEntry?.body.includes(`tarball: ${locator}`), `First-party tarball resolution missing: ${packageRegistration.id}`);
+    const snapshot = snapshots.find((item) => item.key.startsWith(`${packageRegistration.packageName}@${locator}`));
+    assert(snapshot !== undefined, `First-party snapshot missing: ${packageRegistration.id}`);
+    for (const dependencyName of packageRegistration.firstPartyDependencies) {
+      const dependency = registration.packages.find((item) => item.packageName === dependencyName);
+      assert(dependency !== undefined, `First-party dependency registration missing: ${dependencyName}`);
+      assert(snapshot.body.includes(`'${dependencyName}': file:../artifacts/${dependency.id}.tgz`), `Transitive first-party tarball missing: ${packageRegistration.id}/${dependencyName}`);
+    }
+  }
+  return true;
+}
+
 export function validateRegistration(registration) {
   strictKeys(registration, [
     'schemaVersion',
@@ -50,6 +130,7 @@ export function validateRegistration(registration) {
     'baseImage',
     'consumerDependencies',
     'consumerBuildPolicy',
+    'consumerLockfile',
     'packages',
   ], 'Registration');
   assert(registration.schemaVersion === 'bug-dreamer/public-package-registration/v1', 'Unexpected registration schemaVersion');
@@ -64,6 +145,9 @@ export function validateRegistration(registration) {
     assert(/^\d+\.\d+\.\d+$/.test(version), `Consumer dependency is not exact: ${name}`);
   }
   assert(JSON.stringify(registration.consumerBuildPolicy) === JSON.stringify({ allowBuilds: ['esbuild'] }), 'Consumer build policy changed');
+  strictKeys(registration.consumerLockfile, ['path', 'sha256'], 'Consumer lockfile registration');
+  assert(registration.consumerLockfile.path === CONSUMER_LOCKFILE_PATH, 'Consumer lockfile path changed');
+  assert(validSha(registration.consumerLockfile.sha256), 'Consumer lockfile digest is invalid');
   assert(Array.isArray(registration.packages) && registration.packages.length === 4, 'Registration must contain four packages');
   unique(registration.packages.map((item) => item.id), 'package id');
   unique(registration.packages.map((item) => item.packageName), 'package name');
@@ -151,10 +235,15 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
   strictKeys(evidence.image, ['tag', 'imageId', 'baseImage'], 'Evidence image');
   assert(/^sha256:[0-9a-f]{64}$/.test(evidence.image.imageId), 'Evidence image ID is invalid');
   assert(evidence.image.baseImage === registration.baseImage, 'Evidence base image mismatch');
-  strictKeys(evidence.buildInputs, ['dockerfileSha256', 'harnessSha256'], 'Evidence build inputs');
+  strictKeys(evidence.buildInputs, ['dockerfileSha256', 'harnessSha256', 'prepareScriptSha256', 'consumerLockfileSha256'], 'Evidence build inputs');
   assert(evidence.buildInputs.dockerfileSha256 === sha256(await readFile(path.join(repositoryRoot, 'docker-v0.3/Dockerfile'))), 'Dockerfile digest mismatch');
   assert(evidence.buildInputs.harnessSha256 === await aggregateFiles(repositoryRoot, ['harness-v0.3/create-consumer.mjs', 'harness-v0.3/probe-contracts.mjs']), 'Harness digest mismatch');
-  assert(JSON.stringify(evidence.isolation) === JSON.stringify({ network: 'none', readOnlyRoot: true, capabilities: 'none', noNewPrivileges: true, dockerSocket: false, pidsLimit: 128, memory: '512m', cpus: 1 }), 'Isolation receipt changed');
+  assert(evidence.buildInputs.prepareScriptSha256 === sha256(await readFile(path.join(repositoryRoot, 'scripts/prepare-v03-contracts.mjs'))), 'Prepare runner digest mismatch');
+  const registeredLockfile = await readFile(path.join(repositoryRoot, CONSUMER_LOCKFILE_PATH), 'utf8');
+  assert(registration.consumerLockfile.sha256 === sha256(registeredLockfile), 'Registered consumer lockfile digest mismatch');
+  assert(evidence.buildInputs.consumerLockfileSha256 === registration.consumerLockfile.sha256, 'Evidence consumer lockfile digest mismatch');
+  validateFirstPartyLockfile(registeredLockfile, registration);
+  assert(JSON.stringify(evidence.isolation) === JSON.stringify({ dockerRunArgs: EXPECTED_DOCKER_RUN_ARGS, network: 'none', readOnlyRoot: true, capabilities: 'none', noNewPrivileges: true, dockerSocket: false, pidsLimit: 128, memory: '512m', cpus: 1 }), 'Isolation receipt changed');
 
   const probe = evidence.probe;
   strictKeys(probe, ['schemaVersion', 'registrationId', 'targetRevision', 'packageManager', 'isolationObserved', 'artifacts', 'consumer', 'publicImports', 'privateImports', 'publicTraces'], 'Probe result');
@@ -162,7 +251,7 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
   assert(probe.registrationId === registration.registrationId, 'Probe registration mismatch');
   assert(probe.targetRevision === registration.targetRevision, 'Probe target revision mismatch');
   assert(probe.packageManager === registration.packageManager, 'Probe package manager mismatch');
-  assert(JSON.stringify(probe.isolationObserved) === JSON.stringify({ targetSourceAbsent: true, dockerSocketAbsent: true, rootWriteRejected: true }), 'Observed isolation checks failed');
+  assert(JSON.stringify(probe.isolationObserved) === JSON.stringify({ targetSourceAbsent: true, dockerSocketAbsent: true, rootWriteRejected: true, assignedNetworkInterfaces: ['lo'], effectiveCapabilities: '0000000000000000', noNewPrivileges: '1', pidsMax: '128', memoryMax: '536870912', cpuMax: '100000 100000' }), 'Observed isolation checks failed');
   assert(Array.isArray(probe.artifacts) && probe.artifacts.length === 4, 'Probe must record four artifacts');
   unique(probe.artifacts.map((item) => item.id), 'artifact id');
   for (const packageRegistration of registration.packages) {
@@ -175,22 +264,40 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
     const actualSpecifiers = Object.keys(artifact.exports).sort().map((key) => key === '.' ? packageRegistration.packageName : `${packageRegistration.packageName}/${key.slice(2)}`);
     assert(JSON.stringify(actualSpecifiers) === JSON.stringify([...packageRegistration.allowedImportSpecifiers].sort()), `Artifact exports differ from registration: ${packageRegistration.id}`);
   }
-  strictKeys(probe.consumer, ['packageJsonSha256', 'packageJson', 'workspacePolicySha256', 'workspacePolicy', 'lockfileSha256', 'lockfile', 'forbiddenTokensAbsent', 'packageRealpaths'], 'Consumer receipt');
+  strictKeys(probe.consumer, ['packageJsonSha256', 'packageJson', 'workspacePolicySha256', 'workspacePolicy', 'lockfileSha256', 'lockfile', 'forbiddenTokensAbsent', 'packageRealpaths', 'dependencyRealpaths'], 'Consumer receipt');
   assert(validSha(probe.consumer.packageJsonSha256) && validSha(probe.consumer.workspacePolicySha256) && validSha(probe.consumer.lockfileSha256), 'Consumer digest is invalid');
   assert(probe.consumer.packageJsonSha256 === sha256(`${JSON.stringify(probe.consumer.packageJson, null, 2)}\n`), 'Consumer package.json digest mismatch');
   assert(probe.consumer.workspacePolicySha256 === sha256(probe.consumer.workspacePolicy), 'Consumer workspace policy digest mismatch');
+  assert(probe.consumer.workspacePolicy === expectedWorkspacePolicy(registration), 'Consumer workspace policy differs from registration');
   assert(probe.consumer.lockfileSha256 === sha256(probe.consumer.lockfile), 'Consumer lockfile digest mismatch');
-  assert(!probe.consumer.lockfile.includes('workspace:'), 'Consumer lockfile contains workspace protocol');
-  assert(!probe.consumer.lockfile.includes('link:'), 'Consumer lockfile contains link protocol');
-  assert(!probe.consumer.lockfile.includes('/target'), 'Consumer lockfile contains target source path');
-  assert(!probe.consumer.lockfile.includes('registry.npmjs.org/@firsttx/'), 'Consumer lockfile resolves a first-party registry package');
+  assert(probe.consumer.lockfile === registeredLockfile, 'Consumer lockfile differs from frozen registration');
+  validateFirstPartyLockfile(probe.consumer.lockfile, registration);
+  const expectedDependencies = Object.fromEntries([
+    ...Object.entries(registration.consumerDependencies),
+    ...registration.packages.map((item) => [item.packageName, `file:/artifacts/${item.id}.tgz`]),
+  ]);
+  assert(JSON.stringify(Object.entries(probe.consumer.packageJson.dependencies).sort()) === JSON.stringify(Object.entries(expectedDependencies).sort()), 'Consumer dependency set differs from registration');
   for (const packageRegistration of registration.packages) {
     assert(probe.consumer.packageJson.dependencies[packageRegistration.packageName] === `file:/artifacts/${packageRegistration.id}.tgz`, `Consumer package is not tarball-pinned: ${packageRegistration.id}`);
     assert(probe.consumer.lockfile.includes(`${packageRegistration.id}.tgz`), `Consumer lockfile omits tarball: ${packageRegistration.id}`);
   }
   assert(probe.consumer.forbiddenTokensAbsent === true, 'Consumer forbidden token check failed');
   assert(Array.isArray(probe.consumer.packageRealpaths) && probe.consumer.packageRealpaths.length === 4, 'Consumer realpaths are incomplete');
-  for (const item of probe.consumer.packageRealpaths) assert(item.realpath.startsWith('/consumer/node_modules/.pnpm/'), `Package resolves outside clean consumer: ${item.packageName}`);
+  for (const packageRegistration of registration.packages) {
+    const item = probe.consumer.packageRealpaths.find((entry) => entry.packageName === packageRegistration.packageName);
+    assert(item?.realpath.startsWith('/consumer/node_modules/.pnpm/'), `Package resolves outside clean consumer: ${packageRegistration.packageName}`);
+    assert(isTarballRealpath(item.realpath, packageRegistration), `Package does not resolve to its tarball: ${packageRegistration.packageName}`);
+  }
+  const expectedDependencyCount = registration.packages.reduce((count, item) => count + item.firstPartyDependencies.length, 0);
+  assert(Array.isArray(probe.consumer.dependencyRealpaths) && probe.consumer.dependencyRealpaths.length === expectedDependencyCount, 'Target dependency realpaths are incomplete');
+  for (const packageRegistration of registration.packages) {
+    for (const dependencyName of packageRegistration.firstPartyDependencies) {
+      const dependency = registration.packages.find((item) => item.packageName === dependencyName);
+      const item = probe.consumer.dependencyRealpaths.find((entry) => entry.ownerPackageName === packageRegistration.packageName && entry.dependencyPackageName === dependencyName);
+      assert(item?.realpath.startsWith('/consumer/node_modules/.pnpm/'), `Target dependency resolves outside clean consumer: ${packageRegistration.id}/${dependencyName}`);
+      assert(isTarballRealpath(item.realpath, dependency), `Target resolves a non-tarball first-party dependency: ${packageRegistration.id}/${dependencyName}`);
+    }
+  }
 
   const allowedSpecifiers = registration.packages.flatMap((item) => item.allowedImportSpecifiers).sort();
   const actualPublicSpecifiers = probe.publicImports.map((item) => item.specifier).sort();
@@ -224,7 +331,7 @@ export async function validatePublicBoundaryAudit(repositoryRoot, registration, 
   unique(audit.records.map((item) => item.id), 'audit id');
   assert(JSON.stringify(audit.records.map((item) => item.id).sort()) === JSON.stringify(HISTORICAL_IDS), 'Historical audit universe changed');
   for (const record of audit.records) {
-    strictKeys(record, ['id', 'moduleId', 'scenarioPath', 'scenarioSha256', 'reachability', 'reasonCode', 'importSpecifier', 'missingPublicActions', 'evidenceJsonPointer'], `Audit record ${record.id}`);
+    strictKeys(record, ['id', 'moduleId', 'scenarioPath', 'scenarioSha256', 'reachability', 'reasonCode', 'importSpecifier', 'traceExpectation', 'missingPublicActions', 'evidenceJsonPointer'], `Audit record ${record.id}`);
     const sourceRecord = sourceAudit.records.find((item) => item.id === record.id);
     assert(sourceRecord !== undefined, `Source audit record missing: ${record.id}`);
     assert(record.scenarioPath === sourceRecord.scenario.path && record.scenarioSha256 === sourceRecord.scenario.sha256, `Historical scenario changed: ${record.id}`);
@@ -233,19 +340,25 @@ export async function validatePublicBoundaryAudit(repositoryRoot, registration, 
     assert(['public-export', 'internal-contract', 'unreachable'].includes(record.reachability.value), `Invalid provisional reachability: ${record.id}`);
     assert(typeof record.reasonCode === 'string' && record.reasonCode.length > 0, `Reason code missing: ${record.id}`);
     assert(Array.isArray(record.missingPublicActions), `Missing public actions must be an array: ${record.id}`);
+    const moduleRegistration = registration.packages.find((item) => item.id === record.moduleId && item.role === 'target-module');
+    assert(moduleRegistration !== undefined, `Audit module is not registered: ${record.id}/${record.moduleId}`);
     const node = pointerValue(evidence, record.evidenceJsonPointer);
     if (record.reachability.value === 'public-export') {
       assert(record.reasonCode === 'packed-public-trace-executed', `Public reason code mismatch: ${record.id}`);
       assert(record.missingPublicActions.length === 0, `Public result cannot have missing actions: ${record.id}`);
-      assert(node.id === record.id && node.status === 'executed' && node.importSpecifier === record.importSpecifier, `Public trace evidence mismatch: ${record.id}`);
-      const moduleRegistration = registration.packages.find((item) => item.id === record.moduleId);
+      strictKeys(record.traceExpectation, ['actions', 'observed'], `Trace expectation ${record.id}`);
+      assert(node.id === record.id && node.moduleId === record.moduleId && node.status === 'executed' && node.importSpecifier === record.importSpecifier, `Public trace evidence mismatch: ${record.id}`);
       assert(moduleRegistration?.allowedImportSpecifiers.includes(record.importSpecifier), `Audit import is not registered: ${record.id}`);
+      assert(JSON.stringify(node.actions) === JSON.stringify(record.traceExpectation.actions) && JSON.stringify(node.observed) === JSON.stringify(record.traceExpectation.observed), `Public trace observation mismatch: ${record.id}`);
     } else if (record.reachability.value === 'internal-contract') {
       assert(record.reasonCode === 'private-import-rejected', `Internal reason code mismatch: ${record.id}`);
       assert(record.missingPublicActions.length > 0, `Internal result must identify missing public actions: ${record.id}`);
+      assert(record.traceExpectation === null, `Internal result cannot have a public trace expectation: ${record.id}`);
+      assert(moduleRegistration.privateImportSpecifiers.includes(record.importSpecifier), `Internal import is not registered for module: ${record.id}`);
       assert(node.specifier === record.importSpecifier && node.status === 'rejected' && node.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED', `Private import evidence mismatch: ${record.id}`);
     } else {
       assert(record.reasonCode === 'no-public-or-internal-trace', `Unreachable reason code mismatch: ${record.id}`);
+      assert(record.traceExpectation === null, `Unreachable result cannot have a public trace expectation: ${record.id}`);
     }
   }
   return audit;

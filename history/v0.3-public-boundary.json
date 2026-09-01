@@ -7,7 +7,7 @@
   "registrationId": "firsttx-public-packages-f624b09-v1",
   "evidence": {
     "path": "evidence/v0.3/phase1-contracts.json",
-    "sha256": "3bfd7e869f76c9440ced1910018e42996227d6ebcfb572546e06a1145936d5d7"
+    "sha256": "52263262433cb092cf8c2f6a68dd366af64cf08091c27fcc7632230b35c2fec7"
   },
   "records": [
     {
@@ -21,6 +21,20 @@
       },
       "reasonCode": "packed-public-trace-executed",
       "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run",
+          "run"
+        ],
+        "observed": {
+          "events": [
+            "step1-run",
+            "step2-start",
+            "step1-compensate"
+          ]
+        }
+      },
       "missingPublicActions": [],
       "evidenceJsonPointer": "/probe/publicTraces/0"
     },
@@ -35,6 +49,7 @@
       },
       "reasonCode": "private-import-rejected",
       "importSpecifier": "@firsttx/local-first/storage-manager",
+      "traceExpectation": null,
       "missingPublicActions": [
         "local.materializePreviousVersion",
         "local.observeUpgradeReset"
@@ -52,6 +67,21 @@
       },
       "reasonCode": "packed-public-trace-executed",
       "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run",
+          "commit",
+          "run"
+        ],
+        "observed": {
+          "commitOutcome": "resolved",
+          "compensated": [
+            "step-1"
+          ],
+          "stateAfter": "rolled-back"
+        }
+      },
       "missingPublicActions": [],
       "evidenceJsonPointer": "/probe/publicTraces/1"
     },
@@ -66,6 +96,16 @@
       },
       "reasonCode": "packed-public-trace-executed",
       "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run"
+        ],
+        "observed": {
+          "name": "RetryExhaustedError",
+          "message": "Retry exhausted for step-0"
+        }
+      },
       "missingPublicActions": [],
       "evidenceJsonPointer": "/probe/publicTraces/2"
     },
@@ -80,6 +120,7 @@
       },
       "reasonCode": "private-import-rejected",
       "importSpecifier": "@firsttx/local-first/cache-manager",
+      "traceExpectation": null,
       "missingPublicActions": [
         "local.observeHistoryNavigation"
       ],
@@ -96,6 +137,7 @@
       },
       "reasonCode": "private-import-rejected",
       "importSpecifier": "@firsttx/local-first/broadcast",
+      "traceExpectation": null,
       "missingPublicActions": [
         "local.observeBroadcasterLifecycle"
       ],
@@ -112,6 +154,16 @@
       },
       "reasonCode": "packed-public-trace-executed",
       "importSpecifier": "@firsttx/tx",
+      "traceExpectation": {
+        "actions": [
+          "startTransaction",
+          "run"
+        ],
+        "observed": {
+          "calls": 0,
+          "outcome": "Error"
+        }
+      },
       "missingPublicActions": [],
       "evidenceJsonPointer": "/probe/publicTraces/3"
     }

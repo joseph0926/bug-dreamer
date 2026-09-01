@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFile, realpath, stat, writeFile } from 'node:fs/promises';
+import { networkInterfaces } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
@@ -12,6 +13,39 @@ function sha256(value) {
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function section(source, start, end) {
+  const startIndex = source.indexOf(`${start}\n`);
+  const endIndex = end === undefined ? source.length : source.indexOf(`${end}\n`, startIndex + start.length);
+  assert(startIndex >= 0 && endIndex >= 0, `Lockfile section missing: ${start}`);
+  return source.slice(startIndex, endIndex);
+}
+
+function entryBlocks(source) {
+  const matches = [...source.matchAll(/^  '(@firsttx\/[^']+)':(?: \{\})?\n/gm)];
+  return matches.map((match, index) => ({
+    key: match[1],
+    body: source.slice(match.index, matches[index + 1]?.index ?? source.length),
+  }));
+}
+
+function assertFirstPartyLockfile(lockfile, registration) {
+  const packages = entryBlocks(section(lockfile, 'packages:', 'snapshots:'));
+  const snapshots = entryBlocks(section(lockfile, 'snapshots:'));
+  const expectedPackageKeys = registration.packages.map((item) => `${item.packageName}@file:../artifacts/${item.id}.tgz`).sort();
+  assert(JSON.stringify(packages.map((item) => item.key).sort()) === JSON.stringify(expectedPackageKeys), 'Lockfile contains a non-tarball first-party package');
+  for (const packageRegistration of registration.packages) {
+    const locator = `file:../artifacts/${packageRegistration.id}.tgz`;
+    const packageEntry = packages.find((item) => item.key === `${packageRegistration.packageName}@${locator}`);
+    assert(packageEntry?.body.includes(`tarball: ${locator}`), `First-party tarball resolution missing: ${packageRegistration.id}`);
+    const snapshot = snapshots.find((item) => item.key.startsWith(`${packageRegistration.packageName}@${locator}`));
+    assert(snapshot !== undefined, `First-party snapshot missing: ${packageRegistration.id}`);
+    for (const dependencyName of packageRegistration.firstPartyDependencies) {
+      const dependency = registration.packages.find((item) => item.packageName === dependencyName);
+      assert(snapshot.body.includes(`'${dependencyName}': file:../artifacts/${dependency.id}.tgz`), `Transitive first-party tarball missing: ${packageRegistration.id}/${dependencyName}`);
+    }
+  }
 }
 
 function exportedSpecifiers(packageRegistration, manifest) {
@@ -146,6 +180,15 @@ const registration = JSON.parse(await readFile('/registration/packages.json', 'u
 const lockfile = await readFile('/consumer/pnpm-lock.yaml', 'utf8');
 const workspacePolicy = await readFile('/consumer/pnpm-workspace.yaml', 'utf8');
 const packageJson = JSON.parse(await readFile('/consumer/package.json', 'utf8'));
+const processStatus = await readFile('/proc/self/status', 'utf8');
+const effectiveCapabilities = /^CapEff:\s+(\S+)$/m.exec(processStatus)?.[1];
+const noNewPrivileges = /^NoNewPrivs:\s+(\S+)$/m.exec(processStatus)?.[1];
+const assignedNetworkInterfaces = Object.keys(networkInterfaces()).sort();
+const [pidsMax, memoryMax, cpuMax] = await Promise.all([
+  readFile('/sys/fs/cgroup/pids.max', 'utf8').then((value) => value.trim()),
+  readFile('/sys/fs/cgroup/memory.max', 'utf8').then((value) => value.trim()),
+  readFile('/sys/fs/cgroup/cpu.max', 'utf8').then((value) => value.trim()),
+]);
 
 async function absent(filePath) {
   try {
@@ -168,16 +211,25 @@ try {
 assert(targetSourceAbsent, 'Final image contains target source');
 assert(dockerSocketAbsent, 'Final image exposes Docker socket');
 assert(rootWriteRejected, 'Final image root is writable');
+assert(JSON.stringify(assignedNetworkInterfaces) === JSON.stringify(['lo']), 'Container has a non-loopback assigned network interface');
+assert(effectiveCapabilities === '0000000000000000', 'Container has effective Linux capabilities');
+assert(noNewPrivileges === '1', 'Container allows new privileges');
+assert(pidsMax === '128', 'Container process limit differs from policy');
+assert(memoryMax === '536870912', 'Container memory limit differs from policy');
+assert(cpuMax === '100000 100000', 'Container CPU quota differs from policy');
 
 assert(!lockfile.includes('workspace:'), 'Consumer lockfile contains workspace protocol');
 assert(!lockfile.includes('link:'), 'Consumer lockfile contains link protocol');
 assert(!lockfile.includes('/target'), 'Consumer lockfile contains target source path');
 assert(!lockfile.includes('registry.npmjs.org/@firsttx/'), 'Consumer lockfile resolves a first-party registry package');
+assert(sha256(lockfile) === registration.consumerLockfile.sha256, 'Consumer lockfile differs from registration');
+assertFirstPartyLockfile(lockfile, registration);
 
 const artifacts = [];
 const publicImports = [];
 const privateImports = [];
 const packageRealpaths = [];
+const dependencyRealpaths = [];
 for (const packageRegistration of registration.packages) {
   assert(packageJson.dependencies[packageRegistration.packageName] === `file:/artifacts/${packageRegistration.id}.tgz`, `Consumer dependency is not a tarball: ${packageRegistration.id}`);
   assert(lockfile.includes(`${packageRegistration.id}.tgz`), `Consumer lockfile omits tarball: ${packageRegistration.id}`);
@@ -187,6 +239,13 @@ for (const packageRegistration of registration.packages) {
   const resolved = await realpath(`/consumer/node_modules/${packageRegistration.packageName}`);
   assert(resolved.startsWith('/consumer/node_modules/.pnpm/'), `First-party package resolves outside consumer: ${packageRegistration.id}/${resolved}`);
   packageRealpaths.push({ packageName: packageRegistration.packageName, realpath: resolved });
+  for (const dependencyName of packageRegistration.firstPartyDependencies) {
+    const dependencyPath = path.join(resolved, '..', '..', ...dependencyName.split('/'));
+    const dependencyRealpath = await realpath(dependencyPath);
+    const dependency = registration.packages.find((item) => item.packageName === dependencyName);
+    assert(dependencyRealpath.includes(`@firsttx+${dependency.id}@file+..+artifacts+${dependency.id}.tgz/`), `Target resolves a non-tarball first-party dependency: ${packageRegistration.id}/${dependencyName}`);
+    dependencyRealpaths.push({ ownerPackageName: packageRegistration.packageName, dependencyPackageName: dependencyName, realpath: dependencyRealpath });
+  }
 }
 
 const tx = await import('@firsttx/tx');
@@ -206,6 +265,12 @@ process.stdout.write(`${JSON.stringify({
     targetSourceAbsent,
     dockerSocketAbsent,
     rootWriteRejected,
+    assignedNetworkInterfaces,
+    effectiveCapabilities,
+    noNewPrivileges,
+    pidsMax,
+    memoryMax,
+    cpuMax,
   },
   artifacts,
   consumer: {
@@ -217,6 +282,7 @@ process.stdout.write(`${JSON.stringify({
     lockfile,
     forbiddenTokensAbsent: true,
     packageRealpaths,
+    dependencyRealpaths,
   },
   publicImports,
   privateImports,

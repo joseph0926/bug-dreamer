@@ -18,6 +18,10 @@
       "esbuild"
     ]
   },
+  "consumerLockfile": {
+    "path": "registrations/v0.3/consumer-lock.yaml",
+    "sha256": "8c363c7be87400ea25bda3d0f0e8d21e2cfc9d371e34a9c018718cfe2b8011a4"
+  },
   "packages": [
     {
       "id": "shared",

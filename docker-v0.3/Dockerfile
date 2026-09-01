@@ -32,13 +32,13 @@ COPY harness-v0.3 /harness-v0.3
 COPY registrations/v0.3/packages.json /registration/packages.json
 
 RUN mkdir /consumer && chown node:node /consumer
+COPY --chown=node:node registrations/v0.3/consumer-lock.yaml /consumer/pnpm-lock.yaml
 COPY harness-v0.3/probe-contracts.mjs /consumer/probe-contracts.mjs
 
 USER node
 WORKDIR /consumer
 
 RUN node /harness-v0.3/create-consumer.mjs
-RUN pnpm install --lockfile-only
 RUN pnpm install --frozen-lockfile
 
 ENTRYPOINT ["node", "/consumer/probe-contracts.mjs"]

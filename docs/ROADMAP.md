@@ -57,7 +57,7 @@ Adding `fast-check`, registering a real schedule, supporting a second repository
 
 ### Status
 
-Phase 0 is complete as of 2026-09-01 at `2ee324559323360b569105e4e5c75edd286ba46e`. Its history validators pass with the recorded unavailable image gaps. Phase 1 is complete in the current worktree as of 2026-09-01: four pinned first-party packages build and pack, five registered public imports succeed from a tarball-only clean consumer, 12 private imports are rejected, and all seven historical Nightmares have provisional reachability results. Four are `public-export` and three are `internal-contract`. `contracts` and `history` validation return 0. Phase 2 is next and has not started. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
+Phase 0 is complete as of 2026-09-01 at `2ee324559323360b569105e4e5c75edd286ba46e`. Its history validators pass with the recorded unavailable image gaps. Phase 1 is complete as of 2026-09-01 in the current worktree. The registered frozen consumer lockfile resolves every direct and transitive first-party dependency from its packed tarball, the clean-consumer realpaths confirm those tarball resolutions, audit evidence pointers are bound to their registered modules and expected observations, and the isolation receipt is bound to the preparation runner, Docker arguments, and in-container observations. The `contracts` and `history` validators return 0. Phase 2 has not started. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
 
 ## v0.2
 
