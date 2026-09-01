@@ -220,9 +220,9 @@ test('returns exit 2 for an unknown validator subcommand', async () => {
   );
 });
 
-test('returns exit 1 instead of succeeding for an unimplemented phase', async () => {
+test('returns exit 1 instead of succeeding for a later unimplemented phase', async () => {
   await assert.rejects(
-    execFileAsync(process.execPath, ['scripts/validate-v03.mjs', 'contracts'], { cwd: repositoryRoot }),
+    execFileAsync(process.execPath, ['scripts/validate-v03.mjs', 'spec'], { cwd: repositoryRoot }),
     (error) => error.code === 1 && error.stderr.includes('not implemented yet'),
   );
 });

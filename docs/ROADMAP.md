@@ -57,7 +57,7 @@ Adding `fast-check`, registering a real schedule, supporting a second repository
 
 ### Status
 
-Phase 0 is complete as of 2026-09-01 at `2ee324559323360b569105e4e5c75edd286ba46e`. Its history validators pass with the recorded unavailable image gaps. Phase 1 is next and has not started. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
+Phase 0 is complete as of 2026-09-01 at `2ee324559323360b569105e4e5c75edd286ba46e`. Its history validators pass with the recorded unavailable image gaps. Phase 1 is complete in the current worktree as of 2026-09-01: four pinned first-party packages build and pack, five registered public imports succeed from a tarball-only clean consumer, 12 private imports are rejected, and all seven historical Nightmares have provisional reachability results. Four are `public-export` and three are `internal-contract`. `contracts` and `history` validation return 0. Phase 2 is next and has not started. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
 
 ## v0.2
 
