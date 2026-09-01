@@ -5,7 +5,7 @@
 - [README.md](README.md)는 현재 제품 개념, 검증된 결과, 공개 동작 흐름과 알려진 한계를 소유한다.
 - [docs/ROADMAP.md](docs/ROADMAP.md)는 버전별 범위, 제외 범위, phase, 현재 상태와 adopt, revise, retire 판정을 소유한다.
 - [docs/V0.1-CONTRACT.md](docs/V0.1-CONTRACT.md)는 v0.1과 v0.2의 변경 불가 역사 실행 계약, 결과 분류, 실행 증거, 재현 판정과 보고서 형식을 소유한다.
-- RFC가 Accepted로 전환되고 superseding commit이 생기면 [docs/V0.3-CONTRACT.md](docs/V0.3-CONTRACT.md)가 v0.3 입력, 실행, 결과 축, evidence, 재현, 최소화, 게시와 validator 계약을 소유한다. 그 전에는 이관 후보 문서다.
+- [docs/V0.3-CONTRACT.md](docs/V0.3-CONTRACT.md)는 v0.3 입력, 실행, 결과 축, evidence, 재현, 최소화, 게시와 validator 계약을 소유한다.
 - [docs/adr/0001-data-only-evaluation-boundary.md](docs/adr/0001-data-only-evaluation-boundary.md)는 generator, target, fixture materializer, interpreter와 result channel의 신뢰 경계 결정과 이유를 소유한다.
 - [CONTEXT.md](CONTEXT.md)는 버전 간에 공유하는 도메인 용어의 뜻만 소유한다.
 - ROADMAP의 v0.2 절, 당시 registration과 results는 v0.2 확장 범위와 실제 판정의 audit trail이다.

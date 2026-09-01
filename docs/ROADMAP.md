@@ -57,7 +57,7 @@ Adding `fast-check`, registering a real schedule, supporting a second repository
 
 ### Status
 
-Phase 0 worktree preparation is in progress under a Proposed RFC. Before Phase 0 can exit, the RFC must move the v0.3 Dockerfile from the frozen legacy `docker/` closure to `docker-v0.3/`, the user must mark the RFC Accepted, and the required superseding commit must exist. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
+Phase 0 is complete as of 2026-09-01 at `2ee324559323360b569105e4e5c75edd286ba46e`. Its history validators pass with the recorded unavailable image gaps. Phase 1 is next and has not started. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
 
 ## v0.2
 
