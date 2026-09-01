@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "bug-dreamer/v02-audit/v1",
+  "nightmareReport": {
+    "path": "nightmares/2026-08-31.md",
+    "sha256": "12f5a0ebd22881fd8337d5de331c1079cd668b96a783439ed21adaf35c92e874"
+  },
+  "records": [
+    {
+      "id": "nightmare-01",
+      "ordinal": 1,
+      "title": "The failed step never cleans up after itself",
+      "scenario": {
+        "path": "scenarios/firsttx/failed-step-compensation.test.ts",
+        "sha256": "e59c7f4e14452d18efd088ca2207e26b945ca6fbffc8072b3177d59368682495",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/failed-step-compensation.test.ts' --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/failed-step-compensation.run-1.json", "jsonPointer": "/evidence", "sha256": "88fbd52723289c9f787ac6703e6476df590878bca99ba0d888f80e82b263f5ae"},
+        {"path": "evidence/2026-08-31/failed-step-compensation.run-2.json", "jsonPointer": "/evidence", "sha256": "bb3584a6d21311f7bc7c052c5112f3f50b00e4b6a1523d949662689ee277614b"},
+        {"path": "evidence/2026-08-31/failed-step-compensation.run-3.json", "jsonPointer": "/evidence", "sha256": "de525c4f860b1cc921fce89fe29e8d85caa4919baaa693a8bc652fd63e2961aa"}
+      ],
+      "independentReproductionRefs": [],
+      "imageRef": "v02-tx-original",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-possible",
+        "oracle": "disputed",
+        "basisRefs": ["nightmares/2026-08-31.md#1-the-failed-step-never-cleans-up-after-itself"]
+      },
+      "dataGaps": ["The independent reproduction is described in the report but has no separate structured evidence record."]
+    },
+    {
+      "id": "nightmare-02",
+      "ordinal": 2,
+      "title": "The upgrade that seeds poison and then burns the field",
+      "scenario": {
+        "path": "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts",
+        "sha256": "7fc6d51890a660fc168a5b795d2e47d9d7801e614f5c5de68f2ccf980cf0a246",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts' --module packages/local-first --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/incident-seeded/batch-lf.json", "jsonPointer": "/batch/results/1", "sha256": "896f7e1724e1922bac9481a4cac75d2e15147e608f0c88813e77f7969171a1fd"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/incident-seeded/independent-repro-codex.json", "jsonPointer": "/results/2", "sha256": "fec6f4393c6bd22dcd8765c1949045bb4a2fb581c27584093b7acc7b79d56393"}
+      ],
+      "imageRef": "v02-local-first",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-test-seam-candidate",
+        "oracle": "independent-possible",
+        "basisRefs": ["nightmares/2026-08-31.md#2-the-upgrade-that-seeds-poison-and-then-burns-the-field"]
+      },
+      "dataGaps": []
+    },
+    {
+      "id": "nightmare-03",
+      "ordinal": 3,
+      "title": "The receipt that gets refunded anyway",
+      "scenario": {
+        "path": "scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts",
+        "sha256": "81cec1c3ebdeb82d1d91b5c5acd6ad634e409719e2a814440052c1efbac1e6b8",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts' --module packages/tx --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/incident-seeded/batch-tx.json", "jsonPointer": "/batch/results/0", "sha256": "6affca9e14972a9f0bc215a8cc6e50eb6a1a9c63e1c19f738da5052bfd6c430e"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/incident-seeded/independent-repro-codex.json", "jsonPointer": "/results/0", "sha256": "fec6f4393c6bd22dcd8765c1949045bb4a2fb581c27584093b7acc7b79d56393"}
+      ],
+      "imageRef": "v02-tx-rerun",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-likely",
+        "oracle": "independent-possible",
+        "basisRefs": ["nightmares/2026-08-31.md#3-the-receipt-that-gets-refunded-anyway"]
+      },
+      "dataGaps": []
+    },
+    {
+      "id": "nightmare-04",
+      "ordinal": 4,
+      "title": "The error that loses its name in transit",
+      "scenario": {
+        "path": "benchmark/rerun-2026-08-31/control/tx/control-02.test.ts",
+        "sha256": "dcb12049cff5ee9ad6e48e5782c3150a4a0f7c014ca3c9b703b8ea7d13256161",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/tx/control-02.test.ts' --module packages/tx --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/rerun/control/clean-tx.json", "jsonPointer": "/batch/results/1", "sha256": "f55babb629608790f39990fed821ce615ef95345a888e90f8dc9851d15b20804"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/rerun/independent-repro-codex.json", "jsonPointer": "/results/0", "sha256": "0b0846b8102aa1ddb2a3edf63da2d5cc50ffd8481d27b80e2d3bd3596ac34d66"}
+      ],
+      "imageRef": "v02-tx-rerun",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-likely",
+        "oracle": "independent-possible",
+        "basisRefs": ["nightmares/2026-08-31.md#4-the-error-that-loses-its-name-in-transit"]
+      },
+      "dataGaps": []
+    },
+    {
+      "id": "nightmare-05",
+      "ordinal": 5,
+      "title": "The screen that stops listening to history",
+      "scenario": {
+        "path": "benchmark/rerun-2026-08-31/control/local-first/control-06.test.ts",
+        "sha256": "fb442a6a61fe107548eca31a9c07adba7372cc603a57bea0744262cdc200b9b4",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/local-first/control-06.test.ts' --module packages/local-first --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/rerun/control/clean-local-first.json", "jsonPointer": "/batch/results/5", "sha256": "50d0cbffe0f07d739c03519d9e37fd0b8a5cf773af402c6af76828faef1fa439"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/rerun/independent-repro-codex.json", "jsonPointer": "/results/3", "sha256": "0b0846b8102aa1ddb2a3edf63da2d5cc50ffd8481d27b80e2d3bd3596ac34d66"}
+      ],
+      "imageRef": "v02-local-first",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-e2e-required",
+        "oracle": "independent-possible",
+        "basisRefs": ["nightmares/2026-08-31.md#5-the-screen-that-stops-listening-to-history"]
+      },
+      "dataGaps": []
+    },
+    {
+      "id": "nightmare-06",
+      "ordinal": 6,
+      "title": "The megaphone that explodes after you hang it up",
+      "scenario": {
+        "path": "benchmark/rerun-2026-08-31/control/local-first/control-03.test.ts",
+        "sha256": "ed3e34a4f7d329a0f7aa355bc53b17a031cc78b7990e8a0eb76809d90e5e789b",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/local-first/control-03.test.ts' --module packages/local-first --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/rerun/control/clean-local-first.json", "jsonPointer": "/batch/results/2", "sha256": "50d0cbffe0f07d739c03519d9e37fd0b8a5cf773af402c6af76828faef1fa439"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/rerun/independent-repro-codex.json", "jsonPointer": "/results/2", "sha256": "0b0846b8102aa1ddb2a3edf63da2d5cc50ffd8481d27b80e2d3bd3596ac34d66"}
+      ],
+      "imageRef": "v02-local-first",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "internal-likely",
+        "oracle": "independent-possible",
+        "basisRefs": ["nightmares/2026-08-31.md#6-the-megaphone-that-explodes-after-you-hang-it-up"]
+      },
+      "dataGaps": []
+    },
+    {
+      "id": "nightmare-07",
+      "ordinal": 7,
+      "title": "Zero tries, one anonymous explosion",
+      "scenario": {
+        "path": "benchmark/rerun-2026-08-31/control/tx/control-04.test.ts",
+        "sha256": "3fa088ea57d69a8062a3ec85f7add616e7a53c19b775fa8564a588b99fccf69a",
+        "originalCommand": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/tx/control-04.test.ts' --module packages/tx --timeout-ms 30000"
+      },
+      "evidenceRefs": [
+        {"path": "evidence/2026-08-31/rerun/control/clean-tx.json", "jsonPointer": "/batch/results/3", "sha256": "f55babb629608790f39990fed821ce615ef95345a888e90f8dc9851d15b20804"}
+      ],
+      "independentReproductionRefs": [
+        {"path": "evidence/2026-08-31/rerun/independent-repro-codex.json", "jsonPointer": "/results/1", "sha256": "0b0846b8102aa1ddb2a3edf63da2d5cc50ffd8481d27b80e2d3bd3596ac34d66"}
+      ],
+      "imageRef": "v02-tx-rerun",
+      "auditStatus": "unassessed",
+      "axes": {
+        "specAcceptance": {"status": "unassessed", "value": null},
+        "plan": {"status": "unassessed", "value": null},
+        "evaluator": {"status": "unassessed", "value": null},
+        "batch": {"status": "unassessed", "value": null},
+        "execution": {"status": "unassessed", "value": null},
+        "repeatReproduction": {"status": "unassessed", "value": null},
+        "independentReproduction": {"status": "unassessed", "value": null},
+        "reachability": {"status": "unassessed", "value": null},
+        "oracle": {"status": "unassessed", "value": null},
+        "minimization": {"status": "unassessed", "value": null},
+        "humanVerdict": {"status": "historical", "value": "real-bug-not-worth-fixing"},
+        "publication": {"status": "historical", "value": "legacy"}
+      },
+      "staticHypothesis": {
+        "reachability": "public-possible",
+        "oracle": "disputed",
+        "basisRefs": ["nightmares/2026-08-31.md#7-zero-tries-one-anonymous-explosion"]
+      },
+      "dataGaps": []
+    }
+  ],
+  "globalDataGaps": [
+    "Every v0.2 scenario imports through an @target alias that resolves to repository source rather than a packed package export.",
+    "Static hypotheses are not v0.3 result-axis verdicts and must be replaced only after the new evaluator runs."
+  ]
+}

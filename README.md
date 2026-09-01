@@ -4,6 +4,8 @@
 
 Bug Dreamer imagines unlikely but reachable states in your code, turns them into executable tests, and reports only the tests that fail in isolation.
 
+The workflow below describes the completed v0.1 and v0.2 system. v0.3 is in progress and replaces generated test code with validated data, a trusted interpreter, and a separate result channel.
+
 ## How it works
 
 1. Extract the module's contracts first: documentation, existing tests, public types, and declared invariants. They are the only source of expectations.
@@ -13,7 +15,9 @@ Bug Dreamer imagines unlikely but reachable states in your code, turns them into
 5. Keep only failures that show the same signature in three consecutive runs, then reproduce them once more in an independent session.
 6. Rank the survivors by reachability and impact, write them to a future-dated postmortem, and let a human make the final call.
 
-The execution gate is the trust boundary. A plausible story is not enough. Every reported nightmare must include a command that reproduces the failure, and its expectation must cite a contract source that exists independently of the generated scenario.
+For v0.1 and v0.2, the execution gate is the trust boundary. A plausible story is not enough. Every reported nightmare must include a command that reproduces the failure, and its expectation must cite a contract source that exists independently of the generated scenario.
+
+v0.2 reachability was verified against fixed repository-internal execution contracts. Consumer-level reachability through declared package exports and stronger oracle requirements are under audit in v0.3. Its independent reproduction gate requires a separate session and a newly built evaluator image on the same host; reproduction on another physical host remains follow-up validation. A malicious target package deliberately impersonating the trusted result channel is outside the v0.3 threat model.
 
 ## What exists today
 
@@ -25,6 +29,8 @@ The execution gate is the trust boundary. A plausible story is not enough. Every
 
 ## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for version scope, validation rules, and project status. v0.1 and v0.2 are complete.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for version scope, validation rules, and project status. v0.1 and v0.2 are complete, while v0.3 is in progress.
 
 See [docs/V0.1-CONTRACT.md](docs/V0.1-CONTRACT.md) for outcome semantics, evidence fields, reproduction rules, and the report template; v0.2 reuses them unchanged.
+
+See [docs/V0.3-CONTRACT.md](docs/V0.3-CONTRACT.md) for the v0.3 data contracts, trust boundary, result axes, reproduction rules, and publication gate.

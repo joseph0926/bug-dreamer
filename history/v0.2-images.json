@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "bug-dreamer/v02-images/v1",
+  "inventoryCheckedAt": "2026-09-01T00:00:00+09:00",
+  "inventoryScope": "local Docker daemon only; external registries, release assets, and artifact stores were not queried",
+  "currentMutableTags": {
+    "bug-dreamer/firsttx:v0.1-f624b09f148c": "sha256:94d7b4bcfa2a35e132a3495b4fb29b8c77c7aec1e5664ca8f0c6cdb31f0eff49",
+    "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first": null,
+    "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint": null
+  },
+  "images": [
+    {
+      "id": "v02-tx-original",
+      "module": "packages/tx",
+      "tag": "bug-dreamer/firsttx:v0.1-f624b09f148c",
+      "imageId": "sha256:57459b8d27565962c61f0f676c84a0d8141d4bd33ba78210e6625fa98e180794",
+      "ociDigest": null,
+      "platform": null,
+      "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "dependenciesRef": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "f518b0e",
+      "archive": {"locator": null, "sha256": null, "verified": false},
+      "localAvailability": false,
+      "preservation": {"status": "evidence-preserved", "reason": "Evidence, scenario hash, and image ID exist; no exact or rebuilt archive was found."},
+      "replay": {"status": "unavailable", "resultRef": null},
+      "replayCases": [{"auditId": "nightmare-01"}],
+      "evidenceRefs": [
+        "evidence/2026-08-31/failed-step-compensation.run-1.json",
+        "evidence/2026-08-31/failed-step-compensation.run-2.json",
+        "evidence/2026-08-31/failed-step-compensation.run-3.json"
+      ]
+    },
+    {
+      "id": "v02-tx-rerun",
+      "module": "packages/tx",
+      "tag": "bug-dreamer/firsttx:v0.1-f624b09f148c",
+      "imageId": "sha256:e70d5ed2a2a8687c1e46fa73f9ec59ddc52b085f71f1d1db2a39188b5ff8f664",
+      "ociDigest": null,
+      "platform": null,
+      "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "dependenciesRef": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "756f75d-or-later",
+      "archive": {"locator": null, "sha256": null, "verified": false},
+      "localAvailability": false,
+      "preservation": {"status": "evidence-preserved", "reason": "Evidence, scenario hash, and image ID exist; no exact or rebuilt archive was found."},
+      "replay": {"status": "unavailable", "resultRef": null},
+      "replayCases": [
+        {"auditId": "nightmare-03"},
+        {"auditId": "nightmare-04"},
+        {"auditId": "nightmare-07"}
+      ],
+      "evidenceRefs": [
+        "evidence/2026-08-31/incident-seeded/batch-tx.json",
+        "evidence/2026-08-31/rerun/control/clean-tx.json"
+      ]
+    },
+    {
+      "id": "v02-local-first",
+      "module": "packages/local-first",
+      "tag": "bug-dreamer/firsttx:v0.1-f624b09f148c-local-first",
+      "imageId": "sha256:f7b0e86eb825b9fb2cfcddb6236100960d586767248ad0f7799627adbfc43c13",
+      "ociDigest": null,
+      "platform": null,
+      "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "dependenciesRef": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "756f75d-or-later",
+      "archive": {"locator": null, "sha256": null, "verified": false},
+      "localAvailability": false,
+      "preservation": {"status": "evidence-preserved", "reason": "Evidence, scenario hash, and image ID exist; no exact or rebuilt archive was found."},
+      "replay": {"status": "unavailable", "resultRef": null},
+      "replayCases": [
+        {"auditId": "nightmare-02"},
+        {"auditId": "nightmare-05"},
+        {"auditId": "nightmare-06"}
+      ],
+      "evidenceRefs": [
+        "evidence/2026-08-31/incident-seeded/batch-lf.json",
+        "evidence/2026-08-31/rerun/control/clean-local-first.json"
+      ]
+    },
+    {
+      "id": "v02-prepaint",
+      "module": "packages/prepaint",
+      "tag": "bug-dreamer/firsttx:v0.1-f624b09f148c-prepaint",
+      "imageId": "sha256:11fe81ba28f05bedcfe9cbb919d11d7a09d01f9200d913318fb4b810e9bd858c",
+      "ociDigest": null,
+      "platform": null,
+      "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "dependenciesRef": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "756f75d-or-later",
+      "archive": {"locator": null, "sha256": null, "verified": false},
+      "localAvailability": false,
+      "preservation": {"status": "evidence-preserved", "reason": "v0.2 evidence and image ID exist; no exact or rebuilt archive was found."},
+      "replay": {"status": "unavailable", "resultRef": null},
+      "replayCases": [
+        {
+          "id": "v02-prepaint-control-01",
+          "scenario": {
+            "path": "benchmark/rerun-2026-08-31/control/prepaint/control-01.test.ts",
+            "sha256": "3eb6cdcaa765e08f3067a7dc4560a8ca06f22c25b04d5c1aacb954b0d0e0cb0a",
+            "originalCommand": "node scripts/run-scenario.mjs --scenario 'benchmark/rerun-2026-08-31/control/prepaint/control-01.test.ts' --module packages/prepaint --timeout-ms 30000"
+          },
+          "evidenceRefs": [
+            {"path": "evidence/2026-08-31/rerun/control/clean-prepaint.json", "jsonPointer": "/batch/results/0", "sha256": "4d91f773a872ba4246de2446479d7ef722588a9f60fe0a5549f1f376f6fd1a5e"}
+          ],
+          "expectedOutcome": "pass"
+        }
+      ],
+      "evidenceRefs": ["evidence/2026-08-31/rerun/control/clean-prepaint.json"]
+    }
+  ],
+  "dataGaps": [
+    "No external archive locator or archive digest is recorded for any image.",
+    "OCI registry digests and platforms were not recorded in v0.2 evidence.",
+    "The tx tag was reused for two distinct historical image IDs and now points to a third image ID.",
+    "Builder commits are inferred from repository history rather than recorded in evidence."
+  ]
+}

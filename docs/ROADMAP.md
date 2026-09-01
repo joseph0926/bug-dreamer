@@ -1,5 +1,64 @@
 # Roadmap
 
+## v0.3
+
+### Goal
+
+v0.3 hardens two boundaries that v0.2 did not prove: a reported failure must be reachable through declared package exports in a clean consumer, and generator-controlled data or target logs must not be able to forge the evaluator verdict.
+
+The version keeps the pinned `firsttx` target and its three registered modules. It replaces generated executable tests with a validated `NightmareSeed`, a trusted transformation and planning path, a registered action interpreter, a trusted invariant evaluator, and a separate structured result channel.
+
+### Scope
+
+- Audit the seven published nightmares and the 20 planted defects against public package exports and stronger oracle provenance.
+- Build packed target and first-party dependency artifacts and install them in a clean consumer with no workspace links or private source aliases.
+- Define canonical data contracts for `NightmareSeed`, `NightmareSpec`, and `ExecutionPlan`.
+- Add trusted fixture, action, invariant, operator, evaluator, reducer, and evidence contracts.
+- Require five matching isolated runs, one separate-session evaluator rebuild, and a deterministic 1-minimal replay before public confirmation.
+- Measure operator effect and direct-materializer-to-interpreter retention under pre-registered budgets and independent verdicts.
+- Produce evidence-first static reports without automatic promotion to `nightmares/`.
+
+### Phases
+
+Later phases start only after the earlier phase exit is satisfied.
+
+1. **Phase 0, documentation and historical ledger**: transfer the v0.3 contract into repository-owned documents, freeze the v0.2 runtime and historical outputs, record the seven-item audit ledger, and classify historical image preservation.
+   - Exit: `node scripts/validate-v03.mjs history` and `node scripts/validate-v03.mjs history --replay-available` return 0, subject to recorded unavailable image gaps.
+2. **Phase 1, public package boundary**: build packed artifacts, install them in a clean consumer, and reject private imports, workspace links, and unregistered exports.
+   - Exit: `contracts` and `history` validation return 0 and every historical nightmare has a provisional public-boundary result.
+3. **Phase 2, structured input and trusted verdict boundary**: validate data-only seeds and specs, build canonical plans, execute only registered actions, and accept verdicts only from the trusted result channel.
+   - Exit: `spec` and `trust` validation return 0, including marker-forgery and malformed-result negative fixtures.
+4. **Phase 3, operator spike and deterministic reduction**: test three trusted state-transition operators on one asynchronous defect and reduce a preserved violation to a deterministic 1-minimal spec.
+   - Exit: the spike closes as `adopt` or `retire`; `operators` and `replay` validation return 0.
+5. **Phase 4, pre-registered benchmark**: remeasure generic and invariant-first procedures, operator effect, interpreter retention, and an optional approved fast-check spike in one complete benchmark epoch.
+   - Exit: each experiment has a terminal verdict and `benchmark` validation plus scorer recomputation return 0.
+6. **Phase 5, real-module application**: apply the adopted hardened pipeline to the three registered modules and independently reproduce any public candidate.
+   - Exit: `evidence` and `replay` validation return 0 and each public candidate satisfies the v0.3 result gates.
+7. **Phase 6, reports and portfolio**: render evidence-first reports, preserve internal and legacy findings, and document the bounded demonstration.
+   - Exit: `reports` validation returns 0 and no automatic run writes to `nightmares/`.
+
+### Verdicts
+
+The interpreter pipeline, operator strategy, and optional fast-check strategy have separate `adopt`, `revise`, and `retire` decisions. An operator retirement does not retire the hardened interpreter pipeline. The pipeline alone can ship as `v0.3 hardened`; an adopted operator benchmark may ship as `v0.3 operator-guided`.
+
+Pre-registered universes, budgets, formulas, checkpoint digests, benchmark epoch identity, raw measurements, and scorer output belong to `benchmark/v0.3/registration.json` and its result set. This ROADMAP owns the final verdict and current phase status by reference to that evidence. The normative input, execution, result, replay, and publication rules belong to [V0.3-CONTRACT.md](V0.3-CONTRACT.md).
+
+### Exclusions
+
+- Multi-repository support
+- A web application
+- Automatic fixes, merges, or production traffic collection
+- Persistent synthetic customer populations, bounties, underwriting, or deployment guarantees
+- A shared runner package or TLA+ model generation
+- Claims that the absence of a found defect proves correctness
+- Reproduction on another physical host or CI runner as a v0.3 completion requirement
+
+Adding `fast-check`, registering a real schedule, supporting a second repository, or deleting an existing public nightmare requires separate user approval.
+
+### Status
+
+Phase 0 worktree preparation is in progress under a Proposed RFC. Before Phase 0 can exit, the RFC must move the v0.3 Dockerfile from the frozen legacy `docker/` closure to `docker-v0.3/`, the user must mark the RFC Accepted, and the required superseding commit must exist. v0.3 is not complete. The v0.1 and v0.2 completion records below remain historical facts and are not re-judged retroactively.
+
 ## v0.2
 
 ### Scope

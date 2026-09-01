@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "bug-dreamer/history-manifest/v1",
+  "version": "v0.2",
+  "completionDate": "2026-08-31",
+  "baselineCommit": "45106d9df9c8d9b68fb327311e767a10e114959f",
+  "baselineTree": "ed4e6171eea3a2c43708e0ee6f2ff77441e27ff0",
+  "target": {
+    "project": "https://github.com/joseph0926/firsttx",
+    "revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+    "dependenciesRef": "sha256:bb4c56b66360be31204d17074b9dc95a457d916c1b2d80779f14373436646ce7"
+  },
+  "pathUniverseRef": "history/v0.2-paths.json",
+  "targetTreeSnapshotRef": "history/firsttx-v0.2-tree.json",
+  "auditLedgerRef": "history/v0.2-audit.json",
+  "imageLedgerRef": "history/v0.2-images.json",
+  "anchors": {
+    "pathManifestSha256": "d82c50087c96257bcb7a8ae81c9743ad49fafce6ffd21c5995740ab683ebe761",
+    "targetTreeSnapshotSha256": "635dcf36782aa54f5330148be9cd9c8c44b7633e43326cd4687675662a1e7e6c",
+    "imageLedgerSha256": "b3e6cd991e7ba132440a03b07b27ff73b3e715ffca8eb5cba860d85aee3eba6e",
+    "auditImmutableProjectionSha256": "29f2766dd0697c6c2503051e96f9e3d5f39b7cf598c904d15ee3eabc62791edc",
+    "registrationTemplateSha256": "5189aba8ab06fda1f79d33f50bdc50c13b786598c146a2e75c9bd17b7025a2d9"
+  },
+  "nightmareReport": {
+    "path": "nightmares/2026-08-31.md",
+    "sha256": "12f5a0ebd22881fd8337d5de331c1079cd668b96a783439ed21adaf35c92e874",
+    "entryCount": 7
+  },
+  "historicalContract": "docs/V0.1-CONTRACT.md",
+  "legacyEntrypoints": [
+    "scripts/prepare-image.mjs",
+    "scripts/run-scenario.mjs",
+    "scripts/run-batch.mjs",
+    "scripts/run-digest.mjs"
+  ]
+}

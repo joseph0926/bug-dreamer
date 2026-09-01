@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-registration/v1",
+  "status": "template",
+  "requiresUserCheckpoints": true,
+  "phase3": {
+    "finalVerdict": null,
+    "spikeRegistrationDigest": null,
+    "spikeResultDigest": null
+  },
+  "checkpoints": {
+    "commitA": null,
+    "commitB": null,
+    "sealedRef": null
+  },
+  "authorBundle": {
+    "manifestDigest": null,
+    "sessionRecordDigest": null
+  },
+  "universe": {
+    "development": [],
+    "existingPublic": [],
+    "heldOutTemporal": []
+  },
+  "pipelineRetentionDefectIds": [],
+  "pipelineRetentionRows": [],
+  "arms": ["G", "P", "A", "B", "C", "D", "E"],
+  "budgets": null,
+  "metrics": null,
+  "truthTables": null,
+  "revisableReasonCodes": null,
+  "benchmarkEpochId": null
+}

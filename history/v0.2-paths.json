@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "bug-dreamer/history-paths/v1",
+  "baseline": {
+    "repository": "bug-dreamer",
+    "commit": "45106d9df9c8d9b68fb327311e767a10e114959f",
+    "tree": "ed4e6171eea3a2c43708e0ee6f2ff77441e27ff0",
+    "trackedPathCount": 213
+  },
+  "frozenRuntimeInputs": {
+    "pathCount": 152,
+    "explicitPaths": [
+      "benchmark/manifest.json",
+      "docker/Dockerfile",
+      "harness/entrypoint.mjs",
+      "harness/events.mjs",
+      "harness/generated.test.ts",
+      "harness/scenario.mjs",
+      "harness/vitest.config.mjs",
+      "scenarios/firsttx/failed-step-compensation.test.ts",
+      "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-02.test.ts",
+      "scenarios/firsttx/incident-seeded-2026-08-31/local-first/incident-03.test.ts",
+      "scenarios/firsttx/incident-seeded-2026-08-31/tx/incident-01.test.ts",
+      "scripts/prepare-image.mjs",
+      "scripts/run-batch.mjs",
+      "scripts/run-digest.mjs",
+      "scripts/run-scenario.mjs",
+      "src/batch.mjs",
+      "src/benchmark.mjs",
+      "src/classify.mjs",
+      "src/constants.mjs",
+      "src/digest.mjs",
+      "src/docker-command.mjs",
+      "src/modules.mjs",
+      "src/process.mjs",
+      "src/scenario-file.mjs"
+    ],
+    "prefixes": [
+      "benchmark/arms/",
+      "benchmark/baseline/local-first/",
+      "benchmark/baseline/prepaint/",
+      "benchmark/baseline/tx/",
+      "benchmark/checks/",
+      "benchmark/rerun-2026-08-31/baseline/",
+      "benchmark/rerun-2026-08-31/control/",
+      "benchmark/rerun-2026-08-31/separated/"
+    ],
+    "excludePaths": ["benchmark/arms/separated/INVARIANTS.md"],
+    "hostImportClosures": {
+      "scripts/prepare-image.mjs": [
+        "scripts/prepare-image.mjs",
+        "src/benchmark.mjs",
+        "src/constants.mjs",
+        "src/modules.mjs",
+        "src/process.mjs"
+      ],
+      "scripts/run-scenario.mjs": [
+        "scripts/run-scenario.mjs",
+        "src/benchmark.mjs",
+        "src/classify.mjs",
+        "src/constants.mjs",
+        "src/docker-command.mjs",
+        "src/modules.mjs",
+        "src/process.mjs",
+        "src/scenario-file.mjs"
+      ],
+      "scripts/run-batch.mjs": [
+        "scripts/run-batch.mjs",
+        "src/batch.mjs",
+        "src/constants.mjs",
+        "src/modules.mjs",
+        "src/process.mjs",
+        "src/scenario-file.mjs"
+      ],
+      "scripts/run-digest.mjs": [
+        "scripts/run-digest.mjs",
+        "src/constants.mjs",
+        "src/digest.mjs",
+        "src/modules.mjs",
+        "src/process.mjs"
+      ]
+    },
+    "processEntrypoints": {
+      "scripts/run-batch.mjs": ["scripts/run-scenario.mjs"],
+      "scripts/run-digest.mjs": ["scripts/run-batch.mjs"]
+    },
+    "dockerBuildContract": {
+      "dockerfile": "docker/Dockerfile",
+      "repositoryContextPaths": ["docker/", "harness/"],
+      "copySources": ["target/", "harness"],
+      "targetArchiveCommonPaths": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        "tsconfig.base.json",
+        "packages/shared"
+      ],
+      "targetArchiveModulePaths": {
+        "packages/tx": "packages/tx",
+        "packages/local-first": "packages/local-first",
+        "packages/prepaint": "packages/prepaint"
+      },
+      "targetArchiveTrees": {
+        "packages/tx": {"pathCount": 40, "gitLsTreeSha256": "5efa9101f9b980f0d1c907200015ad759855bc4294d04f04ba9695ea3a03bf6e"},
+        "packages/local-first": {"pathCount": 50, "gitLsTreeSha256": "b2f65aef4834e81386ece1f55823e4fe531f1f12dcbdcc696ee368b380c4e362"},
+        "packages/prepaint": {"pathCount": 55, "gitLsTreeSha256": "4ce6ba5b48e5ee69c888607d2e7ebaad8fc2ad9292556912025ce66a77230323"}
+      },
+      "baseImage": "node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203"
+    }
+  },
+  "frozenHistoricalOutputs": {
+    "pathCount": 39,
+    "explicitPaths": [
+      "benchmark/arms/separated/INVARIANTS.md",
+      "benchmark/baseline/PROMPT.md",
+      "benchmark/rerun-2026-08-31/REGISTRATION.md",
+      "digests/2026-08-31.md",
+      "nightmares/2026-08-31.md"
+    ],
+    "prefixes": ["benchmark/results/", "evidence/2026-08-31/"],
+    "excludePaths": []
+  },
+  "baselineSnapshotOnly": {
+    "pathCount": 22,
+    "derivation": "baseline tracked paths minus frozenRuntimeInputs and frozenHistoricalOutputs",
+    "packageJsonProjection": {
+      "engines": {"node": "24.x"},
+      "packageManager": "pnpm@11.17.0",
+      "scripts": {
+        "runner:prepare": "node scripts/prepare-image.mjs",
+        "runner:run": "node scripts/run-scenario.mjs",
+        "runner:batch": "node scripts/run-batch.mjs",
+        "runner:digest": "node scripts/run-digest.mjs"
+      }
+    },
+    "pnpmLockProjection": {
+      "lockfileVersion": "9.0",
+      "autoInstallPeers": true,
+      "excludeLinksFromLockfile": false,
+      "legacyRootDependencies": {}
+    }
+  },
+  "reservedLegacyNamespaces": [
+    "benchmark/arms/",
+    "benchmark/baseline/",
+    "benchmark/checks/",
+    "benchmark/results/",
+    "benchmark/rerun-2026-08-31/",
+    "evidence/2026-08-31/",
+    "docker/",
+    "harness/",
+    "scenarios/firsttx/"
+  ],
+  "historicalBuildSnapshots": [
+    {
+      "imageRef": "v02-tx-original",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "f518b0e",
+      "confidence": "inferred",
+      "reason": "The image ID first appears with the original v0.1 evidence before later Docker and harness changes."
+    },
+    {
+      "imageRef": "v02-tx-rerun",
+      "recordedBuilderCommit": null,
+      "inferredBuilderCommit": "756f75d-or-later",
+      "confidence": "inferred",
+      "reason": "The image ID appears in evidence after the Docker and harness update, but evidence did not record a builder commit."
+    }
+  ],
+  "constraints": {
+    "topLevelSetsDisjoint": true,
+    "trackedUniverseComplete": true,
+    "rejectFrozenChanges": true,
+    "rejectClosureAddition": true,
+    "rejectClosureRemoval": true,
+    "allowV03PathsOutsideLegacyClosure": true
+  }
+}
