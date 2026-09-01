@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "policy-injection",
+  "invariantId": "tx.successful-step-return",
+  "actors": ["checkout"],
+  "actions": [],
+  "imports": ["../../packages/tx/src/transaction.ts"],
+  "shell": "node arbitrary.js",
+  "runCount": 999,
+  "resourcePolicy": { "network": true }
+}

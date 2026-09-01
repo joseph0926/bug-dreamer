@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "bug-dreamer/phase2-catalog/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "target": {
+    "registrationId": "firsttx-public-packages-f624b09-v1",
+    "registrationPath": "registrations/v0.3/packages.json",
+    "registrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+    "moduleId": "tx",
+    "packageName": "@firsttx/tx",
+    "importSpecifier": "@firsttx/tx",
+    "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+    "artifactSha256": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
+  },
+  "actions": [
+    {
+      "id": "tx.start",
+      "actorKind": "transaction",
+      "adapterId": "tx.start/v1",
+      "argumentSchemaId": "tx.start-args/v1",
+      "bindingOutputType": "tx-handle"
+    },
+    {
+      "id": "tx.run",
+      "actorKind": "transaction",
+      "adapterId": "tx.run/v1",
+      "argumentSchemaId": "tx.run-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "tx.commit",
+      "actorKind": "transaction",
+      "adapterId": "tx.commit/v1",
+      "argumentSchemaId": "tx.commit-args/v1",
+      "bindingOutputType": null
+    }
+  ],
+  "invariants": [
+    {
+      "id": "tx.original-error-propagation",
+      "evaluatorId": "tx.original-error-propagation/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md#automatic-rollback",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "thrown-error",
+      "observedFields": [
+        { "name": "name", "type": "string" },
+        { "name": "message", "type": "string" }
+      ]
+    },
+    {
+      "id": "tx.successful-step-return",
+      "evaluatorId": "tx.successful-step-return/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/tx/tests/transaction.test.ts#should-execute-a-single-step-successfully",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [
+        { "name": "value", "type": "json" }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "tx.step-outcome/v1",
+      "kind": "public-test-seam",
+      "materializerId": "tx.step-outcome/v1",
+      "consumerActionId": "tx.run"
+    }
+  ]
+}

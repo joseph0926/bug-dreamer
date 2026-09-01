@@ -28,7 +28,7 @@ LABEL org.bug-dreamer.registration-sha256=$REGISTRATION_SHA256
 RUN corepack install --global pnpm@11.17.0 && corepack enable pnpm
 
 COPY --from=artifacts /artifacts /artifacts
-COPY harness-v0.3 /harness-v0.3
+COPY harness-v0.3/create-consumer.mjs /harness-v0.3/create-consumer.mjs
 COPY registrations/v0.3/packages.json /registration/packages.json
 
 RUN mkdir /consumer && chown node:node /consumer

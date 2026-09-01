@@ -6,4 +6,19 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      canonicalize:
+        specifier: 4.0.0
+        version: 4.0.0
+
+packages:
+
+  canonicalize@4.0.0:
+    resolution: {integrity: sha512-FEdXzwWs+N3rZqEqpqleiY9M1A6IAf9oo1zHFABnLW9FcJ/jzsu+G/Ks3Hq3FglmPKe80GeGBw8ZXLEnwPB0vQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+snapshots:
+
+  canonicalize@4.0.0: {}

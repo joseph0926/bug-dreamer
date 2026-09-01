@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "empty-actors",
+  "invariantId": "tx.successful-step-return",
+  "actors": [],
+  "actions": []
+}
