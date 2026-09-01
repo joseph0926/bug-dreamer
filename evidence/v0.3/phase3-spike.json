@@ -1,0 +1,345 @@
+{
+  "schemaVersion": "bug-dreamer/phase3-spike-evidence/v1",
+  "registration": {
+    "path": "benchmark/v0.3/phase3-spike.json",
+    "sha256": "37663c70d1b52e1d26a274c0c9beddb8f06de8ddafbb696bdd3cce53b306bfbf"
+  },
+  "manifestDefect": {
+    "path": "benchmark/manifest.json",
+    "sha256": "dc22d1d46a318ab7fd8a2d8100039cdc521e0c80082ea0af9f1f979808ec8ce0",
+    "defectId": "tx-total-timeout-resets-per-step"
+  },
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "phase1Evidence": {
+    "path": "evidence/v0.3/phase1-contracts.json",
+    "sha256": "c0fe4336066a563433b5131e753da803f3d20767ed371cfa7ff44b137d587949"
+  },
+  "phase2TrustEvidence": {
+    "path": "evidence/v0.3/phase2-trust.json",
+    "sha256": "f9faa8c1eccde2afa871448946c5c1d7593874dc67f71c79e6eb3eeb765eb40a"
+  },
+  "operatorCatalog": {
+    "path": "registrations/v0.3/phase3-operators.json",
+    "sha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
+  },
+  "seed": {
+    "path": "contracts/v0.3/seeds/total-timeout.json",
+    "sha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12"
+  },
+  "cleanArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed",
+  "defectArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
+  "defectTarballDigests": {
+    "shared": "3a32a16aa4f6923a7755cbfee600e4c9d0372bbbc951985df5591bd5cd60ce7c",
+    "tx": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
+    "local-first": "70a7963c00e27a09499b85d4d7bb4995807148946ebd396e8890e15da4660213",
+    "prepaint": "86de9a40f96f46b7be81c2bca8e2241ce5fafd6eaad5c17497371bccdbbf2e98"
+  },
+  "consumerDockerfilePatch": {
+    "file": "docker-v0.3/Dockerfile",
+    "find": "RUN pnpm install --frozen-lockfile\n",
+    "replace": "RUN pnpm install --update-checksums\n",
+    "reason": "The frozen consumer lockfile pins the clean first-party tarball integrity; the defect tarball requires refreshed checksums while every other resolution stays locked."
+  },
+  "images": {
+    "cleanConsumer": {
+      "tag": "bug-dreamer-v03-contracts:f624b09f148c",
+      "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5"
+    },
+    "cleanTrust": {
+      "tag": "bug-dreamer-v03-trust:f624b09f148c",
+      "imageId": "sha256:f1f02543c4bb4fa72836d3887b3410d8f3023118645a32f6e5c5ebec3410c7cf"
+    },
+    "cleanSpike": {
+      "tag": "bug-dreamer-v03-spike:f624b09f148c-clean",
+      "imageId": "sha256:43d98884f4b2f233769d6059338d2387d404f19bc26761fedd4432b0fcc473a2"
+    },
+    "defectConsumer": {
+      "tag": "bug-dreamer-v03-spike-consumer:f624b09f148c-tx-total-timeout-resets-per-step",
+      "imageId": "sha256:8978c808b3165b8ee47fe9588ead983638f1c476be11f7bd9fc9a50b3d0dac8f"
+    },
+    "defectTrust": {
+      "tag": "bug-dreamer-v03-spike-trust:f624b09f148c-tx-total-timeout-resets-per-step",
+      "imageId": "sha256:2895a44738cf8f7f7ca17d54db618c1bf1a5cf1bf1082d8eff5ece619300b721"
+    },
+    "defectSpike": {
+      "tag": "bug-dreamer-v03-spike:f624b09f148c-tx-total-timeout-resets-per-step",
+      "imageId": "sha256:17cebccdce7aabdced5703a94c93f590424ebaec43ca48db3c095309593d6317"
+    }
+  },
+  "defectBuildInputs": {
+    "contractImageId": "sha256:8978c808b3165b8ee47fe9588ead983638f1c476be11f7bd9fc9a50b3d0dac8f",
+    "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+    "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
+    "defectId": "tx-total-timeout-resets-per-step",
+    "catalogSha256": "fa49523d301b0a332293731a0b0662e93a7b7ffdc322e2a0f05196be9b69e4bd",
+    "prepareScriptSha256": "8dae31655176d29d992ffc58b76793c16bd3bec867a2c8075b00988102dab99d",
+    "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
+  },
+  "defectEvaluationContractKey": "b42b541649cfd8a8bda19b3552e2350311991ed4895e6a8289852a704b27cf76",
+  "executionBudget": {
+    "evaluationTimeoutMs": 30000,
+    "stdoutLimitBytes": 1048576,
+    "stderrLimitBytes": 1048576,
+    "recordedOutputBytes": 4096
+  },
+  "baseline": {
+    "evaluatedSpecs": 1,
+    "spec": {
+      "kind": "rejected-policy",
+      "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+    }
+  },
+  "arms": [
+    {
+      "operatorId": "time.advance/v1",
+      "requestPath": "contracts/v0.3/requests/time-advance.json",
+      "requestSha256": "fa0a6344e5579108a7994e800fa7666c211fb753fd57107015a006c71c7a72ad",
+      "cleanSpecDigest": "deac892b09424eebc935c85ba208d3555912002531cf0b68e3924bd1352193a9",
+      "cleanPlanDigest": "a7d9d2e746b02797691a96c3d7dc387e0f042ed6cb4e49a85818f4657b286b30",
+      "defectSpecDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+      "defectPlanDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+      "cleanRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 676
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"deac892b09424eebc935c85ba208d3555912002531cf0b68e3924bd1352193a9\",\n  \"planDigest\": \"a7d9d2e746b02797691a96c3d7dc387e0f042ed6cb4e49a85818f4657b286b30\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"pass\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionTimeoutError\",\n    \"message\": \"Transaction timeout\"\n  },\n  \"violationIdentity\": null,\n  \"payloadDigest\": \"1c406057acbcd6428f70f05e11257ca1a20a1000660185811f6848f299e20e6f\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "pass"
+          },
+          "trustedResultDigest": "1c406057acbcd6428f70f05e11257ca1a20a1000660185811f6848f299e20e6f",
+          "violationIdentity": null
+        }
+      },
+      "defectRun": {
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "timedOut": false,
+        "outputTruncated": false,
+        "resultEntries": [
+          {
+            "name": "result.json",
+            "type": "regular",
+            "size": 911
+          }
+        ],
+        "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+        "classification": {
+          "evaluator": "evaluated",
+          "execution": {
+            "status": "candidate-failure"
+          },
+          "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+          "violationIdentity": {
+            "invariantRegistrationId": "tx.total-timeout",
+            "normalizedObservedKind": "returned-value",
+            "normalizedObservedFields": {
+              "value": "after-advance"
+            },
+            "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+          }
+        }
+      },
+      "twoSided": true,
+      "repeatRuns": [
+        {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        },
+        {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        },
+        {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        },
+        {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        },
+        {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      ],
+      "fiveOfFive": true
+    },
+    {
+      "operatorId": "schedule.release-order/v1",
+      "requestPath": "contracts/v0.3/requests/spike-release-order.json",
+      "requestSha256": "602398ac1aa10483ff1424012b31445304ff85a0c7cf62923320e70f031f4127",
+      "rejection": {
+        "kind": "rejected-policy",
+        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+      }
+    },
+    {
+      "operatorId": "fault.step-outcome/v1",
+      "requestPath": "contracts/v0.3/requests/spike-fault.json",
+      "requestSha256": "243f99252c6b5c0fd7dbb3ec61f13a4da87cc4d1d0caafa694b78720a46d396f",
+      "rejection": {
+        "kind": "rejected-policy",
+        "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+      }
+    }
+  ],
+  "evaluatedSpecs": 9,
+  "verdict": "adopt",
+  "adoptedOperatorId": "time.advance/v1"
+}

@@ -7,7 +7,7 @@
   },
   "cases": {
     "path": "contracts/v0.3/spec-cases.json",
-    "sha256": "310c967b6909e02fef918645fa27713f2c694eaba9bf3ec0d89791c20234bd07"
+    "sha256": "8fdc386cb1ecf951d974a79c3fcddc99888750ae4df7120b7fda715229ece23e"
   },
   "canonicalizer": {
     "standard": "RFC 8785 JCS",
@@ -20,7 +20,7 @@
       "sourceSha256": "f35aabdaae0311a2fc8a108f0dd1c99161e84ddb2ffaedcb42a3e31fe3009da8",
       "seedDigest": "d6448d56e82d84844ad67988183763022d53aa54f4408f79f519171b926a65d9",
       "specDigest": "ce4bcbf2e731632d251d6d45a2f4d21868635552f14375f86ba07fb9de24d3e5",
-      "planDigest": "210ed148a25b7023cdd7a1e4f881011dabd1e12ba1d73732dc9ae8f6dc7de09a",
+      "planDigest": "d033e53e6709c0e5df22ecb5500c91285c9af5f6cd10a52af81e6fb013cdd169",
       "actionCount": 3,
       "fixtureCount": 1
     },
@@ -29,7 +29,7 @@
       "sourceSha256": "74550adfd1333c4f32399d706b25b56ad0161b863579ec1f2c11118e9eed0d4e",
       "seedDigest": "7ae1bd805824425bc1a5f807fcc80f02d13c531d29860e527a8060cda8e88271",
       "specDigest": "4f7ad5b43d9bec97548628e1ed4b534da18a724fb941dccdf9b2c99425998838",
-      "planDigest": "7e4e4b7da3ecd96fcfebbaa87f157c0783acb9e3e9f7a51c49de28332f8b92c2",
+      "planDigest": "a723de134289395623887707ef622726a789fc0f583f81cd4e2ca8e03c4cb222",
       "actionCount": 2,
       "fixtureCount": 1
     },
@@ -38,7 +38,7 @@
       "sourceSha256": "12aa98ca582ef8b9d3b02e2d39213f03fe46ae561d4842c092a786bca3f8becc",
       "seedDigest": "4a400a00399f7527279000f62942b2645eba61c0ccaaaf83febead4ba1a241b8",
       "specDigest": "966fc479a8319a6ffad68376348ccf8ac1012608cf21b71802ea9eeedc13f780",
-      "planDigest": "4ab5087dfebda50f1234832c5f9e9ec01be7979af5460827ed15ff309842e951",
+      "planDigest": "1017258693f16f0432d77e4eae4c60cee6aadae11e4e07426e4332b607f60bf2",
       "actionCount": 3,
       "fixtureCount": 1
     },
@@ -47,9 +47,18 @@
       "sourceSha256": "f486fbb63cc3c8802e34047880e4ab6d60c19ac2aecd44c67db3e42da6d4818b",
       "seedDigest": "5a5b19bb3221507e159a2037a2ed7288026484ac1feec53c715191a06556e0ca",
       "specDigest": "1874b2e93519778a3b13d0ce8d7e3e7495b9a7ce4c90ac0d11c372597ac535ac",
-      "planDigest": "3fcae8c274673a95e4f7b0bb5a6eef0a0e9513e74fa3735f1a1eb8ba7ee06251",
+      "planDigest": "868f282d9876881e43db0306318279303fd9b98d34bb10266520b082d1d87015",
       "actionCount": 2,
       "fixtureCount": 1
+    },
+    {
+      "path": "contracts/v0.3/seeds/two-steps.json",
+      "sourceSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "seedDigest": "504ffb407f7827d20e9f5a6c1b11389fdbb209dc57de5b97aca951dc5874629c",
+      "specDigest": "48ed4b806b9fecdca4dffe51497c90f7ea6b89c8e145de8a4e9688b4718e7192",
+      "planDigest": "25b8efb40115bceadc6e78090275ebb28c398b10c68818a6a17a57b37725bed7",
+      "actionCount": 4,
+      "fixtureCount": 2
     }
   ],
   "negative": [

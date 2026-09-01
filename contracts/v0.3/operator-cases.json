@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "bug-dreamer/operator-cases/v1",
+  "positive": [
+    {
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/time-advance.json"
+    },
+    {
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/chained-advance.json"
+    },
+    {
+      "seed": "contracts/v0.3/seeds/two-steps.json",
+      "request": "contracts/v0.3/requests/release-order.json"
+    },
+    {
+      "seed": "contracts/v0.3/seeds/two-steps.json",
+      "request": "contracts/v0.3/requests/fault-nonfinal.json"
+    }
+  ],
+  "negative": [
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/negative-unregistered.json",
+      "expectedKind": "rejected-catalog",
+      "expectedMessage": "Operator is not registered"
+    },
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/negative-advance-bound.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "advanceMs is outside the registered bounds"
+    },
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/total-timeout.json",
+      "request": "contracts/v0.3/requests/negative-advance-zero.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "advanceMs is outside the registered bounds"
+    },
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/two-steps.json",
+      "request": "contracts/v0.3/requests/negative-release-single.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "at least two instance IDs"
+    },
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/two-steps.json",
+      "request": "contracts/v0.3/requests/negative-fault-final.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "not applicable to the final tx.run outcome"
+    },
+    {
+      "type": "request",
+      "seed": "contracts/v0.3/seeds/two-steps.json",
+      "request": "contracts/v0.3/requests/negative-empty.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "Transformation request length is invalid"
+    },
+    {
+      "type": "chain-tamper",
+      "positiveIndex": 1,
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "breaks the transformation digest chain"
+    }
+  ]
+}

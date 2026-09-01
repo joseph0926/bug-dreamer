@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "bug-dreamer/phase3-operators/v1",
+  "catalogVersion": "firsttx-phase3-f624b09-v1",
+  "extendsCatalogVersion": "firsttx-phase2-f624b09-v1",
+  "operators": [
+    {
+      "id": "time.advance/v1",
+      "kind": "schedule-control",
+      "argumentSchemaId": "time.advance-args/v1",
+      "bounds": {
+        "advanceMsMin": 1,
+        "advanceMsMax": 86400000
+      }
+    },
+    {
+      "id": "schedule.release-order/v1",
+      "kind": "schedule-control",
+      "argumentSchemaId": "schedule.release-order-args/v1",
+      "bounds": {
+        "minInstanceIds": 2
+      }
+    },
+    {
+      "id": "fault.step-outcome/v1",
+      "kind": "action-transformation",
+      "argumentSchemaId": "fault.step-outcome-args/v1",
+      "bounds": {
+        "policy": "tx.run argument schema and policy limits"
+      }
+    }
+  ],
+  "invariants": [
+    {
+      "id": "tx.total-timeout",
+      "evaluatorId": "tx.total-timeout/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md#timeout-protection",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [
+        "packages/tx/tests/transaction.test.ts#should-timeout-during-execution",
+        "packages/tx/tests/transaction.test.ts#should-include-elapsed-time-in-timeout-error"
+      ],
+      "normalizedObservedKind": "thrown-error",
+      "observedFields": [
+        { "name": "name", "type": "string" },
+        { "name": "message", "type": "string" }
+      ],
+      "applicability": {
+        "finalRunOutcome": "return",
+        "requires": "virtual-advance-past-timeout"
+      }
+    }
+  ]
+}

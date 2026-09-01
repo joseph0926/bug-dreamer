@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "bug-dreamer/transformation-request/v1",
+  "transformations": [
+    {
+      "operatorId": "fault.step-outcome/v1",
+      "arguments": {
+        "targetInstanceId": "action-0003",
+        "outcome": "throw",
+        "value": null,
+        "errorName": "Error",
+        "errorMessage": "final-flip"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+ARG SPIKE_CONTRACT_DIGEST
+
+LABEL org.bug-dreamer.spike-contract-key=$SPIKE_CONTRACT_DIGEST
+
+USER root
+
+COPY src/v03-operators.mjs /consumer/evaluator/src/v03-operators.mjs
+COPY registrations/v0.3/phase3-operators.json /registration/phase3-operators.json
+
+USER node
+WORKDIR /consumer/evaluator
+
+ENTRYPOINT ["node"]
+CMD ["/consumer/evaluator/main.mjs"]

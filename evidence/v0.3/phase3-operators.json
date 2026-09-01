@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "bug-dreamer/phase3-operator-evidence/v1",
+  "operatorCatalog": {
+    "path": "registrations/v0.3/phase3-operators.json",
+    "sha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7",
+    "catalogVersion": "firsttx-phase3-f624b09-v1"
+  },
+  "baseCatalog": {
+    "path": "registrations/v0.3/phase2-catalog.json",
+    "sha256": "e7220accb68dc69d7a043a71ffbd81a0866d3b09ec8fa389b9923b14b86e01db",
+    "catalogVersion": "firsttx-phase2-f624b09-v1"
+  },
+  "cases": {
+    "path": "contracts/v0.3/operator-cases.json",
+    "sha256": "671d34cbf029e00ea53bc86567d6adf69737bc43693aae3154e1ea73076c58a8"
+  },
+  "positive": [
+    {
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/time-advance.json",
+      "requestSha256": "fa0a6344e5579108a7994e800fa7666c211fb753fd57107015a006c71c7a72ad",
+      "seedDigest": "e4c312e79ca66fc772a2bed230a0621b61676a667e850898ae5d83b7adc5e51b",
+      "specDigest": "deac892b09424eebc935c85ba208d3555912002531cf0b68e3924bd1352193a9",
+      "planDigest": "a7d9d2e746b02797691a96c3d7dc387e0f042ed6cb4e49a85818f4657b286b30",
+      "operatorIds": [
+        "time.advance/v1"
+      ],
+      "transformationCount": 1,
+      "scheduleControlCount": 1,
+      "fixtureCount": 2
+    },
+    {
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/chained-advance.json",
+      "requestSha256": "8db72eaec452bfdd6f64475185222356d529df71d2ee79820f614eafc45be78f",
+      "seedDigest": "e4c312e79ca66fc772a2bed230a0621b61676a667e850898ae5d83b7adc5e51b",
+      "specDigest": "7742092e6beb5d176c84314200261678ba71c150eb47ab5b2880bd19a8e6e306",
+      "planDigest": "a0ab31c80d5286c7b39609cf699ca7b810aeb2ef840a4abb80ffb30436bf5441",
+      "operatorIds": [
+        "time.advance/v1",
+        "time.advance/v1"
+      ],
+      "transformationCount": 2,
+      "scheduleControlCount": 2,
+      "fixtureCount": 2
+    },
+    {
+      "seedPath": "contracts/v0.3/seeds/two-steps.json",
+      "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "requestPath": "contracts/v0.3/requests/release-order.json",
+      "requestSha256": "602398ac1aa10483ff1424012b31445304ff85a0c7cf62923320e70f031f4127",
+      "seedDigest": "504ffb407f7827d20e9f5a6c1b11389fdbb209dc57de5b97aca951dc5874629c",
+      "specDigest": "6dbf9e97db499bd4b5bb3b896e03c2ee0d39ffaba70dace794b29b4cf7387811",
+      "planDigest": "76f623b14c29a40a528d7d140063ad47af9f266cf4e729084d6f1e517690dde0",
+      "operatorIds": [
+        "schedule.release-order/v1"
+      ],
+      "transformationCount": 1,
+      "scheduleControlCount": 1,
+      "fixtureCount": 2
+    },
+    {
+      "seedPath": "contracts/v0.3/seeds/two-steps.json",
+      "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "requestPath": "contracts/v0.3/requests/fault-nonfinal.json",
+      "requestSha256": "cf59eea9e6cb4d81e7a18e08c7afac877cea547ddbc075f29dbc19fed3d6ff79",
+      "seedDigest": "504ffb407f7827d20e9f5a6c1b11389fdbb209dc57de5b97aca951dc5874629c",
+      "specDigest": "c7d8cbd23b967e8e9b465085d9577b550518d9522ae91a4d21cd5c18baa4a46c",
+      "planDigest": "e226e8a0ed8f58d80f59f42ce67a6901299715fc77691714e0717e11e5ff7dcf",
+      "operatorIds": [
+        "fault.step-outcome/v1"
+      ],
+      "transformationCount": 1,
+      "scheduleControlCount": 0,
+      "fixtureCount": 2
+    }
+  ],
+  "negative": [
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/negative-unregistered.json",
+      "requestSha256": "7f2fcfd82eedf5c7ce27a2c1e6ef491d9a784a259bd7f29280d31960ae821b4f",
+      "expectedKind": "rejected-catalog",
+      "observedKind": "rejected-catalog",
+      "expectedMessage": "Operator is not registered"
+    },
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/negative-advance-bound.json",
+      "requestSha256": "24c03ce9d7cf4d762a2f2b642a5f2931a2b360b2e009c2a37b3236f6dce43454",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "advanceMs is outside the registered bounds"
+    },
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/total-timeout.json",
+      "seedSha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12",
+      "requestPath": "contracts/v0.3/requests/negative-advance-zero.json",
+      "requestSha256": "2b7132531687f16a6c472adca6ecd4e17c437e6122259e846207f9d6d145e6c6",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "advanceMs is outside the registered bounds"
+    },
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/two-steps.json",
+      "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "requestPath": "contracts/v0.3/requests/negative-release-single.json",
+      "requestSha256": "6a0f96ce88e20bb835195708973fab352fb8faf1f9668aff04d74243ae2327e2",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "at least two instance IDs"
+    },
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/two-steps.json",
+      "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "requestPath": "contracts/v0.3/requests/negative-fault-final.json",
+      "requestSha256": "f0c81fdc82a6af641e74694e6f9cbfdb827174dc17e663dd0dfdfe3452b53bb2",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "not applicable to the final tx.run outcome"
+    },
+    {
+      "type": "request",
+      "seedPath": "contracts/v0.3/seeds/two-steps.json",
+      "seedSha256": "b5b4af3772c4a0e00de93bd0d7383c54de05edd793c42fecc875a0e0a287ebaf",
+      "requestPath": "contracts/v0.3/requests/negative-empty.json",
+      "requestSha256": "7cea659131e3663e4d94721837745bc45ad3f759b9e644419856c6aba5304c9b",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "Transformation request length is invalid"
+    },
+    {
+      "type": "chain-tamper",
+      "positiveIndex": 1,
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "breaks the transformation digest chain"
+    }
+  ]
+}

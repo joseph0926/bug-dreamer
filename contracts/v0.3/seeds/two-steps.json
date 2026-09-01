@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "tx-two-steps",
+  "invariantId": "tx.successful-step-return",
+  "actors": ["checkout"],
+  "actions": [
+    {
+      "actionId": "tx.start",
+      "actor": "checkout",
+      "arguments": { "transactionId": "phase3-two-steps", "timeoutMs": 5000, "transition": false },
+      "bind": { "name": "tx", "type": "tx-handle" }
+    },
+    {
+      "actionId": "tx.run",
+      "actor": "checkout",
+      "arguments": {
+        "tx": { "$binding": "tx" },
+        "outcome": "return",
+        "value": "first-step",
+        "errorName": null,
+        "errorMessage": null,
+        "log": null,
+        "retry": null
+      },
+      "bind": null
+    },
+    {
+      "actionId": "tx.run",
+      "actor": "checkout",
+      "arguments": {
+        "tx": { "$binding": "tx" },
+        "outcome": "return",
+        "value": "second-step",
+        "errorName": null,
+        "errorMessage": null,
+        "log": null,
+        "retry": null
+      },
+      "bind": null
+    },
+    {
+      "actionId": "tx.commit",
+      "actor": "checkout",
+      "arguments": { "tx": { "$binding": "tx" } },
+      "bind": null
+    }
+  ]
+}

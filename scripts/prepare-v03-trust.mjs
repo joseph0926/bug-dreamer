@@ -31,7 +31,7 @@ const prepareScriptPath = path.join(repositoryRoot, 'scripts/prepare-v03-trust.m
 const contractEvidencePath = path.join(repositoryRoot, 'evidence/v0.3/phase1-contracts.json');
 const dockerfilePath = path.join(repositoryRoot, 'docker-v0.3/Dockerfile.trust');
 const catalogPath = path.join(repositoryRoot, 'registrations/v0.3/phase2-catalog.json');
-const harnessFiles = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs'];
+const harnessFiles = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const sourceFiles = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
 const productionCommand = ['/consumer/evaluator/main.mjs'];
 

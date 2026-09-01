@@ -140,7 +140,7 @@ test('rejects catalog, spec, fixture, and plan tampering', async () => {
 
   const identityTamper = structuredClone(spec);
   identityTamper.transformedActions[0].adapterId = 'arbitrary/import/v1';
-  assert.throws(() => validateNightmareSpec(identityTamper, catalog), /identity transformation/u);
+  assert.throws(() => validateNightmareSpec(identityTamper, catalog), /Identity transformation/u);
 
   const fixtureTamper = structuredClone(spec);
   fixtureTamper.fixtures[0].stateDigest = '0'.repeat(64);

@@ -16,6 +16,7 @@ USER root
 COPY harness-v0.3/trust/evaluator.mjs /consumer/evaluator/evaluator.mjs
 COPY harness-v0.3/trust/main.mjs /consumer/evaluator/main.mjs
 COPY harness-v0.3/trust/case-main.mjs /consumer/evaluator/case-main.mjs
+COPY harness-v0.3/trust/virtual-clock.mjs /consumer/evaluator/virtual-clock.mjs
 COPY src/v03-wire.mjs /consumer/evaluator/src/v03-wire.mjs
 COPY src/v03-spec.mjs /consumer/evaluator/src/v03-spec.mjs
 COPY src/v03-trust.mjs /consumer/evaluator/src/v03-trust.mjs

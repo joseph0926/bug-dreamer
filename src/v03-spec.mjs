@@ -47,6 +47,10 @@ export const ACTION_POLICY_LIMITS = Object.freeze({
   retryMaxAttempts: 5,
   retryDelayMs: 1000,
 });
+export const TRANSFORMATION_STATE_DOMAIN = 'bug-dreamer/transformation-state/v1';
+export const VIRTUAL_TIME_ORIGIN_MS = 1000000000000;
+export const TRANSFORMATION_LIMIT = 16;
+export const VIRTUAL_TIME_ADVANCE_LIMITS = Object.freeze({ minMs: 1, maxMs: 86400000 });
 
 export class V03SpecError extends Error {
   constructor(kind, message) {
@@ -141,10 +145,48 @@ function validateActionArguments(actionId, args, bindings) {
   fail('rejected-catalog', `Unknown action: ${actionId}`);
 }
 
-function validateInvariantApplicability(invariant, actions, label) {
+function validateInvariantApplicability(invariant, actions, scheduleControls, label) {
   const finalRun = actions.findLast((action) => action.actionId === 'tx.run');
   assert(finalRun !== undefined, 'rejected-policy', `${label} invariant requires a tx.run action: ${invariant.id}`);
-  assert(finalRun.arguments.outcome === OUTCOME_BY_OBSERVED_KIND[invariant.normalizedObservedKind], 'rejected-policy', `${label} invariant is not applicable to the final tx.run outcome: ${invariant.id}`);
+  const expectedOutcome = invariant.applicability === undefined
+    ? OUTCOME_BY_OBSERVED_KIND[invariant.normalizedObservedKind]
+    : invariant.applicability.finalRunOutcome;
+  assert(finalRun.arguments.outcome === expectedOutcome, 'rejected-policy', `${label} invariant is not applicable to the final tx.run outcome: ${invariant.id}`);
+  if (scheduleControls === null || invariant.applicability?.requires !== 'virtual-advance-past-timeout') return;
+  const totalAdvanceMs = scheduleControls
+    .filter((control) => control.kind === 'virtual-time-advance')
+    .reduce((sum, control) => sum + control.advanceMs, 0);
+  const producer = actions.find((action) => action.actionId === 'tx.start' && action.bind !== null && action.bind.name === finalRun.arguments.tx.$binding);
+  assert(producer !== undefined, 'rejected-policy', `${label} invariant requires the final tx.run transaction producer: ${invariant.id}`);
+  assert(totalAdvanceMs > producer.arguments.timeoutMs, 'rejected-policy', `${label} total virtual-time advance must exceed the transaction timeout: ${invariant.id}`);
+}
+
+export function stateDigest(actions, scheduleControls) {
+  return domainDigest(TRANSFORMATION_STATE_DOMAIN, { actions, scheduleControls });
+}
+
+function validateScheduleControl(control, actions, index) {
+  const label = `Schedule control ${index}`;
+  assert(isPlainObject(control) && typeof control.kind === 'string', 'rejected-schema', `${label} must declare a kind`);
+  const instanceIds = new Set(actions.map((action) => action.instanceId));
+  if (control.kind === 'virtual-time-advance') {
+    strictKeys(control, ['kind', 'afterInstanceId', 'advanceMs'], [], label);
+    assert(Number.isSafeInteger(control.advanceMs), 'rejected-schema', `${label} advanceMs must be a safe integer`);
+    assert(control.advanceMs >= VIRTUAL_TIME_ADVANCE_LIMITS.minMs && control.advanceMs <= VIRTUAL_TIME_ADVANCE_LIMITS.maxMs, 'rejected-policy', `${label} advanceMs is outside the registered bounds`);
+    assert(instanceIds.has(control.afterInstanceId), 'rejected-policy', `${label} references an unknown action instance`);
+    return;
+  }
+  if (control.kind === 'completion-release-order') {
+    strictKeys(control, ['kind', 'instanceIds'], [], label);
+    assert(Array.isArray(control.instanceIds) && control.instanceIds.length >= 2, 'rejected-schema', `${label} requires at least two instance IDs`);
+    unique(control.instanceIds, 'release-order instance', 'rejected-schema');
+    const runIds = new Set(actions.filter((action) => action.actionId === 'tx.run').map((action) => action.instanceId));
+    for (const instanceId of control.instanceIds) {
+      assert(runIds.has(instanceId), 'rejected-policy', `${label} references a non-run action instance: ${instanceId}`);
+    }
+    return;
+  }
+  fail('rejected-catalog', `${label} kind is not registered: ${control.kind}`);
 }
 
 export function validatePhase2Catalog(catalog) {
@@ -237,7 +279,7 @@ export function validateNightmareSeed(seed, catalog) {
       bindings.set(action.bind.name, action.bind.type);
     }
   }
-  validateInvariantApplicability(invariant, seed.actions, 'NightmareSeed');
+  validateInvariantApplicability(invariant, seed.actions, null, 'NightmareSeed');
   return seed;
 }
 
@@ -245,7 +287,7 @@ export function parseNightmareSeed(bytes, catalog) {
   return validateNightmareSeed(parseJsonBytes(bytes), catalog);
 }
 
-function fixtureRecord(action, instanceId, catalog) {
+export function fixtureRecord(action, instanceId, catalog) {
   const registration = catalog.fixtures[0];
   const state = {
     outcome: action.arguments.outcome,
@@ -271,7 +313,7 @@ function fixtureRecord(action, instanceId, catalog) {
   };
 }
 
-export function buildNightmareSpec(seed, catalog) {
+export function composeNightmareSpec(seed, catalog) {
   validateNightmareSeed(seed, catalog);
   const baseActions = seed.actions.map((action, index) => {
     const registration = catalog.actions.find((item) => item.id === action.actionId);
@@ -285,7 +327,7 @@ export function buildNightmareSpec(seed, catalog) {
       bind: action.bind,
     };
   });
-  const spec = {
+  return {
     schemaVersion: SPEC_SCHEMA_VERSION,
     seedDigest: domainDigest(SEED_DIGEST_DOMAIN, seed),
     targetRegistrationId: catalog.target.registrationId,
@@ -305,7 +347,10 @@ export function buildNightmareSpec(seed, catalog) {
       version: '4.0.0',
     },
   };
-  return validateNightmareSpec(spec, catalog);
+}
+
+export function buildNightmareSpec(seed, catalog) {
+  return validateNightmareSpec(composeNightmareSpec(seed, catalog), catalog);
 }
 
 function validateSpecAction(action, catalog, label) {
@@ -329,7 +374,9 @@ export function validateNightmareSpec(spec, catalog) {
     assert(!RESERVED_ACTORS.has(actor) && !actor.startsWith('__'), 'rejected-policy', `Spec actor is reserved: ${actor}`);
   }
   assert(Array.isArray(spec.baseActions) && spec.baseActions.length > 0 && spec.baseActions.length <= WIRE_LIMITS.actions, 'rejected-schema', 'NightmareSpec action count is invalid');
-  assert(Array.isArray(spec.transformedActions) && canonicalJson(spec.transformedActions) === canonicalJson(spec.baseActions), 'rejected-policy', 'Phase 2 allows only identity transformation');
+  assert(Array.isArray(spec.transformedActions) && spec.transformedActions.length === spec.baseActions.length, 'rejected-schema', 'NightmareSpec transformed action count is invalid');
+  assert(Array.isArray(spec.transformations) && spec.transformations.length <= TRANSFORMATION_LIMIT, 'rejected-schema', 'NightmareSpec transformation count is invalid');
+  assert(Array.isArray(spec.scheduleControls) && spec.scheduleControls.length <= WIRE_LIMITS.scheduleControls, 'rejected-schema', 'NightmareSpec schedule control count is invalid');
   unique(spec.baseActions.map((item) => item.instanceId), 'action instanceId', 'rejected-schema');
   const bindings = new Map();
   for (const [index, action] of spec.baseActions.entries()) {
@@ -346,11 +393,33 @@ export function validateNightmareSpec(spec, catalog) {
       bindings.set(action.bind.name, action.bind.type);
     }
   }
-  validateInvariantApplicability(invariant, spec.baseActions, 'NightmareSpec');
-  assert(Array.isArray(spec.transformations) && spec.transformations.length === 0, 'rejected-policy', 'Phase 2 transformations must be empty');
-  assert(Array.isArray(spec.scheduleControls) && spec.scheduleControls.length === 0, 'rejected-policy', 'Phase 2 schedule controls must be empty');
+  if (spec.transformations.length === 0) {
+    assert(canonicalJson(spec.transformedActions) === canonicalJson(spec.baseActions), 'rejected-policy', 'Identity transformation requires byte-equal transformed actions');
+    assert(spec.scheduleControls.length === 0, 'rejected-policy', 'Identity transformation requires empty schedule controls');
+  } else {
+    const transformedBindings = new Map();
+    for (const [index, action] of spec.transformedActions.entries()) {
+      validateSpecAction(action, catalog, `Transformed action ${index}`);
+      const base = spec.baseActions[index];
+      assert(action.instanceId === base.instanceId && action.actionId === base.actionId && action.actor === base.actor && canonicalJson(action.bind) === canonicalJson(base.bind), 'rejected-policy', `Transformed action ${index} changes non-argument fields`);
+      const registration = catalog.actions.find((item) => item.id === action.actionId);
+      validateActionArguments(action.actionId, action.arguments, transformedBindings);
+      if (registration.bindingOutputType !== null) transformedBindings.set(action.bind.name, action.bind.type);
+    }
+    for (const [index, control] of spec.scheduleControls.entries()) validateScheduleControl(control, spec.transformedActions, index);
+    let previousDigest = stateDigest(spec.baseActions, []);
+    for (const [index, record] of spec.transformations.entries()) {
+      strictKeys(record, ['operatorId', 'operatorRegistrationDigest', 'arguments', 'beforeDigest', 'afterDigest'], [], `Transformation ${index}`);
+      assert(typeof record.operatorId === 'string' && record.operatorId.endsWith('/v1'), 'rejected-schema', `Transformation ${index} operator id is invalid`);
+      assert(validSha(record.operatorRegistrationDigest) && validSha(record.beforeDigest) && validSha(record.afterDigest), 'rejected-schema', `Transformation ${index} digest is invalid`);
+      assert(record.beforeDigest === previousDigest, 'rejected-policy', `Transformation ${index} breaks the transformation digest chain`);
+      previousDigest = record.afterDigest;
+    }
+    assert(previousDigest === stateDigest(spec.transformedActions, spec.scheduleControls), 'rejected-policy', 'Final transformation digest does not cover the transformed state');
+  }
+  validateInvariantApplicability(invariant, spec.transformedActions, spec.scheduleControls, 'NightmareSpec');
   assert(Array.isArray(spec.fixtures) && spec.fixtures.length <= WIRE_LIMITS.fixtures, 'rejected-schema', 'NightmareSpec fixture count is invalid');
-  const runIds = spec.baseActions.filter((item) => item.actionId === 'tx.run').map((item) => item.instanceId);
+  const runIds = spec.transformedActions.filter((item) => item.actionId === 'tx.run').map((item) => item.instanceId);
   assert(JSON.stringify(spec.fixtures.map((item) => item.consumerActionInstanceId)) === JSON.stringify(runIds), 'rejected-policy', 'NightmareSpec fixtures do not cover run actions');
   for (const fixture of spec.fixtures) {
     strictKeys(fixture, ['registrationId', 'registrationDigest', 'kind', 'producerArtifact', 'publicActionTrace', 'canonicalWirePayload', 'materializerId', 'stateDigest', 'consumerActionInstanceId'], [], 'Spec fixture');
@@ -358,7 +427,7 @@ export function validateNightmareSpec(spec, catalog) {
     assert(validSha(fixture.registrationDigest) && validSha(fixture.stateDigest), 'rejected-schema', 'Spec fixture digest is invalid');
     assert(fixture.stateDigest === domainDigest(FIXTURE_DIGEST_DOMAIN, fixture.canonicalWirePayload), 'rejected-policy', 'Spec fixture state digest mismatch');
     assert(runIds.includes(fixture.consumerActionInstanceId), 'rejected-policy', 'Spec fixture consumer is invalid');
-    const consumer = spec.baseActions.find((action) => action.instanceId === fixture.consumerActionInstanceId);
+    const consumer = spec.transformedActions.find((action) => action.instanceId === fixture.consumerActionInstanceId);
     assert(canonicalJson(fixture) === canonicalJson(fixtureRecord(consumer, consumer.instanceId, catalog)), 'rejected-policy', 'Spec fixture materialization record changed');
   }
   assert(canonicalJson(spec.canonicalizer) === canonicalJson({ standard: 'RFC 8785 JCS', package: 'canonicalize', version: '4.0.0' }), 'rejected-policy', 'NightmareSpec canonicalizer changed');
@@ -396,7 +465,7 @@ export function buildExecutionPlan(spec, catalog) {
       producerActionInstanceId: action.instanceId,
     })),
     fixtureSetup: spec.fixtures,
-    virtualTime: { originMs: 0 },
+    virtualTime: { originMs: VIRTUAL_TIME_ORIGIN_MS },
     scheduleControls: spec.scheduleControls,
   };
   return validateExecutionPlan(plan, spec, catalog);
@@ -437,8 +506,8 @@ export function validateExecutionPlan(plan, spec, catalog) {
   assert(canonicalJson(plan.bindings) === canonicalJson(expectedBindings), 'rejected-policy', 'ExecutionPlan bindings changed');
   assert(canonicalJson(plan.fixtureSetup) === canonicalJson(spec.fixtures), 'rejected-policy', 'ExecutionPlan fixture setup changed');
   strictKeys(plan.virtualTime, ['originMs'], [], 'ExecutionPlan virtualTime');
-  assert(plan.virtualTime.originMs === 0, 'rejected-policy', 'Phase 2 virtual time origin changed');
-  assert(Array.isArray(plan.scheduleControls) && plan.scheduleControls.length === 0, 'rejected-policy', 'Phase 2 schedule controls must be empty');
+  assert(plan.virtualTime.originMs === VIRTUAL_TIME_ORIGIN_MS, 'rejected-policy', 'Registered virtual time origin changed');
+  assert(Array.isArray(plan.scheduleControls) && canonicalJson(plan.scheduleControls) === canonicalJson(spec.scheduleControls), 'rejected-policy', 'ExecutionPlan schedule controls changed');
   return plan;
 }
 

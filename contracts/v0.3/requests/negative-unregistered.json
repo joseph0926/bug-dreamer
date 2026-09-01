@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "bug-dreamer/transformation-request/v1",
+  "transformations": [
+    {
+      "operatorId": "chaos.monkey/v1",
+      "arguments": {}
+    }
+  ]
+}

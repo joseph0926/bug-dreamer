@@ -11,6 +11,7 @@ import {
 } from '/consumer/evaluator/src/v03-spec.mjs';
 import { RESULT_DIGEST_DOMAIN, RESULT_SCHEMA_VERSION } from '/consumer/evaluator/src/v03-trust.mjs';
 import { canonicalJson, domainDigest, parseJsonBytes } from '/consumer/evaluator/src/v03-wire.mjs';
+import { createVirtualClock } from '/consumer/evaluator/virtual-clock.mjs';
 
 export const resultPath = '/result/result.json';
 
@@ -23,9 +24,59 @@ function bindingName(value) {
   return value.$binding;
 }
 
-async function interpret(plan) {
+function executeRun(action, tx, observations, gatePromise) {
+  const step = async () => {
+    if (gatePromise !== null) await gatePromise;
+    if (action.arguments.log !== null) process.stdout.write(`${action.arguments.log}\n`);
+    if (action.arguments.outcome === 'throw') {
+      const ErrorClass = action.arguments.errorName === 'TypeError' ? TypeError : Error;
+      throw new ErrorClass(action.arguments.errorMessage);
+    }
+    return action.arguments.value;
+  };
+  return (async () => {
+    try {
+      const options = action.arguments.retry === null ? undefined : { retry: action.arguments.retry };
+      const value = options === undefined ? await tx.run(step) : await tx.run(step, options);
+      observations.set(action.instanceId, { kind: 'returned-value', fields: { value } });
+    } catch (error) {
+      observations.set(action.instanceId, { kind: 'thrown-error', fields: { name: error.name, message: error.message } });
+    }
+  })();
+}
+
+async function interpret(plan, clock) {
   const bindings = new Map();
   const observations = new Map();
+  const gatedIds = new Set(plan.scheduleControls
+    .filter((control) => control.kind === 'completion-release-order')
+    .flatMap((control) => control.instanceIds));
+  const gates = new Map();
+  const pendingRuns = new Map();
+  const launched = new Set();
+  const executedControls = new Set();
+
+  const applyAdvances = async (instanceId) => {
+    for (const [index, control] of plan.scheduleControls.entries()) {
+      if (control.kind !== 'virtual-time-advance' || control.afterInstanceId !== instanceId || executedControls.has(index)) continue;
+      executedControls.add(index);
+      await clock.advance(control.advanceMs);
+    }
+  };
+
+  const releaseReady = async () => {
+    for (const [index, control] of plan.scheduleControls.entries()) {
+      if (control.kind !== 'completion-release-order' || executedControls.has(index)) continue;
+      if (!control.instanceIds.every((instanceId) => launched.has(instanceId))) continue;
+      executedControls.add(index);
+      for (const instanceId of control.instanceIds) {
+        gates.get(instanceId).release();
+        await pendingRuns.get(instanceId);
+        await applyAdvances(instanceId);
+      }
+    }
+  };
+
   for (const action of plan.actions) {
     if (action.adapterId === 'tx.start/v1') {
       const tx = startTransaction({
@@ -35,25 +86,24 @@ async function interpret(plan) {
       });
       bindings.set(action.bind.name, tx);
       observations.set(action.instanceId, { kind: 'transaction-created', fields: { id: action.arguments.transactionId } });
+      await applyAdvances(action.instanceId);
       continue;
     }
     if (action.adapterId === 'tx.run/v1') {
       const tx = bindings.get(bindingName(action.arguments.tx));
       assert(tx !== undefined, 'tx.run binding is unavailable');
-      const step = async () => {
-        if (action.arguments.log !== null) process.stdout.write(`${action.arguments.log}\n`);
-        if (action.arguments.outcome === 'throw') {
-          const ErrorClass = action.arguments.errorName === 'TypeError' ? TypeError : Error;
-          throw new ErrorClass(action.arguments.errorMessage);
-        }
-        return action.arguments.value;
-      };
-      try {
-        const options = action.arguments.retry === null ? undefined : { retry: action.arguments.retry };
-        const value = options === undefined ? await tx.run(step) : await tx.run(step, options);
-        observations.set(action.instanceId, { kind: 'returned-value', fields: { value } });
-      } catch (error) {
-        observations.set(action.instanceId, { kind: 'thrown-error', fields: { name: error.name, message: error.message } });
+      if (gatedIds.has(action.instanceId)) {
+        let release;
+        const gatePromise = new Promise((resolve) => {
+          release = resolve;
+        });
+        gates.set(action.instanceId, { release });
+        pendingRuns.set(action.instanceId, executeRun(action, tx, observations, gatePromise));
+        launched.add(action.instanceId);
+        await releaseReady();
+      } else {
+        await executeRun(action, tx, observations, null);
+        await applyAdvances(action.instanceId);
       }
       continue;
     }
@@ -66,9 +116,13 @@ async function interpret(plan) {
       } catch (error) {
         observations.set(action.instanceId, { kind: 'commit-result', fields: { status: 'rejected', name: error.name } });
       }
+      await applyAdvances(action.instanceId);
       continue;
     }
     throw new Error(`Unregistered adapter: ${action.adapterId}`);
+  }
+  for (const [index] of plan.scheduleControls.entries()) {
+    assert(executedControls.has(index), `Schedule control was not executed: ${index}`);
   }
   return observations;
 }
@@ -86,6 +140,8 @@ function evaluate(plan, observations) {
   } else if (plan.evaluatorId === 'tx.successful-step-return/v1') {
     passed = observed.kind === 'returned-value'
       && canonicalJson(observed.fields.value) === canonicalJson(runAction.arguments.value);
+  } else if (plan.evaluatorId === 'tx.total-timeout/v1') {
+    passed = observed.kind === 'thrown-error' && observed.fields.name === 'TransactionTimeoutError';
   } else {
     throw new Error(`Unregistered evaluator: ${plan.evaluatorId}`);
   }
@@ -118,16 +174,35 @@ function createResult(plan, spec, catalog, evaluation) {
   return { ...payload, payloadDigest: domainDigest(RESULT_DIGEST_DOMAIN, payload) };
 }
 
+async function extendCatalog(catalog) {
+  let extensionBytes;
+  try {
+    extensionBytes = await readFile('/registration/phase3-operators.json');
+  } catch {
+    return catalog;
+  }
+  const { validatePhase3OperatorCatalog } = await import('/consumer/evaluator/src/v03-operators.mjs');
+  const extension = validatePhase3OperatorCatalog(parseJsonBytes(extensionBytes));
+  return { ...catalog, invariants: [...catalog.invariants, ...extension.invariants] };
+}
+
 export async function evaluateTrustedResult() {
   const [catalogBytes, specBytes, planBytes] = await Promise.all([
     readFile('/registration/phase2-catalog.json'),
     readFile('/input/spec.json'),
     readFile('/input/plan.json'),
   ]);
-  const catalog = validatePhase2Catalog(parseJsonBytes(catalogBytes));
+  const catalog = await extendCatalog(validatePhase2Catalog(parseJsonBytes(catalogBytes)));
   const spec = validateNightmareSpec(parseJsonBytes(specBytes), catalog);
   const plan = validateExecutionPlan(parseJsonBytes(planBytes), spec, catalog);
-  const observations = await interpret(plan);
+  const clock = createVirtualClock(plan.virtualTime.originMs);
+  clock.install();
+  let observations;
+  try {
+    observations = await interpret(plan, clock);
+  } finally {
+    clock.uninstall();
+  }
   const evaluation = evaluate(plan, observations);
   return createResult(plan, spec, catalog, evaluation);
 }

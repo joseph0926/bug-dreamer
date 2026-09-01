@@ -16,7 +16,7 @@ const CONTRACT_EVIDENCE_PATH = 'evidence/v0.3/phase1-contracts.json';
 const CATALOG_PATH = 'registrations/v0.3/phase2-catalog.json';
 const PREPARE_PATH = 'scripts/prepare-v03-trust.mjs';
 const DOCKERFILE_PATH = 'docker-v0.3/Dockerfile.trust';
-const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs'];
+const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const SOURCE_FILES = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
 const PRODUCTION_COMMAND = ['/consumer/evaluator/main.mjs'];
 
