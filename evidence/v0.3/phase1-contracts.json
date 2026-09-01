@@ -8,11 +8,11 @@
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
   "image": {
     "tag": "bug-dreamer-v03-contracts:f624b09f148c",
-    "imageId": "sha256:6a6f7a88ac32097728261f7449ddd6830fca4d5a7e0068bb20662fccb55a024c",
+    "imageId": "sha256:16c3055799e143a4eee364b20f1d68d9fe89ffa31b4159dbb38ccd145c800ef4",
     "baseImage": "node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203"
   },
   "buildInputs": {
-    "dockerfileSha256": "dfdf633e44ca39d348228ed0034021d9a044f51c80952105a1f2560720a04ab7",
+    "dockerfileSha256": "cea9cd0e17b6e4dad165b801886859ce6f922ea2e69d513e1998c10d9deb8c2c",
     "harnessSha256": "46b5f2f44dc7735c48535c2134cdc81b1f79c6082002875dddb692ed6f4b3cc8",
     "prepareScriptSha256": "7daeadb9a2db265e5fe51b3127da812d079fef354aebc5723e9b5923c041aac6",
     "consumerLockfileSha256": "8c363c7be87400ea25bda3d0f0e8d21e2cfc9d371e34a9c018718cfe2b8011a4"
