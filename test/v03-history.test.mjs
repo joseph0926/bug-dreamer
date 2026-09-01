@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { appendFile, copyFile, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
 import path from 'node:path';
@@ -24,6 +24,7 @@ import {
   validateImages,
   validateRecordedReplayResult,
   validateRegistrationTemplateShape,
+  V02_COMPLETION,
 } from '../src/v03-history.mjs';
 
 const execFileAsync = promisify(execFile);
@@ -31,6 +32,29 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 
 async function readJson(relativePath) {
   return JSON.parse(await readFile(path.join(repositoryRoot, relativePath), 'utf8'));
+}
+
+async function createTrackedFileCopy() {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'bug-dreamer-baseline-test-'));
+  const { stdout } = await execFileAsync('git', ['ls-files', '-z'], { cwd: repositoryRoot, maxBuffer: 32 * 1024 * 1024 });
+  for (const relativePath of stdout.split('\0').filter(Boolean)) {
+    const destination = path.join(temporaryRoot, relativePath);
+    await mkdir(path.dirname(destination), { recursive: true });
+    await copyFile(path.join(repositoryRoot, relativePath), destination);
+  }
+  return temporaryRoot;
+}
+
+function temporaryGit(temporaryRoot) {
+  const configuration = [
+    '-c', 'user.email=history-test@example.invalid',
+    '-c', 'user.name=history test',
+    '-c', 'commit.gpgsign=false',
+  ];
+  return async (args) => {
+    const { stdout } = await execFileAsync('git', [...configuration, ...args], { cwd: temporaryRoot });
+    return stdout.trim();
+  };
 }
 
 test('validates the current v0.2 history ledger and path universe', async () => {
@@ -131,6 +155,54 @@ test('rejects a replay result reference for a different scenario', async () => {
   }
 });
 
+test('rejects a history manifest whose baseline moved off the frozen v0.2 completion commit', async () => {
+  const temporaryRoot = await createTrackedFileCopy();
+  try {
+    const git = temporaryGit(temporaryRoot);
+    await git(['init', '-q', '-b', 'main']);
+    await git(['add', '-A']);
+    await git(['commit', '-q', '-m', 'import the tracked file universe']);
+
+    await appendFile(path.join(temporaryRoot, 'harness/entrypoint.mjs'), '\n');
+    await git(['add', '-A']);
+    await git(['commit', '-q', '-m', 'change a frozen runtime input']);
+    const movedCommit = await git(['rev-parse', 'HEAD']);
+    const movedTree = await git(['rev-parse', 'HEAD^{tree}']);
+
+    const manifestPath = path.join(temporaryRoot, 'history/v0.2-manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    const pathsPath = path.join(temporaryRoot, manifest.pathUniverseRef);
+    const pathManifest = JSON.parse(await readFile(pathsPath, 'utf8'));
+    const movedPaths = (await git(['ls-tree', '-r', '--name-only', movedCommit])).split('\n').filter(Boolean);
+    const movedPartition = partitionPaths(movedPaths, pathManifest);
+    pathManifest.baseline.commit = movedCommit;
+    pathManifest.baseline.tree = movedTree;
+    pathManifest.baseline.trackedPathCount = movedPaths.length;
+    pathManifest.frozenRuntimeInputs.pathCount = movedPartition.runtime.length;
+    pathManifest.frozenHistoricalOutputs.pathCount = movedPartition.historical.length;
+    pathManifest.baselineSnapshotOnly.pathCount = movedPartition.snapshot.length;
+    const pathsBytes = `${JSON.stringify(pathManifest, null, 2)}\n`;
+    await writeFile(pathsPath, pathsBytes);
+    manifest.baselineCommit = movedCommit;
+    manifest.baselineTree = movedTree;
+    manifest.anchors.pathManifestSha256 = sha256(pathsBytes);
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+    await git(['add', '-A']);
+    await git(['commit', '-q', '-m', 'move the recorded baseline onto the changed tree']);
+
+    assert.notEqual(movedCommit, V02_COMPLETION.commit);
+    assert.equal(manifest.baselineTree, pathManifest.baseline.tree);
+    assert.equal(await git(['rev-parse', `${manifest.baselineCommit}^{tree}`]), manifest.baselineTree);
+    assert.equal(sha256(await readFile(pathsPath)), manifest.anchors.pathManifestSha256);
+
+    await assert.rejects(validateHistory(temporaryRoot), (error) => (
+      error instanceof HistoryValidationError && /baseline commit is not the frozen v0.2 completion commit/i.test(error.message)
+    ));
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
 test('rejects a symlink in a frozen path directory chain', async () => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'bug-dreamer-symlink-test-'));
   try {
@@ -160,6 +232,18 @@ test('rejects an independent reproduction pointer for a different scenario', asy
   ]);
   audit.records[2].independentReproductionRefs[0].jsonPointer = '/results/1';
   await assert.rejects(validateAudit(repositoryRoot, manifest, audit, images), /Independent reproduction command mismatch/);
+});
+
+test('rejects an image ledger evidence path that escapes the repository root', async () => {
+  const [manifest, images] = await Promise.all([
+    readJson('history/v0.2-manifest.json'),
+    readJson('history/v0.2-images.json'),
+  ]);
+  const image = images.images.find((candidate) => Array.isArray(candidate.evidenceRefs) && candidate.evidenceRefs.length > 0);
+  image.evidenceRefs[0] = '../../outside.json';
+  await assert.rejects(validateImages(repositoryRoot, manifest, images), (error) => (
+    error instanceof HistoryValidationError && /must not escape the root/.test(error.message)
+  ));
 });
 
 test('finds files added outside the frozen legacy path universe', () => {

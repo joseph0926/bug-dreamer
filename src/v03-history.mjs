@@ -5,6 +5,7 @@ import { lstat, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { MODULES } from './modules.mjs';
+import { PathContainmentError, assertNoSymlinkAncestors, resolveContainedPath } from './v03-paths.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -31,6 +32,11 @@ const PRESERVATION_STATES = new Set([
 ]);
 
 const REPLAY_STATES = new Set(['not-attempted', 'pass', 'mismatch', 'unavailable', 'error']);
+
+export const V02_COMPLETION = Object.freeze({
+  commit: '45106d9df9c8d9b68fb327311e767a10e114959f',
+  tree: 'ed4e6171eea3a2c43708e0ee6f2ff77441e27ff0',
+});
 
 export class HistoryValidationError extends Error {}
 
@@ -68,8 +74,19 @@ export function immutableAuditProjection(audit) {
   };
 }
 
+async function containedPath(repositoryRoot, relativePath) {
+  try {
+    const absolute = resolveContainedPath(repositoryRoot, relativePath);
+    await assertNoSymlinkAncestors(repositoryRoot, absolute);
+    return absolute;
+  } catch (error) {
+    if (error instanceof PathContainmentError) throw new HistoryValidationError(error.message);
+    throw error;
+  }
+}
+
 async function readJson(repositoryRoot, relativePath) {
-  const source = await readFile(path.join(repositoryRoot, relativePath), 'utf8');
+  const source = await readFile(await containedPath(repositoryRoot, relativePath), 'utf8');
   try {
     return JSON.parse(source);
   } catch (error) {
@@ -205,7 +222,7 @@ async function importClosure(repositoryRoot, entrypoint) {
     const current = pending.pop();
     if (visited.has(current)) continue;
     visited.add(current);
-    const source = await readFile(path.join(repositoryRoot, current), 'utf8');
+    const source = await readFile(await containedPath(repositoryRoot, current), 'utf8');
     for (const specifier of extractLocalImports(source)) {
       const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(current), specifier));
       pending.push(resolved);
@@ -254,7 +271,7 @@ async function validateEvidenceRef(repositoryRoot, reference) {
   assert(typeof reference.path === 'string', 'Evidence reference path is required');
   assert(typeof reference.jsonPointer === 'string', `Evidence JSON pointer is required: ${reference.path}`);
   assert(/^[0-9a-f]{64}$/.test(reference.sha256), `Evidence sha256 is invalid: ${reference.path}`);
-  const bytes = await readFile(path.join(repositoryRoot, reference.path));
+  const bytes = await readFile(await containedPath(repositoryRoot, reference.path));
   assert(sha256(bytes) === reference.sha256, `Evidence hash mismatch: ${reference.path}`);
   const document = JSON.parse(bytes.toString('utf8'));
   return readJsonPointer(document, reference.jsonPointer);
@@ -282,7 +299,7 @@ export async function validateAudit(repositoryRoot, manifest, audit, images) {
   assert(Array.isArray(audit.records) && audit.records.length === 7, 'Audit ledger must contain seven records');
   assert(audit.nightmareReport.path === manifest.nightmareReport.path, 'Audit report path differs from history manifest');
   assert(audit.nightmareReport.sha256 === manifest.nightmareReport.sha256, 'Audit report hash differs from history manifest');
-  const report = await readFile(path.join(repositoryRoot, audit.nightmareReport.path));
+  const report = await readFile(await containedPath(repositoryRoot, audit.nightmareReport.path));
   assert(sha256(report) === audit.nightmareReport.sha256, 'Nightmare report hash mismatch');
 
   const imageById = new Map(images.images.map((image) => [image.id, image]));
@@ -297,7 +314,7 @@ export async function validateAudit(repositoryRoot, manifest, audit, images) {
     assert(record.auditStatus === 'unassessed', `Phase 0 audit status must be unassessed: ${record.id}`);
     assert(typeof record.title === 'string' && record.title.length > 0, `Audit title is missing: ${record.id}`);
     assert(typeof record.scenario.originalCommand === 'string' && record.scenario.originalCommand.length > 0, `Original command is missing: ${record.id}`);
-    const scenario = await readFile(path.join(repositoryRoot, record.scenario.path));
+    const scenario = await readFile(await containedPath(repositoryRoot, record.scenario.path));
     assert(sha256(scenario) === record.scenario.sha256, `Scenario hash mismatch: ${record.id}`);
     assert(imageById.has(record.imageRef), `Unknown image reference: ${record.id}/${record.imageRef}`);
     assert(Array.isArray(record.evidenceRefs) && record.evidenceRefs.length > 0, `Primary evidence is missing: ${record.id}`);
@@ -333,7 +350,7 @@ export async function validateAudit(repositoryRoot, manifest, audit, images) {
 async function validateArchiveVerification(repositoryRoot, manifest, image) {
   const reference = image.archive.verificationRef;
   assert(reference && typeof reference.path === 'string' && /^[0-9a-f]{64}$/.test(reference.sha256), `Archive verification ref is incomplete: ${image.id}`);
-  const bytes = await readFile(path.join(repositoryRoot, reference.path));
+  const bytes = await readFile(await containedPath(repositoryRoot, reference.path));
   assert(sha256(bytes) === reference.sha256, `Archive verification hash mismatch: ${image.id}`);
   const verification = JSON.parse(bytes.toString('utf8'));
   assert(verification.schemaVersion === 'bug-dreamer/v02-image-archive-verification/v1', `Archive verification schema mismatch: ${image.id}`);
@@ -394,7 +411,7 @@ export async function validateImages(repositoryRoot, manifest, images, historica
     assert(Array.isArray(image.replayCases) && image.replayCases.length > 0, `Image replay cases are missing: ${image.id}`);
     let foundImage = false;
     for (const evidencePath of image.evidenceRefs) {
-      const source = await readFile(path.join(repositoryRoot, evidencePath), 'utf8');
+      const source = await readFile(await containedPath(repositoryRoot, evidencePath), 'utf8');
       if (source.includes(image.imageId)) foundImage = true;
     }
     assert(foundImage, `Image ID is absent from its evidence refs: ${image.id}`);
@@ -457,7 +474,7 @@ export function targetArchiveTree(entries, archivePaths) {
 }
 
 async function validateTargetTreeSnapshot(repositoryRoot, manifest, buildContract) {
-  const bytes = await readFile(path.join(repositoryRoot, manifest.targetTreeSnapshotRef));
+  const bytes = await readFile(await containedPath(repositoryRoot, manifest.targetTreeSnapshotRef));
   assert(sha256(bytes) === manifest.anchors.targetTreeSnapshotSha256, 'Target tree snapshot anchor mismatch');
   const snapshot = JSON.parse(bytes.toString('utf8'));
   assertExactKeys(snapshot, ['schemaVersion', 'repository', 'revision', 'captureCommand', 'entryEncoding', 'treeSha256', 'entries'], 'target tree snapshot');
@@ -539,7 +556,7 @@ function comparableReplayResult(result) {
 
 export async function validateRecordedReplayResult(repositoryRoot, image, results) {
   assert(image.replay.resultRef && typeof image.replay.resultRef.path === 'string' && /^[0-9a-f]{64}$/.test(image.replay.resultRef.sha256), `Available historical image has no hashed replay result reference: ${image.id}`);
-  const resultBytes = await readFile(path.join(repositoryRoot, image.replay.resultRef.path));
+  const resultBytes = await readFile(await containedPath(repositoryRoot, image.replay.resultRef.path));
   assert(sha256(resultBytes) === image.replay.resultRef.sha256, `Recorded replay result hash mismatch: ${image.id}`);
   const recorded = JSON.parse(resultBytes.toString('utf8'));
   assert(recorded.schemaVersion === 'bug-dreamer/v02-replay-result/v1' && Array.isArray(recorded.results), `Recorded replay result shape is invalid: ${image.id}`);
@@ -586,6 +603,8 @@ async function validateReplayAvailability(repositoryRoot, images) {
 
 export async function validateHistory(repositoryRoot, options = {}) {
   const manifest = await readJson(repositoryRoot, 'history/v0.2-manifest.json');
+  assert(manifest.baselineCommit === V02_COMPLETION.commit, 'History manifest baseline commit is not the frozen v0.2 completion commit');
+  assert(manifest.baselineTree === V02_COMPLETION.tree, 'History manifest baseline tree is not the frozen v0.2 completion tree');
   const pathManifest = await readJson(repositoryRoot, manifest.pathUniverseRef);
   const audit = await readJson(repositoryRoot, manifest.auditLedgerRef);
   const images = await readJson(repositoryRoot, manifest.imageLedgerRef);
@@ -594,8 +613,8 @@ export async function validateHistory(repositoryRoot, options = {}) {
   assert(pathManifest.schemaVersion === 'bug-dreamer/history-paths/v1', 'Unexpected path manifest schemaVersion');
   assert(pathManifest.baseline.commit === manifest.baselineCommit, 'History manifests disagree on baseline commit');
   assert(pathManifest.baseline.tree === manifest.baselineTree, 'History manifests disagree on baseline tree');
-  const pathManifestBytes = await readFile(path.join(repositoryRoot, manifest.pathUniverseRef));
-  const imageLedgerBytes = await readFile(path.join(repositoryRoot, manifest.imageLedgerRef));
+  const pathManifestBytes = await readFile(await containedPath(repositoryRoot, manifest.pathUniverseRef));
+  const imageLedgerBytes = await readFile(await containedPath(repositoryRoot, manifest.imageLedgerRef));
   const registrationTemplateBytes = await readFile(path.join(repositoryRoot, 'benchmark/v0.3/registration.template.json'));
   assert(sha256(pathManifestBytes) === manifest.anchors.pathManifestSha256, 'Path manifest anchor mismatch');
   assert(sha256(imageLedgerBytes) === manifest.anchors.imageLedgerSha256, 'Image ledger anchor mismatch');
@@ -629,7 +648,7 @@ export async function validateHistory(repositoryRoot, options = {}) {
     assert(JSON.stringify(actual) === JSON.stringify([...expected].sort()), `Legacy import closure changed: ${entrypoint}`);
   }
 
-  const dockerfile = await readFile(path.join(repositoryRoot, pathManifest.frozenRuntimeInputs.dockerBuildContract.dockerfile), 'utf8');
+  const dockerfile = await readFile(await containedPath(repositoryRoot, pathManifest.frozenRuntimeInputs.dockerBuildContract.dockerfile), 'utf8');
   const copySources = parseDockerCopySources(dockerfile);
   assert(JSON.stringify(copySources) === JSON.stringify(pathManifest.frozenRuntimeInputs.dockerBuildContract.copySources), 'Legacy Docker COPY sources changed');
   for (const contextPath of pathManifest.frozenRuntimeInputs.dockerBuildContract.repositoryContextPaths) {

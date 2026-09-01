@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { buildTransformedSpec, loadPhase3Catalog } from './v03-operators.mjs';
+import { resolveContainedPath } from './v03-paths.mjs';
 import {
   V03SpecError,
   buildExecutionPlan,
@@ -20,6 +21,7 @@ const MANIFEST_PATH = 'benchmark/manifest.json';
 const SPEC_CASES_PATH = 'contracts/v0.3/spec-cases.json';
 const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const SOURCE_FILES = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
+const RUN_RECORD_KEYS = ['exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'resultEntries', 'rawResult', 'classification'];
 const OPERATOR_ARM_REQUESTS = [
   { operatorId: 'time.advance/v1', requestPath: 'contracts/v0.3/requests/time-advance.json' },
   { operatorId: 'schedule.release-order/v1', requestPath: 'contracts/v0.3/requests/spike-release-order.json' },
@@ -34,6 +36,11 @@ function fail(message) {
 
 function assert(condition, message) {
   if (!condition) fail(message);
+}
+
+function strictKeys(value, keys, label) {
+  assert(value !== null && typeof value === 'object' && !Array.isArray(value), `${label} must be an object`);
+  assert(JSON.stringify(Object.keys(value).sort()) === JSON.stringify([...keys].sort()), `${label} fields changed`);
 }
 
 function sha256(value) {
@@ -66,7 +73,39 @@ async function aggregateFiles(repositoryRoot, relativePaths) {
   return digest.digest('hex');
 }
 
+function assertRunRecord(recorded, label) {
+  strictKeys(recorded, RUN_RECORD_KEYS, `Spike run record ${label}`);
+  assert(recorded.exitCode === null || Number.isInteger(recorded.exitCode), `Spike run exit code is invalid: ${label}`);
+  assert(typeof recorded.timedOut === 'boolean' && typeof recorded.outputTruncated === 'boolean', `Spike run execution flags are invalid: ${label}`);
+  assert(!(recorded.timedOut && recorded.outputTruncated), `Spike run reports both a timeout and a truncation: ${label}`);
+  for (const stream of ['stdout', 'stderr']) {
+    const observedBytes = recorded[`${stream}Bytes`];
+    assert(typeof recorded[stream] === 'string', `Spike run ${stream} record is not a string: ${label}`);
+    assert(Number.isInteger(observedBytes) && observedBytes >= 0, `Spike run ${stream} byte count is invalid: ${label}`);
+    const storedBytes = Buffer.byteLength(recorded[stream], 'utf8');
+    assert(storedBytes <= EXECUTION_BUDGET.recordedOutputBytes, `Spike run ${stream} record exceeds the cap: ${label}`);
+    if (observedBytes <= EXECUTION_BUDGET.recordedOutputBytes) assert(storedBytes === observedBytes, `Spike run ${stream} record is incomplete: ${label}`);
+  }
+  const overflowed = recorded.stdoutBytes > EXECUTION_BUDGET.stdoutLimitBytes || recorded.stderrBytes > EXECUTION_BUDGET.stderrLimitBytes;
+  assert(recorded.outputTruncated === overflowed, `Spike run truncation flag disagrees with the recorded byte counts: ${label}`);
+  assert(recorded.rawResult === null || typeof recorded.rawResult === 'string', `Spike run raw result is invalid: ${label}`);
+  assert(Array.isArray(recorded.resultEntries), `Spike run result entries are invalid: ${label}`);
+  if (recorded.rawResult === null) {
+    assert(recorded.resultEntries.length === 0, `Spike run recorded result files without a raw result: ${label}`);
+  } else {
+    assert(recorded.resultEntries.length === 1, `Spike run result file universe changed: ${label}`);
+    const [entry] = recorded.resultEntries;
+    strictKeys(entry, ['name', 'type', 'size'], `Spike run result entry ${label}`);
+    assert(entry.name === 'result.json', `Spike run result file name changed: ${label}`);
+    assert(entry.type === 'regular', `Spike run result entry is not a regular file: ${label}`);
+    assert(Number.isInteger(entry.size) && entry.size >= 0, `Spike run result entry size is invalid: ${label}`);
+    assert(entry.size === Buffer.byteLength(recorded.rawResult, 'utf8'), `Spike run result size mismatch: ${label}`);
+  }
+  assert(recorded.classification !== null && typeof recorded.classification === 'object' && !Array.isArray(recorded.classification), `Spike run classification is invalid: ${label}`);
+}
+
 function recomputeRun(recorded, plan, spec, catalog, label) {
+  assertRunRecord(recorded, label);
   const resultBytes = recorded.rawResult === null ? null : Buffer.from(recorded.rawResult, 'utf8');
   const classification = classifyTrustedResult({
     resultBytes,
@@ -83,6 +122,7 @@ function recomputeRun(recorded, plan, spec, catalog, label) {
 
 export async function validateSpikeReplay(repositoryRoot) {
   const readRepoFile = (relativePath) => readFile(path.join(repositoryRoot, relativePath));
+  const readContainedFile = (relativePath) => readFile(resolveContainedPath(repositoryRoot, relativePath));
   const [evidenceBytes, registrationBytes, manifestBytes, { catalog: cleanCatalog, catalogBytes, operatorCatalog, operatorBytes }] = await Promise.all([
     readRepoFile(EVIDENCE_PATH),
     readRepoFile(REGISTRATION_PATH),
@@ -102,9 +142,9 @@ export async function validateSpikeReplay(repositoryRoot) {
   assert(evidence.targetRevision === registration.targetRevision && evidence.targetRevision === cleanCatalog.target.targetRevision, 'Spike target revision mismatch');
 
   const [phase1Bytes, trustBytes, seedBytes] = await Promise.all([
-    readRepoFile(evidence.phase1Evidence.path),
-    readRepoFile(evidence.phase2TrustEvidence.path),
-    readRepoFile(evidence.seed.path),
+    readContainedFile(evidence.phase1Evidence.path),
+    readContainedFile(evidence.phase2TrustEvidence.path),
+    readContainedFile(evidence.seed.path),
   ]);
   assert(evidence.phase1Evidence.sha256 === sha256(phase1Bytes), 'Spike Phase 1 evidence reference mismatch');
   assert(evidence.phase2TrustEvidence.sha256 === sha256(trustBytes), 'Spike Phase 2 trust evidence reference mismatch');
@@ -125,7 +165,7 @@ export async function validateSpikeReplay(repositoryRoot) {
     if (artifact.id === cleanCatalog.target.moduleId) continue;
     assert(evidence.defectTarballDigests[artifact.id] === artifact.sha256, `Spike defect build changed a non-target artifact: ${artifact.id}`);
   }
-  const dockerfileSource = (await readRepoFile(evidence.consumerDockerfilePatch.file)).toString('utf8');
+  const dockerfileSource = (await readContainedFile(evidence.consumerDockerfilePatch.file)).toString('utf8');
   const patchedConsumerDockerfile = applyEdit(dockerfileSource, evidence.consumerDockerfilePatch);
   assert(Array.isArray(evidence.defectConsumerLockfile.changedIntegrityLines)
     && evidence.defectConsumerLockfile.changedIntegrityLines.length >= 1
@@ -185,7 +225,7 @@ export async function validateSpikeReplay(repositoryRoot) {
   for (const [index, relativePath] of specCases.positive.entries()) {
     const recorded = evidence.baseline.identityRuns[index];
     assert(recorded.seedPath === relativePath, `Spike baseline seed order mismatch: ${relativePath}`);
-    const baselineSeedBytes = await readRepoFile(relativePath);
+    const baselineSeedBytes = await readContainedFile(relativePath);
     assert(recorded.seedSha256 === sha256(baselineSeedBytes), `Spike baseline seed digest mismatch: ${relativePath}`);
     const baselineSeed = parseNightmareSeed(baselineSeedBytes, defectCatalog);
     const baselineSpec = buildNightmareSpec(baselineSeed, defectCatalog);
@@ -205,7 +245,7 @@ export async function validateSpikeReplay(repositoryRoot) {
   for (const [index, entry] of OPERATOR_ARM_REQUESTS.entries()) {
     const recorded = evidence.arms[index];
     assert(recorded.operatorId === entry.operatorId && recorded.requestPath === entry.requestPath, `Spike arm identity mismatch: ${entry.operatorId}`);
-    const requestBytes = await readRepoFile(entry.requestPath);
+    const requestBytes = await readContainedFile(entry.requestPath);
     assert(recorded.requestSha256 === sha256(requestBytes), `Spike arm request digest mismatch: ${entry.operatorId}`);
     const request = JSON.parse(requestBytes.toString('utf8'));
     let cleanSpec;

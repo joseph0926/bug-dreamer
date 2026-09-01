@@ -22,3 +22,5 @@ jobs:
       - run: node scripts/validate-v03.mjs contracts
       - run: node scripts/validate-v03.mjs spec
       - run: node scripts/validate-v03.mjs trust
+      - run: node scripts/validate-v03.mjs operators
+      - run: node scripts/validate-v03.mjs replay
