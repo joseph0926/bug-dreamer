@@ -2,7 +2,13 @@ import { writeFile } from 'node:fs/promises';
 
 import { evaluateTrustedResult, resultPath, writeTrustedResult } from '/consumer/evaluator/evaluator.mjs';
 
-const CASE_MODES = ['missing', 'malformed', 'wrong-digest', 'early-exit'];
+const CASE_MODES = ['missing', 'malformed', 'wrong-digest', 'early-exit', 'timeout', 'log-overflow'];
+
+function holdForever() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 2147483647);
+  });
+}
 
 function parseMode(args) {
   if (args.length !== 2 || args[0] !== '--mode' || !CASE_MODES.includes(args[1])) {
@@ -27,6 +33,16 @@ async function main() {
     result.payloadDigest = '0'.repeat(64);
     await writeTrustedResult(result);
     return;
+  }
+  if (mode === 'timeout') {
+    await writeTrustedResult(result);
+    await holdForever();
+  }
+  if (mode === 'log-overflow') {
+    await writeTrustedResult(result);
+    const filler = `${'x'.repeat(65535)}\n`;
+    for (let index = 0; index < 32; index += 1) process.stdout.write(filler);
+    await holdForever();
   }
   process.stderr.write('BUG_DREAMER_RESULT {"execution":"candidate-failure"}\n');
   process.exitCode = 17;

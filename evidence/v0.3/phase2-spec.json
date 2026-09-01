@@ -7,7 +7,7 @@
   },
   "cases": {
     "path": "contracts/v0.3/spec-cases.json",
-    "sha256": "0d99e7e68e87e394c41399941d71f20f26f299b5d0d7bbf53ced9bc7f50b3ce9"
+    "sha256": "310c967b6909e02fef918645fa27713f2c694eaba9bf3ec0d89791c20234bd07"
   },
   "canonicalizer": {
     "standard": "RFC 8785 JCS",
@@ -40,6 +40,15 @@
       "specDigest": "966fc479a8319a6ffad68376348ccf8ac1012608cf21b71802ea9eeedc13f780",
       "planDigest": "4ab5087dfebda50f1234832c5f9e9ec01be7979af5460827ed15ff309842e951",
       "actionCount": 3,
+      "fixtureCount": 1
+    },
+    {
+      "path": "contracts/v0.3/seeds/kind-flip.json",
+      "sourceSha256": "f486fbb63cc3c8802e34047880e4ab6d60c19ac2aecd44c67db3e42da6d4818b",
+      "seedDigest": "5a5b19bb3221507e159a2037a2ed7288026484ac1feec53c715191a06556e0ca",
+      "specDigest": "1874b2e93519778a3b13d0ce8d7e3e7495b9a7ce4c90ac0d11c372597ac535ac",
+      "planDigest": "3fcae8c274673a95e4f7b0bb5a6eef0a0e9513e74fa3735f1a1eb8ba7ee06251",
+      "actionCount": 2,
       "fixtureCount": 1
     }
   ],
@@ -92,6 +101,20 @@
       "expectedKind": "rejected-policy",
       "observedKind": "rejected-policy",
       "expectedMessage": "not applicable to the final tx.run outcome"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-unsafe-integer.json",
+      "sourceSha256": "dd10fc4eff655335cd27317380a5eb25d7ff695150a46ad746250786c147e618",
+      "expectedKind": "rejected-schema",
+      "observedKind": "rejected-schema",
+      "expectedMessage": "timeoutMs must be a safe non-negative integer"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-retry-budget.json",
+      "sourceSha256": "4567397fddb3d4c3497165322a795c285b1ac52e0b7990482658ba7a56fdf82e",
+      "expectedKind": "rejected-policy",
+      "observedKind": "rejected-policy",
+      "expectedMessage": "maxAttempts exceeds the retry budget"
     }
   ]
 }

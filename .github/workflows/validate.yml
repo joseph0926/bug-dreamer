@@ -1,0 +1,24 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: node --test test/*.test.mjs
+      - run: node scripts/validate-v03.mjs history
+      - run: node scripts/validate-v03.mjs contracts
+      - run: node scripts/validate-v03.mjs spec
+      - run: node scripts/validate-v03.mjs trust

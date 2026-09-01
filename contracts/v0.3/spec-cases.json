@@ -3,7 +3,8 @@
   "positive": [
     "contracts/v0.3/seeds/pass.json",
     "contracts/v0.3/seeds/candidate.json",
-    "contracts/v0.3/seeds/marker-forgery.json"
+    "contracts/v0.3/seeds/marker-forgery.json",
+    "contracts/v0.3/seeds/kind-flip.json"
   ],
   "negative": [
     {
@@ -40,6 +41,16 @@
       "path": "contracts/v0.3/seeds/negative-invariant-outcome.json",
       "expectedKind": "rejected-policy",
       "expectedMessage": "not applicable to the final tx.run outcome"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-unsafe-integer.json",
+      "expectedKind": "rejected-schema",
+      "expectedMessage": "timeoutMs must be a safe non-negative integer"
+    },
+    {
+      "path": "contracts/v0.3/seeds/negative-retry-budget.json",
+      "expectedKind": "rejected-policy",
+      "expectedMessage": "maxAttempts exceeds the retry budget"
     }
   ]
 }

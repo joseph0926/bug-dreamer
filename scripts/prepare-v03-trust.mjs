@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
   chmod,
   cp,
@@ -22,7 +22,7 @@ import {
   loadPhase2Catalog,
   parseNightmareSeed,
 } from '../src/v03-spec.mjs';
-import { classifyTrustedResult, readTrustedResultChannel } from '../src/v03-trust.mjs';
+import { EXECUTION_BUDGET, classifyTrustedResult, readTrustedResultChannel } from '../src/v03-trust.mjs';
 import { domainDigest } from '../src/v03-wire.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -84,14 +84,69 @@ function caseCommand(mode) {
   return ['/consumer/evaluator/case-main.mjs', '--mode', mode];
 }
 
-function normalizedRunArgs(args, inputDirectory, resultDirectory, imageTag, command) {
+function normalizedRunArgs(args, inputDirectory, resultDirectory, imageTag, command, containerName) {
   const normalized = args.slice(0, args.length - command.length).map((argument) => {
     if (argument === `type=bind,source=${inputDirectory},target=/input,readonly`) return '<input-mount>';
     if (argument === `type=bind,source=${resultDirectory},target=/result`) return '<result-mount>';
     if (argument === imageTag) return '<image>';
+    if (argument === containerName) return '<container-name>';
     return argument;
   });
   return [...normalized, '<command>'];
+}
+
+function runCase(args, containerName) {
+  const { evaluationTimeoutMs, stdoutLimitBytes, stderrLimitBytes, recordedOutputBytes } = EXECUTION_BUDGET;
+  return new Promise((resolve, reject) => {
+    const child = spawn('docker', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const streams = {
+      stdout: { limit: stdoutLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
+      stderr: { limit: stderrLimitBytes, bytes: 0, recorded: [], recordedBytes: 0 },
+    };
+    let timedOut = false;
+    let outputTruncated = false;
+    let stopped = false;
+    const stop = () => {
+      if (stopped) return;
+      stopped = true;
+      spawn('docker', ['rm', '--force', containerName], { stdio: 'ignore' });
+    };
+    const timer = setTimeout(() => {
+      timedOut = true;
+      stop();
+    }, evaluationTimeoutMs);
+    const collect = (name) => (chunk) => {
+      const stream = streams[name];
+      stream.bytes += chunk.length;
+      if (stream.recordedBytes < recordedOutputBytes) {
+        const slice = chunk.subarray(0, recordedOutputBytes - stream.recordedBytes);
+        stream.recorded.push(slice);
+        stream.recordedBytes += slice.length;
+      }
+      if (stream.bytes > stream.limit) {
+        outputTruncated = true;
+        stop();
+      }
+    };
+    child.stdout.on('data', collect('stdout'));
+    child.stderr.on('data', collect('stderr'));
+    child.once('error', (error) => {
+      clearTimeout(timer);
+      reject(error);
+    });
+    child.once('close', (exitCode) => {
+      clearTimeout(timer);
+      resolve({
+        exitCode,
+        stdout: Buffer.concat(streams.stdout.recorded).toString('utf8'),
+        stderr: Buffer.concat(streams.stderr.recorded).toString('utf8'),
+        stdoutBytes: streams.stdout.bytes,
+        stderrBytes: streams.stderr.bytes,
+        timedOut,
+        outputTruncated,
+      });
+    });
+  });
 }
 
 async function readCanonicalizerIntegrity(lockfilePath) {
@@ -131,6 +186,7 @@ async function main() {
     sourceSha256: await aggregateFiles(repositoryRoot, sourceFiles),
     catalogSha256: sha256(catalogBytes),
     prepareScriptSha256: sha256(await readFile(prepareScriptPath)),
+    executionBudget: EXECUTION_BUDGET,
     canonicalizer: {
       package: 'canonicalize',
       version: '4.0.0',
@@ -199,10 +255,13 @@ async function main() {
       { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
       { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
       { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'pass' },
+      { id: 'kind-flip', seed: 'contracts/v0.3/seeds/kind-flip.json', mode: 'valid', command: productionCommand, expectedEvaluator: 'evaluated', expectedExecution: 'candidate-failure' },
       { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
       { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
       { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
       { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', command: caseCommand('early-exit'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'timeout', seed: 'contracts/v0.3/seeds/pass.json', mode: 'timeout', command: caseCommand('timeout'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
+      { id: 'log-overflow', seed: 'contracts/v0.3/seeds/pass.json', mode: 'log-overflow', command: caseCommand('log-overflow'), expectedEvaluator: 'evaluator-error', expectedExecution: 'unrunnable' },
     ];
     const caseResults = [];
     let dockerRunArgsTemplate;
@@ -223,9 +282,12 @@ async function main() {
         writeFile(path.join(inputDirectory, 'spec.json'), `${JSON.stringify(spec, null, 2)}\n`),
         writeFile(path.join(inputDirectory, 'plan.json'), `${JSON.stringify(plan, null, 2)}\n`),
       ]);
+      const containerName = `bug-dreamer-v03-trust-${definition.id}-${randomUUID()}`;
       const dockerRunArgs = [
         'run',
         '--rm',
+        '--name',
+        containerName,
         '--network',
         'none',
         '--read-only',
@@ -248,12 +310,20 @@ async function main() {
         imageTag,
         ...definition.command,
       ];
-      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageTag, definition.command);
+      const normalizedArgs = normalizedRunArgs(dockerRunArgs, inputDirectory, resultDirectory, imageTag, definition.command, containerName);
       dockerRunArgsTemplate ??= normalizedArgs;
       if (JSON.stringify(normalizedArgs) !== JSON.stringify(dockerRunArgsTemplate)) throw new Error('Trust cases use different isolation arguments');
-      const execution = await run('docker', dockerRunArgs);
+      const execution = await runCase(dockerRunArgs, containerName);
       const { entries: resultEntries, resultBytes } = await readTrustedResultChannel(resultDirectory);
-      const classification = classifyTrustedResult({ resultBytes, exitCode: execution.exitCode, plan, spec, catalog });
+      const classification = classifyTrustedResult({
+        resultBytes,
+        exitCode: execution.exitCode,
+        timedOut: execution.timedOut,
+        outputTruncated: execution.outputTruncated,
+        plan,
+        spec,
+        catalog,
+      });
       if (classification.evaluator !== definition.expectedEvaluator || classification.execution.status !== definition.expectedExecution) {
         throw new Error(`Unexpected trust classification: ${definition.id} ${JSON.stringify({ exitCode: execution.exitCode, stdout: execution.stdout, stderr: execution.stderr, resultEntries, classification })}`);
       }
@@ -266,6 +336,10 @@ async function main() {
         exitCode: execution.exitCode,
         stdout: execution.stdout,
         stderr: execution.stderr,
+        stdoutBytes: execution.stdoutBytes,
+        stderrBytes: execution.stderrBytes,
+        timedOut: execution.timedOut,
+        outputTruncated: execution.outputTruncated,
         resultEntries,
         rawResult: resultBytes === null ? null : resultBytes.toString('utf8'),
         classification,

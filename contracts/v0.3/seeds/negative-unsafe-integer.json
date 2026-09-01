@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+  "catalogVersion": "firsttx-phase2-f624b09-v1",
+  "id": "tx-unsafe-integer",
+  "invariantId": "tx.successful-step-return",
+  "actors": ["checkout"],
+  "actions": [
+    {
+      "actionId": "tx.start",
+      "actor": "checkout",
+      "arguments": { "transactionId": "phase2-unsafe-integer", "timeoutMs": 9007199254740993, "transition": false },
+      "bind": { "name": "tx", "type": "tx-handle" }
+    },
+    {
+      "actionId": "tx.run",
+      "actor": "checkout",
+      "arguments": {
+        "tx": { "$binding": "tx" },
+        "outcome": "return",
+        "value": null,
+        "errorName": null,
+        "errorMessage": null,
+        "log": null,
+        "retry": null
+      },
+      "bind": null
+    }
+  ]
+}

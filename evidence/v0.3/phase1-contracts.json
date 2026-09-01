@@ -6,6 +6,32 @@
     "registrationId": "firsttx-public-packages-f624b09-v1"
   },
   "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sourceManifests": [
+    {
+      "id": "shared",
+      "workspacePath": "packages/shared",
+      "path": "packages/shared/package.json",
+      "sha256": "5ff9d4bbc3b8ea44b373043dd78f8e47b0b0e5d800a6333c6c2bcfd8aebee8aa"
+    },
+    {
+      "id": "tx",
+      "workspacePath": "packages/tx",
+      "path": "packages/tx/package.json",
+      "sha256": "1ad3b875f214c979966726cdf25561cfa47af4cc9f0f7feff2735d56b5cfb162"
+    },
+    {
+      "id": "local-first",
+      "workspacePath": "packages/local-first",
+      "path": "packages/local-first/package.json",
+      "sha256": "2bb07e7d16f8b69e1ce71a4619cb4138d14da211677d4cd5493091852f2491d5"
+    },
+    {
+      "id": "prepaint",
+      "workspacePath": "packages/prepaint",
+      "path": "packages/prepaint/package.json",
+      "sha256": "e16a3905165d86551d873b272fd227a3bd40ab88e5c5799f94aa0a2a7e3e19d0"
+    }
+  ],
   "image": {
     "tag": "bug-dreamer-v03-contracts:f624b09f148c",
     "imageId": "sha256:9863670188fbbf2651082258cd6d7aa57c444dfa6746026deec76bccae9c68c5",
@@ -14,7 +40,7 @@
   "buildInputs": {
     "dockerfileSha256": "cea9cd0e17b6e4dad165b801886859ce6f922ea2e69d513e1998c10d9deb8c2c",
     "harnessSha256": "46b5f2f44dc7735c48535c2134cdc81b1f79c6082002875dddb692ed6f4b3cc8",
-    "prepareScriptSha256": "7daeadb9a2db265e5fe51b3127da812d079fef354aebc5723e9b5923c041aac6",
+    "prepareScriptSha256": "8e9f7abebc117639f91ee8dd5be6ed81c759e44618f14a87a0f19c04ebf82800",
     "consumerLockfileSha256": "8c363c7be87400ea25bda3d0f0e8d21e2cfc9d371e34a9c018718cfe2b8011a4"
   },
   "isolation": {

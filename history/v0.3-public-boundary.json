@@ -7,7 +7,7 @@
   "registrationId": "firsttx-public-packages-f624b09-v1",
   "evidence": {
     "path": "evidence/v0.3/phase1-contracts.json",
-    "sha256": "c82e736961c39b9b114249af3cfbf261af67aed9f5cff11c73609ec9849ad82e"
+    "sha256": "c0fe4336066a563433b5131e753da803f3d20767ed371cfa7ff44b137d587949"
   },
   "records": [
     {

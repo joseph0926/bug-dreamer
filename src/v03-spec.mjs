@@ -42,6 +42,11 @@ const OUTCOME_BY_OBSERVED_KIND = Object.freeze({
   'thrown-error': 'throw',
   'returned-value': 'return',
 });
+export const ACTION_POLICY_LIMITS = Object.freeze({
+  startTimeoutMs: 10000,
+  retryMaxAttempts: 5,
+  retryDelayMs: 1000,
+});
 
 export class V03SpecError extends Error {
   constructor(kind, message) {
@@ -96,8 +101,10 @@ function validateBindingReference(value, bindings, expectedType, label) {
 function validateRetry(value) {
   if (value === null) return;
   strictKeys(value, ['maxAttempts', 'delayMs', 'backoff'], [], 'tx.run retry');
-  assert(Number.isInteger(value.maxAttempts) && value.maxAttempts >= 0, 'rejected-schema', 'tx.run maxAttempts must be a non-negative integer');
-  assert(Number.isInteger(value.delayMs) && value.delayMs >= 0, 'rejected-schema', 'tx.run delayMs must be a non-negative integer');
+  assert(Number.isSafeInteger(value.maxAttempts) && value.maxAttempts >= 0, 'rejected-schema', 'tx.run maxAttempts must be a safe non-negative integer');
+  assert(Number.isSafeInteger(value.delayMs) && value.delayMs >= 0, 'rejected-schema', 'tx.run delayMs must be a safe non-negative integer');
+  assert(value.maxAttempts <= ACTION_POLICY_LIMITS.retryMaxAttempts, 'rejected-policy', 'tx.run maxAttempts exceeds the retry budget');
+  assert(value.delayMs <= ACTION_POLICY_LIMITS.retryDelayMs, 'rejected-policy', 'tx.run delayMs exceeds the retry budget');
   assert(['linear', 'exponential'].includes(value.backoff), 'rejected-schema', 'tx.run backoff is invalid');
 }
 
@@ -105,7 +112,8 @@ function validateActionArguments(actionId, args, bindings) {
   if (actionId === 'tx.start') {
     strictKeys(args, ['transactionId', 'timeoutMs', 'transition'], [], 'tx.start arguments');
     assert(typeof args.transactionId === 'string', 'rejected-schema', 'tx.start transactionId must be a string');
-    assert(Number.isInteger(args.timeoutMs) && args.timeoutMs >= 0, 'rejected-schema', 'tx.start timeoutMs must be a non-negative integer');
+    assert(Number.isSafeInteger(args.timeoutMs) && args.timeoutMs >= 0, 'rejected-schema', 'tx.start timeoutMs must be a safe non-negative integer');
+    assert(args.timeoutMs <= ACTION_POLICY_LIMITS.startTimeoutMs, 'rejected-policy', 'tx.start timeoutMs exceeds the policy limit');
     assert(typeof args.transition === 'boolean', 'rejected-schema', 'tx.start transition must be boolean');
     return;
   }
@@ -285,7 +293,7 @@ export function buildNightmareSpec(seed, catalog) {
     catalogVersion: catalog.catalogVersion,
     actors: seed.actors,
     baseActions,
-    transformedActions: baseActions,
+    transformedActions: structuredClone(baseActions),
     transformations: [],
     scheduleControls: [],
     fixtures: baseActions

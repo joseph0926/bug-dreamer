@@ -8,7 +8,7 @@ import {
   loadPhase2Catalog,
   parseNightmareSeed,
 } from './v03-spec.mjs';
-import { classifyTrustedResult } from './v03-trust.mjs';
+import { EXECUTION_BUDGET, classifyTrustedResult } from './v03-trust.mjs';
 import { canonicalJson, domainDigest, parseJsonBytes } from './v03-wire.mjs';
 
 const EVIDENCE_PATH = 'evidence/v0.3/phase2-trust.json';
@@ -28,10 +28,13 @@ const CASE_DEFINITIONS = [
   { id: 'pass', seed: 'contracts/v0.3/seeds/pass.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'pass' },
   { id: 'candidate', seed: 'contracts/v0.3/seeds/candidate.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
   { id: 'marker-forgery', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'pass' },
+  { id: 'kind-flip', seed: 'contracts/v0.3/seeds/kind-flip.json', mode: 'valid', command: PRODUCTION_COMMAND, evaluator: 'evaluated', execution: 'candidate-failure' },
   { id: 'missing-result', seed: 'contracts/v0.3/seeds/marker-forgery.json', mode: 'missing', command: caseCommand('missing'), evaluator: 'evaluator-error', execution: 'unrunnable' },
   { id: 'malformed-result', seed: 'contracts/v0.3/seeds/pass.json', mode: 'malformed', command: caseCommand('malformed'), evaluator: 'evaluator-error', execution: 'unrunnable' },
   { id: 'wrong-digest', seed: 'contracts/v0.3/seeds/pass.json', mode: 'wrong-digest', command: caseCommand('wrong-digest'), evaluator: 'evaluator-error', execution: 'unrunnable' },
   { id: 'early-exit', seed: 'contracts/v0.3/seeds/pass.json', mode: 'early-exit', command: caseCommand('early-exit'), evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'timeout', seed: 'contracts/v0.3/seeds/pass.json', mode: 'timeout', command: caseCommand('timeout'), evaluator: 'evaluator-error', execution: 'unrunnable' },
+  { id: 'log-overflow', seed: 'contracts/v0.3/seeds/pass.json', mode: 'log-overflow', command: caseCommand('log-overflow'), evaluator: 'evaluator-error', execution: 'unrunnable' },
 ];
 const MARKER = 'BUG_DREAMER_RESULT {"execution":"candidate-failure"}';
 
@@ -82,9 +85,10 @@ async function listFiles(root, prefix = '') {
 
 function expectedDockerArgs() {
   return [
-    'run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-    '--pids-limit', '128', '--memory', '512m', '--cpus', '1', '--tmpfs', '/tmp:rw,noexec,nosuid,size=64m',
-    '--mount', '<input-mount>', '--mount', '<result-mount>', '<image>', '<command>',
+    'run', '--rm', '--name', '<container-name>', '--network', 'none', '--read-only', '--cap-drop', 'ALL',
+    '--security-opt', 'no-new-privileges', '--pids-limit', '128', '--memory', '512m', '--cpus', '1',
+    '--tmpfs', '/tmp:rw,noexec,nosuid,size=64m', '--mount', '<input-mount>', '--mount', '<result-mount>',
+    '<image>', '<command>',
   ];
 }
 
@@ -125,6 +129,7 @@ export async function validateTrustContracts(repositoryRoot) {
     sourceSha256: await aggregateFiles(repositoryRoot, SOURCE_FILES),
     catalogSha256: sha256(catalogBytes),
     prepareScriptSha256: sha256(await readFile(path.join(repositoryRoot, PREPARE_PATH))),
+    executionBudget: EXECUTION_BUDGET,
     canonicalizer: {
       package: 'canonicalize',
       version: '4.0.0',
@@ -159,16 +164,26 @@ export async function validateTrustContracts(repositoryRoot) {
   for (const definition of CASE_DEFINITIONS) {
     const recorded = evidence.cases.find((item) => item.id === definition.id);
     assert(recorded !== undefined, `Trust evidence case missing: ${definition.id}`);
-    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
+    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
     assert(recorded.seedPath === definition.seed && recorded.mode === definition.mode, `Trust case input changed: ${definition.id}`);
     assert(JSON.stringify(recorded.command) === JSON.stringify(definition.command), `Trust case entrypoint changed: ${definition.id}`);
+    assert(recorded.timedOut === (definition.id === 'timeout'), `Trust case timeout flag changed: ${definition.id}`);
+    assert(recorded.outputTruncated === (definition.id === 'log-overflow'), `Trust case truncation flag changed: ${definition.id}`);
+    for (const stream of ['stdout', 'stderr']) {
+      const observedBytes = recorded[`${stream}Bytes`];
+      const storedBytes = Buffer.byteLength(recorded[stream], 'utf8');
+      assert(Number.isInteger(observedBytes) && observedBytes >= 0, `Trust case ${stream} byte count is invalid: ${definition.id}`);
+      assert(storedBytes <= EXECUTION_BUDGET.recordedOutputBytes, `Trust case ${stream} record exceeds the cap: ${definition.id}`);
+      if (observedBytes <= EXECUTION_BUDGET.recordedOutputBytes) assert(storedBytes === observedBytes, `Trust case ${stream} record is incomplete: ${definition.id}`);
+    }
+    if (definition.id === 'log-overflow') assert(recorded.stdoutBytes > EXECUTION_BUDGET.stdoutLimitBytes, 'Log-overflow case did not exceed the stdout limit');
     const seedBytes = await readFile(path.join(repositoryRoot, definition.seed));
     assert(recorded.seedSha256 === sha256(seedBytes), `Trust case seed digest mismatch: ${definition.id}`);
     const seed = parseNightmareSeed(seedBytes, catalog);
     const spec = buildNightmareSpec(seed, catalog);
     const plan = buildExecutionPlan(spec, catalog);
     const resultBytes = recorded.rawResult === null ? null : Buffer.from(recorded.rawResult, 'utf8');
-    const classification = classifyTrustedResult({ resultBytes, exitCode: recorded.exitCode, plan, spec, catalog });
+    const classification = classifyTrustedResult({ resultBytes, exitCode: recorded.exitCode, timedOut: recorded.timedOut, outputTruncated: recorded.outputTruncated, plan, spec, catalog });
     assert(canonicalJson(classification) === canonicalJson(recorded.classification), `Trust classification evidence mismatch: ${definition.id}`);
     assert(classification.evaluator === definition.evaluator && classification.execution.status === definition.execution, `Trust classification changed: ${definition.id}`);
     if (definition.evaluator === 'evaluator-error') {
@@ -187,6 +202,10 @@ export async function validateTrustContracts(repositoryRoot) {
   assert(evidence.cases.find((item) => item.id === 'missing-result').stdout.includes(MARKER), 'Missing-result stdout marker fixture is absent');
   assert(evidence.cases.find((item) => item.id === 'malformed-result').stderr.includes(MARKER), 'Malformed-result stderr marker fixture is absent');
   assert(evidence.cases.find((item) => item.id === 'early-exit').stderr.includes(MARKER), 'Early-exit stderr marker fixture is absent');
+  const kindFlip = evidence.cases.find((item) => item.id === 'kind-flip');
+  assert(kindFlip.classification.violationIdentity !== null && kindFlip.classification.violationIdentity.normalizedObservedKind === 'thrown-error', 'Kind-flip case did not record the actual thrown-error observation');
+  assert(evidence.cases.find((item) => item.id === 'timeout').classification.execution.reason === 'evaluator-timeout', 'Timeout case reason changed');
+  assert(evidence.cases.find((item) => item.id === 'log-overflow').classification.execution.reason === 'evaluator-log-limit', 'Log-overflow case reason changed');
   return {
     evaluationContractKey: expectedContractKey,
     imageId: evidence.image.imageId,

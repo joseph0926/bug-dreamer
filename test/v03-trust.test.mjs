@@ -10,10 +10,18 @@ import {
   buildNightmareSpec,
   loadPhase2Catalog,
   parseNightmareSeed,
+  planDigest,
+  specDigest,
 } from '../src/v03-spec.mjs';
-import { classifyTrustedResult, readTrustedResultChannel, validateTrustedResult } from '../src/v03-trust.mjs';
+import {
+  RESULT_DIGEST_DOMAIN,
+  RESULT_SCHEMA_VERSION,
+  classifyTrustedResult,
+  readTrustedResultChannel,
+  validateTrustedResult,
+} from '../src/v03-trust.mjs';
 import { validateTrustContracts } from '../src/v03-trust-validation.mjs';
-import { WIRE_LIMITS, parseJsonBytes } from '../src/v03-wire.mjs';
+import { WIRE_LIMITS, domainDigest, parseJsonBytes } from '../src/v03-wire.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -31,9 +39,97 @@ async function context(seedPath) {
 
 test('validates all recorded isolated trust cases and their immutable inputs', async () => {
   const result = await validateTrustContracts(repositoryRoot);
-  assert.equal(result.caseCount, 7);
-  assert.equal(result.candidateCount, 1);
-  assert.equal(result.evaluatorErrorCount, 4);
+  assert.equal(result.caseCount, 10);
+  assert.equal(result.candidateCount, 2);
+  assert.equal(result.evaluatorErrorCount, 6);
+});
+
+function trustedResult(plan, spec, catalog, { execution, observedKind, observedFields }) {
+  const violationIdentity = execution === 'candidate-failure' ? {
+    invariantRegistrationId: plan.invariantRegistrationId,
+    normalizedObservedKind: observedKind,
+    normalizedObservedFields: observedFields,
+    targetArtifactDigest: plan.targetArtifactDigest,
+  } : null;
+  const payload = {
+    schemaVersion: RESULT_SCHEMA_VERSION,
+    specDigest: specDigest(spec, catalog),
+    planDigest: planDigest(plan, spec, catalog),
+    targetArtifactDigest: plan.targetArtifactDigest,
+    invariantRegistrationId: plan.invariantRegistrationId,
+    evaluatorStatus: 'evaluated',
+    execution,
+    observedKind,
+    observedFields,
+    violationIdentity,
+  };
+  return { ...payload, payloadDigest: domainDigest(RESULT_DIGEST_DOMAIN, payload) };
+}
+
+test('classifies observation kind flips as candidate failures in both directions', async () => {
+  const expectedReturn = await context('contracts/v0.3/seeds/pass.json');
+  const threwInstead = trustedResult(expectedReturn.plan, expectedReturn.spec, expectedReturn.catalog, {
+    execution: 'candidate-failure',
+    observedKind: 'thrown-error',
+    observedFields: { name: 'TransactionTimeoutError', message: '' },
+  });
+  const threwClassification = classifyTrustedResult({
+    resultBytes: Buffer.from(JSON.stringify(threwInstead)),
+    exitCode: 0,
+    ...expectedReturn,
+  });
+  assert.equal(threwClassification.evaluator, 'evaluated');
+  assert.equal(threwClassification.execution.status, 'candidate-failure');
+  assert.equal(threwClassification.violationIdentity.normalizedObservedKind, 'thrown-error');
+
+  const expectedThrow = await context('contracts/v0.3/seeds/candidate.json');
+  const returnedInstead = trustedResult(expectedThrow.plan, expectedThrow.spec, expectedThrow.catalog, {
+    execution: 'candidate-failure',
+    observedKind: 'returned-value',
+    observedFields: { value: null },
+  });
+  const returnedClassification = classifyTrustedResult({
+    resultBytes: Buffer.from(JSON.stringify(returnedInstead)),
+    exitCode: 0,
+    ...expectedThrow,
+  });
+  assert.equal(returnedClassification.evaluator, 'evaluated');
+  assert.equal(returnedClassification.execution.status, 'candidate-failure');
+  assert.equal(returnedClassification.violationIdentity.normalizedObservedKind, 'returned-value');
+});
+
+test('a passing result cannot claim a different observation kind', async () => {
+  const { catalog, spec, plan } = await context('contracts/v0.3/seeds/pass.json');
+  const mismatchedPass = trustedResult(plan, spec, catalog, {
+    execution: 'pass',
+    observedKind: 'thrown-error',
+    observedFields: { name: 'Error', message: 'boom' },
+  });
+  const classification = classifyTrustedResult({
+    resultBytes: Buffer.from(JSON.stringify(mismatchedPass)),
+    exitCode: 0,
+    plan,
+    spec,
+    catalog,
+  });
+  assert.equal(classification.evaluator, 'evaluator-error');
+  assert.match(classification.execution.reason, /observed kind mismatch/u);
+});
+
+test('timeout and log overflow override even a valid trusted result', async () => {
+  const receipt = await evidence();
+  const recorded = receipt.cases.find((item) => item.id === 'pass');
+  const { catalog, spec, plan } = await context(recorded.seedPath);
+  const resultBytes = Buffer.from(recorded.rawResult);
+  const timeout = classifyTrustedResult({ resultBytes, exitCode: 0, timedOut: true, plan, spec, catalog });
+  assert.equal(timeout.evaluator, 'evaluator-error');
+  assert.equal(timeout.execution.status, 'unrunnable');
+  assert.equal(timeout.execution.kind, 'infrastructure');
+  assert.equal(timeout.execution.reason, 'evaluator-timeout');
+  assert.equal(timeout.violationIdentity, null);
+  const overflow = classifyTrustedResult({ resultBytes, exitCode: 0, outputTruncated: true, plan, spec, catalog });
+  assert.equal(overflow.execution.reason, 'evaluator-log-limit');
+  assert.equal(overflow.execution.kind, 'infrastructure');
 });
 
 test('accepts pass and candidate results only with a valid payload digest and identity', async () => {

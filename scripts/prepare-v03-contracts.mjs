@@ -88,6 +88,20 @@ async function main() {
   try {
     await mkdir(targetDestination, { recursive: true });
     await archiveTarget(targetPath, targetDestination, registration.targetRevision);
+    const sourceManifests = [];
+    for (const packageRegistration of registration.packages) {
+      const manifestPath = `${packageRegistration.workspacePath}/package.json`;
+      const manifestSha256 = sha256(await readFile(path.join(targetDestination, manifestPath)));
+      if (manifestSha256 !== packageRegistration.sourceManifestSha256) {
+        throw new Error(`Source manifest digest mismatch: ${packageRegistration.id}`);
+      }
+      sourceManifests.push({
+        id: packageRegistration.id,
+        workspacePath: packageRegistration.workspacePath,
+        path: manifestPath,
+        sha256: manifestSha256,
+      });
+    }
     await cp(path.join(repositoryRoot, 'docker-v0.3'), path.join(temporaryRoot, 'docker-v0.3'), { recursive: true });
     await cp(path.join(repositoryRoot, 'harness-v0.3'), path.join(temporaryRoot, 'harness-v0.3'), { recursive: true });
     await mkdir(path.join(temporaryRoot, 'registrations/v0.3'), { recursive: true });
@@ -148,6 +162,7 @@ async function main() {
         registrationId: registration.registrationId,
       },
       targetRevision: registration.targetRevision,
+      sourceManifests,
       image: {
         tag: imageTag,
         imageId: inspection.stdout.trim(),

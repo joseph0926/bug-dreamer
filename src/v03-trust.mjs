@@ -6,6 +6,19 @@ import { planDigest, specDigest, validateExecutionPlan, validateNightmareSpec } 
 
 export const RESULT_SCHEMA_VERSION = 'bug-dreamer/trusted-result/v1';
 export const RESULT_DIGEST_DOMAIN = 'bug-dreamer/trusted-result/v1';
+export const OBSERVATION_SCHEMAS = Object.freeze({
+  'returned-value': Object.freeze([Object.freeze({ name: 'value', type: 'json' })]),
+  'thrown-error': Object.freeze([
+    Object.freeze({ name: 'name', type: 'string' }),
+    Object.freeze({ name: 'message', type: 'string' }),
+  ]),
+});
+export const EXECUTION_BUDGET = Object.freeze({
+  evaluationTimeoutMs: 30000,
+  stdoutLimitBytes: 1048576,
+  stderrLimitBytes: 1048576,
+  recordedOutputBytes: 4096,
+});
 
 export class V03TrustError extends Error {}
 
@@ -86,8 +99,13 @@ export function validateTrustedResult(result, plan, spec, catalog) {
   assert(result.invariantRegistrationId === plan.invariantRegistrationId, 'Trusted result invariant mismatch');
   assert(result.evaluatorStatus === 'evaluated', 'Trusted result evaluator status is invalid');
   assert(['pass', 'candidate-failure'].includes(result.execution), 'Trusted result execution is invalid');
-  assert(result.observedKind === plan.normalizedObservedKind, 'Trusted result observed kind mismatch');
-  validateObservedFields(result.observedFields, plan.observedFields);
+  const observationSchema = OBSERVATION_SCHEMAS[result.observedKind];
+  assert(observationSchema !== undefined, 'Trusted result observed kind is not registered');
+  assert(canonicalJson(plan.observedFields) === canonicalJson(OBSERVATION_SCHEMAS[plan.normalizedObservedKind]), 'Plan observed contract differs from the registered observation schema');
+  if (result.execution === 'pass') {
+    assert(result.observedKind === plan.normalizedObservedKind, 'Passing trusted result observed kind mismatch');
+  }
+  validateObservedFields(result.observedFields, observationSchema);
   assert(validSha(result.payloadDigest), 'Trusted result payload digest is invalid');
   assert(result.payloadDigest === domainDigest(RESULT_DIGEST_DOMAIN, resultPayload(result)), 'Trusted result payload digest mismatch');
   if (result.execution === 'pass') {
@@ -115,7 +133,9 @@ function evaluatorError(reason) {
   };
 }
 
-export function classifyTrustedResult({ resultBytes, exitCode, plan, spec, catalog }) {
+export function classifyTrustedResult({ resultBytes, exitCode, timedOut = false, outputTruncated = false, plan, spec, catalog }) {
+  if (timedOut === true) return evaluatorError('evaluator-timeout');
+  if (outputTruncated === true) return evaluatorError('evaluator-log-limit');
   if (exitCode !== 0) return evaluatorError('evaluator-early-exit');
   if (resultBytes === null || resultBytes === undefined) return evaluatorError('missing-trusted-result');
   let result;

@@ -56,6 +56,19 @@ test('builds deterministic self-contained specs and plans for every positive see
   }
 });
 
+test('keeps base and transformed actions as independent objects', async () => {
+  const { catalog } = await loadPhase2Catalog(repositoryRoot);
+  const seed = await readSeed('contracts/v0.3/seeds/pass.json', catalog);
+  const spec = buildNightmareSpec(seed, catalog);
+  assert.notStrictEqual(spec.transformedActions, spec.baseActions);
+  spec.transformedActions.forEach((action, index) => {
+    assert.notStrictEqual(action, spec.baseActions[index]);
+    assert.notStrictEqual(action.arguments, spec.baseActions[index].arguments);
+  });
+  spec.transformedActions[1].arguments.value = { zero: 0, empty: '', flag: false, items: [], extra: true };
+  assert.deepEqual(spec.baseActions[1].arguments.value, { zero: 0, empty: '', flag: false, items: [] });
+});
+
 test('preserves zero-like values through seed, spec, and plan construction', async () => {
   const { catalog } = await loadPhase2Catalog(repositoryRoot);
   const seed = await readSeed('contracts/v0.3/seeds/pass.json', catalog);
@@ -121,8 +134,13 @@ test('rejects catalog, spec, fixture, and plan tampering', async () => {
   assert.throws(() => validatePhase2Catalog(observationTamper), /observed contract changed/u);
 
   const specTamper = structuredClone(spec);
+  specTamper.baseActions[0].adapterId = 'arbitrary/import/v1';
   specTamper.transformedActions[0].adapterId = 'arbitrary/import/v1';
   assert.throws(() => validateNightmareSpec(specTamper, catalog), /adapter binding changed/u);
+
+  const identityTamper = structuredClone(spec);
+  identityTamper.transformedActions[0].adapterId = 'arbitrary/import/v1';
+  assert.throws(() => validateNightmareSpec(identityTamper, catalog), /identity transformation/u);
 
   const fixtureTamper = structuredClone(spec);
   fixtureTamper.fixtures[0].stateDigest = '0'.repeat(64);

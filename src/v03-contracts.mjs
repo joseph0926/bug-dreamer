@@ -224,7 +224,7 @@ async function aggregateFiles(repositoryRoot, paths) {
 }
 
 export async function validateEvidence(repositoryRoot, registration, evidence) {
-  strictKeys(evidence, ['schemaVersion', 'registration', 'targetRevision', 'image', 'buildInputs', 'isolation', 'probe'], 'Contract evidence');
+  strictKeys(evidence, ['schemaVersion', 'registration', 'targetRevision', 'sourceManifests', 'image', 'buildInputs', 'isolation', 'probe'], 'Contract evidence');
   assert(evidence.schemaVersion === 'bug-dreamer/phase1-contract-evidence/v1', 'Unexpected contract evidence schemaVersion');
   strictKeys(evidence.registration, ['path', 'sha256', 'registrationId'], 'Evidence registration');
   assert(evidence.registration.path === REGISTRATION_PATH, 'Evidence registration path changed');
@@ -232,6 +232,14 @@ export async function validateEvidence(repositoryRoot, registration, evidence) {
   const registrationBytes = await readFile(path.join(repositoryRoot, REGISTRATION_PATH));
   assert(evidence.registration.sha256 === sha256(registrationBytes), 'Evidence registration digest mismatch');
   assert(evidence.targetRevision === registration.targetRevision, 'Evidence target revision mismatch');
+  assert(Array.isArray(evidence.sourceManifests) && evidence.sourceManifests.length === registration.packages.length, 'Source manifest verification is incomplete');
+  for (const packageRegistration of registration.packages) {
+    const recordedManifest = evidence.sourceManifests.find((item) => item.id === packageRegistration.id);
+    assert(recordedManifest !== undefined, `Source manifest verification missing: ${packageRegistration.id}`);
+    strictKeys(recordedManifest, ['id', 'workspacePath', 'path', 'sha256'], `Source manifest ${packageRegistration.id}`);
+    assert(recordedManifest.workspacePath === packageRegistration.workspacePath && recordedManifest.path === `${packageRegistration.workspacePath}/package.json`, `Source manifest path mismatch: ${packageRegistration.id}`);
+    assert(recordedManifest.sha256 === packageRegistration.sourceManifestSha256, `Source manifest digest mismatch: ${packageRegistration.id}`);
+  }
   strictKeys(evidence.image, ['tag', 'imageId', 'baseImage'], 'Evidence image');
   assert(/^sha256:[0-9a-f]{64}$/.test(evidence.image.imageId), 'Evidence image ID is invalid');
   assert(evidence.image.baseImage === registration.baseImage, 'Evidence base image mismatch');
