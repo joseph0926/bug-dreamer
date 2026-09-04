@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { buildTransformedSpec, loadPhase3Catalog, validateTransformationRequest } from './v03-operators.mjs';
+import { buildTransformedSpec, loadPhase3Catalog } from './v03-operators.mjs';
 import {
   V03SpecError,
   buildExecutionPlan,
@@ -42,7 +42,7 @@ async function buildPositiveSpec(repositoryRoot, fixture, catalog, operatorCatal
   const seed = parseNightmareSeed(seedBytes, catalog);
   const request = parseJsonBytes(requestBytes);
   const spec = buildTransformedSpec(seed, request, catalog, operatorCatalog);
-  return { seedBytes, requestBytes, seed, request, spec };
+  return { seedBytes, requestBytes, seed, spec };
 }
 
 export async function buildOperatorEvidence(repositoryRoot) {
@@ -57,8 +57,7 @@ export async function buildOperatorEvidence(repositoryRoot) {
 
   const positive = [];
   for (const fixture of cases.positive) {
-    const { seedBytes, requestBytes, seed, request, spec } = await buildPositiveSpec(repositoryRoot, fixture, catalog, operatorCatalog);
-    validateTransformationRequest(request, operatorCatalog);
+    const { seedBytes, requestBytes, seed, spec } = await buildPositiveSpec(repositoryRoot, fixture, catalog, operatorCatalog);
     const plan = buildExecutionPlan(spec, catalog);
     positive.push({
       seedPath: fixture.seed,
