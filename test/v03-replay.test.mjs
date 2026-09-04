@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { PathContainmentError } from '../src/v03-paths.mjs';
 import { ReplayValidationError, validateSpikeReplay } from '../src/v03-replay-validation.mjs';
+import { TrustValidationError, validateTrustContracts } from '../src/v03-trust-validation.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SPIKE_EVIDENCE = 'evidence/v0.3/phase3-spike.json';
@@ -21,22 +22,22 @@ async function mirrorDirectory(relativeDirectory, targetRoot, skip) {
   }
 }
 
-async function mirroredRoot(mutate) {
+async function mirroredRoot(mutate, evidencePath) {
   const root = await mkdtemp(path.join(tmpdir(), 'v03-replay-'));
   for (const name of await readdir(repositoryRoot)) {
     if (name === 'evidence') continue;
     await symlink(path.join(repositoryRoot, name), path.join(root, name));
   }
   await mirrorDirectory('evidence', root, 'v0.3');
-  await mirrorDirectory('evidence/v0.3', root, 'phase3-spike.json');
-  const evidence = JSON.parse(await readFile(path.join(repositoryRoot, SPIKE_EVIDENCE), 'utf8'));
+  await mirrorDirectory('evidence/v0.3', root, path.basename(evidencePath));
+  const evidence = JSON.parse(await readFile(path.join(repositoryRoot, evidencePath), 'utf8'));
   mutate(evidence);
-  await writeFile(path.join(root, SPIKE_EVIDENCE), `${JSON.stringify(evidence, null, 2)}\n`);
+  await writeFile(path.join(root, evidencePath), `${JSON.stringify(evidence, null, 2)}\n`);
   return root;
 }
 
-async function withMirroredRoot(mutate, run) {
-  const root = await mirroredRoot(mutate);
+async function withMirroredRoot(mutate, run, evidencePath = SPIKE_EVIDENCE) {
+  const root = await mirroredRoot(mutate, evidencePath);
   try {
     await run(root);
   } finally {
@@ -105,6 +106,23 @@ test('rejects a run that reports both a timeout and a truncation', async () => {
     run.timedOut = true;
     run.outputTruncated = true;
   });
+});
+
+test('trust rejects unmarked output overflow even when the recorded verdict passes', async () => {
+  await withMirroredRoot((evidence) => {
+    const run = evidence.cases.find((item) => item.id === 'pass');
+    run.stdoutBytes = 1048577;
+  }, async (root) => {
+    await assert.rejects(validateTrustContracts(root), TrustValidationError);
+  }, 'evidence/v0.3/phase2-trust.json');
+});
+
+test('trust rejects a malformed exit code even when timeout overrides classification', async () => {
+  await withMirroredRoot((evidence) => {
+    evidence.cases.find((item) => item.id === 'timeout').exitCode = '137';
+  }, async (root) => {
+    await assert.rejects(validateTrustContracts(root), TrustValidationError);
+  }, 'evidence/v0.3/phase2-trust.json');
 });
 
 test('rejects a defect consumer lockfile digest that does not match the reconstruction', async () => {

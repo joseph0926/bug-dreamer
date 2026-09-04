@@ -5,6 +5,7 @@ import path from 'node:path';
 import { firstPartyEntryBlocks, lockfileSection } from './v03-contracts.mjs';
 import { buildTransformedSpec, loadPhase3Catalog } from './v03-operators.mjs';
 import { resolveContainedPath } from './v03-paths.mjs';
+import { validateRunRecord } from './v03-run-record.mjs';
 import {
   V03SpecError,
   buildExecutionPlan,
@@ -24,7 +25,6 @@ const PACKAGE_REGISTRATION_PATH = 'registrations/v0.3/packages.json';
 const CONSUMER_LOCKFILE_PATH = 'registrations/v0.3/consumer-lock.yaml';
 const HARNESS_FILES = ['harness-v0.3/trust/case-main.mjs', 'harness-v0.3/trust/evaluator.mjs', 'harness-v0.3/trust/main.mjs', 'harness-v0.3/trust/virtual-clock.mjs'];
 const SOURCE_FILES = ['src/v03-wire.mjs', 'src/v03-spec.mjs', 'src/v03-trust.mjs'];
-const RUN_RECORD_KEYS = ['exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'cleanupError', 'resultEntries', 'rawResult', 'classification'];
 const OPERATOR_ARM_REQUESTS = [
   { operatorId: 'time.advance/v1', requestPath: 'contracts/v0.3/requests/time-advance.json' },
   { operatorId: 'schedule.release-order/v1', requestPath: 'contracts/v0.3/requests/spike-release-order.json' },
@@ -113,40 +113,8 @@ function validateDefectConsumerLockfile(record, registeredLockfile, targetKey) {
   assert(sha256(rebuilt.join('\n')) === record.sha256, 'Spike defect consumer lockfile digest does not match the reconstructed lockfile');
 }
 
-function assertRunRecord(recorded, label) {
-  strictKeys(recorded, RUN_RECORD_KEYS, `Spike run record ${label}`);
-  assert(recorded.exitCode === null || Number.isInteger(recorded.exitCode), `Spike run exit code is invalid: ${label}`);
-  assert(typeof recorded.timedOut === 'boolean' && typeof recorded.outputTruncated === 'boolean', `Spike run execution flags are invalid: ${label}`);
-  assert(recorded.cleanupError === null, `Spike run container cleanup failed: ${label}`);
-  assert(!(recorded.timedOut && recorded.outputTruncated), `Spike run reports both a timeout and a truncation: ${label}`);
-  for (const stream of ['stdout', 'stderr']) {
-    const observedBytes = recorded[`${stream}Bytes`];
-    assert(typeof recorded[stream] === 'string', `Spike run ${stream} record is not a string: ${label}`);
-    assert(Number.isInteger(observedBytes) && observedBytes >= 0, `Spike run ${stream} byte count is invalid: ${label}`);
-    const storedBytes = Buffer.byteLength(recorded[stream], 'utf8');
-    assert(storedBytes <= EXECUTION_BUDGET.recordedOutputBytes, `Spike run ${stream} record exceeds the cap: ${label}`);
-    if (observedBytes <= EXECUTION_BUDGET.recordedOutputBytes) assert(storedBytes === observedBytes, `Spike run ${stream} record is incomplete: ${label}`);
-  }
-  const overflowed = recorded.stdoutBytes > EXECUTION_BUDGET.stdoutLimitBytes || recorded.stderrBytes > EXECUTION_BUDGET.stderrLimitBytes;
-  assert(recorded.outputTruncated === overflowed, `Spike run truncation flag disagrees with the recorded byte counts: ${label}`);
-  assert(recorded.rawResult === null || typeof recorded.rawResult === 'string', `Spike run raw result is invalid: ${label}`);
-  assert(Array.isArray(recorded.resultEntries), `Spike run result entries are invalid: ${label}`);
-  if (recorded.rawResult === null) {
-    assert(recorded.resultEntries.length === 0, `Spike run recorded result files without a raw result: ${label}`);
-  } else {
-    assert(recorded.resultEntries.length === 1, `Spike run result file universe changed: ${label}`);
-    const [entry] = recorded.resultEntries;
-    strictKeys(entry, ['name', 'type', 'size'], `Spike run result entry ${label}`);
-    assert(entry.name === 'result.json', `Spike run result file name changed: ${label}`);
-    assert(entry.type === 'regular', `Spike run result entry is not a regular file: ${label}`);
-    assert(Number.isInteger(entry.size) && entry.size >= 0, `Spike run result entry size is invalid: ${label}`);
-    assert(entry.size === Buffer.byteLength(recorded.rawResult, 'utf8'), `Spike run result size mismatch: ${label}`);
-  }
-  assert(recorded.classification !== null && typeof recorded.classification === 'object' && !Array.isArray(recorded.classification), `Spike run classification is invalid: ${label}`);
-}
-
 function recomputeRun(recorded, plan, spec, catalog, label) {
-  assertRunRecord(recorded, label);
+  validateRunRecord(recorded, { assert, label: `Spike run ${label}` });
   const resultBytes = recorded.rawResult === null ? null : Buffer.from(recorded.rawResult, 'utf8');
   const classification = classifyTrustedResult({
     resultBytes,

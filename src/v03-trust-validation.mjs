@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir, realpath } from 'node:fs/promises';
 import path from 'node:path';
 
+import { validateRunRecord } from './v03-run-record.mjs';
 import {
   buildExecutionPlan,
   buildNightmareSpec,
@@ -165,19 +166,15 @@ export async function validateTrustContracts(repositoryRoot) {
   for (const definition of CASE_DEFINITIONS) {
     const recorded = evidence.cases.find((item) => item.id === definition.id);
     assert(recorded !== undefined, `Trust evidence case missing: ${definition.id}`);
-    strictKeys(recorded, ['id', 'seedPath', 'seedSha256', 'mode', 'command', 'exitCode', 'stdout', 'stderr', 'stdoutBytes', 'stderrBytes', 'timedOut', 'outputTruncated', 'cleanupError', 'resultEntries', 'rawResult', 'classification'], `Trust case ${definition.id}`);
-    assert(recorded.cleanupError === null, `Trust case container cleanup failed: ${definition.id}`);
+    validateRunRecord(recorded, {
+      assert,
+      label: `Trust case ${definition.id}`,
+      extraKeys: ['id', 'seedPath', 'seedSha256', 'mode', 'command'],
+    });
     assert(recorded.seedPath === definition.seed && recorded.mode === definition.mode, `Trust case input changed: ${definition.id}`);
     assert(JSON.stringify(recorded.command) === JSON.stringify(definition.command), `Trust case entrypoint changed: ${definition.id}`);
     assert(recorded.timedOut === (definition.id === 'timeout'), `Trust case timeout flag changed: ${definition.id}`);
     assert(recorded.outputTruncated === (definition.id === 'log-overflow'), `Trust case truncation flag changed: ${definition.id}`);
-    for (const stream of ['stdout', 'stderr']) {
-      const observedBytes = recorded[`${stream}Bytes`];
-      const storedBytes = Buffer.byteLength(recorded[stream], 'utf8');
-      assert(Number.isInteger(observedBytes) && observedBytes >= 0, `Trust case ${stream} byte count is invalid: ${definition.id}`);
-      assert(storedBytes <= EXECUTION_BUDGET.recordedOutputBytes, `Trust case ${stream} record exceeds the cap: ${definition.id}`);
-      if (observedBytes <= EXECUTION_BUDGET.recordedOutputBytes) assert(storedBytes === observedBytes, `Trust case ${stream} record is incomplete: ${definition.id}`);
-    }
     if (definition.id === 'log-overflow') assert(recorded.stdoutBytes > EXECUTION_BUDGET.stdoutLimitBytes, 'Log-overflow case did not exceed the stdout limit');
     const seedBytes = await readFile(path.join(repositoryRoot, definition.seed));
     assert(recorded.seedSha256 === sha256(seedBytes), `Trust case seed digest mismatch: ${definition.id}`);
@@ -193,11 +190,6 @@ export async function validateTrustContracts(repositoryRoot) {
     }
     const expectedNames = ['missing-result', 'early-exit'].includes(definition.id) ? [] : ['result.json'];
     assert(JSON.stringify(recorded.resultEntries.map((item) => item.name)) === JSON.stringify(expectedNames), `Trust result file universe changed: ${definition.id}`);
-    for (const entry of recorded.resultEntries) {
-      strictKeys(entry, ['name', 'type', 'size'], `Trust result entry ${definition.id}`);
-      assert(entry.type === 'regular' && Number.isInteger(entry.size) && entry.size >= 0, `Trust result entry is not a regular file: ${definition.id}`);
-    }
-    if (recorded.rawResult !== null) assert(Buffer.byteLength(recorded.rawResult, 'utf8') === recorded.resultEntries[0].size, `Trust result size mismatch: ${definition.id}`);
   }
   assert(evidence.cases.find((item) => item.id === 'marker-forgery').stdout.includes(MARKER), 'Marker-shaped seed value did not reach stdout');
   assert(evidence.cases.find((item) => item.id === 'marker-forgery').classification.execution.status === 'pass', 'Stdout marker changed trusted classification');
