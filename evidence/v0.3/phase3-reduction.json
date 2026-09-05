@@ -1,0 +1,1022 @@
+{
+  "schemaVersion": "bug-dreamer/phase3-reduction-evidence/v1",
+  "bindings": {
+    "registration": {
+      "path": "benchmark/v0.3/phase3-reduction.json",
+      "sha256": "1eff3c8626ef8b95cd6eb80f5e40799f9709d73f2a86293e0bb0cda6f718e380"
+    },
+    "spike": {
+      "path": "evidence/v0.3/phase3-spike.json",
+      "sha256": "d421b5a71c6b731f64762a2200dc976f7f5bbc92eec45fe3005c78bc22b3d548"
+    },
+    "seed": {
+      "path": "contracts/v0.3/seeds/total-timeout.json",
+      "sha256": "ddf2e80efe567f0f1919654dfbd79afdfbc49a902fe3cc4ee75e040b4d87da12"
+    },
+    "request": {
+      "path": "contracts/v0.3/requests/time-advance.json",
+      "sha256": "fa0a6344e5579108a7994e800fa7666c211fb753fd57107015a006c71c7a72ad"
+    },
+    "sources": [
+      {
+        "path": "scripts/prepare-v03-reduction.mjs",
+        "sha256": "9660fbb8100cc81f7efb8d92744fc2cf76586ad47a7f142f84261fe8b1583f7d"
+      },
+      {
+        "path": "src/v03-reduction.mjs",
+        "sha256": "56f79fd8cef077fc557cb72167dd6972e3074654065b17ac963f6636ae556d44"
+      },
+      {
+        "path": "src/v03-reduction-validation.mjs",
+        "sha256": "afa343cd308688c5f2e7898a75e806fea115c34e149fcff3a214ea0b8a0e2fd3"
+      },
+      {
+        "path": "src/v03-runner.mjs",
+        "sha256": "d6d28f4f57648a44f135908a41cc5eb6fc14d1a6e6be5e344ba615dd5a946e01"
+      },
+      {
+        "path": "src/v03-run-record.mjs",
+        "sha256": "ae91cfb9086af637e03283324b2b7b101bd585ea9b10d0aeb294cddf3b0f5fb3"
+      }
+    ],
+    "images": {
+      "clean": {
+        "imageId": "sha256:345124bb77b8dd06bce385ff3138e3a522450ccd4c577af1091b9dd8eeb44247",
+        "baseImageId": "sha256:d1b99a24a4549edd4ab0b4beb9e1b548e38a6e8ebaf380f620bb8aa730ef04ba",
+        "spikeContractKey": "c9f707207b6d05922a0c9e75d01a3e0108692045211dca1748cb4b0a9d2b9ac1",
+        "evaluationContractKey": "0c08c61bbef849abb799afffb717e72779b3a7427165389e475326061b67064f"
+      },
+      "defect": {
+        "imageId": "sha256:65bd925aa8398fe25f51568d3da65cc1a6fb4f0691b2271fa5af59b400de47c0",
+        "baseImageId": "sha256:3a238d779937670f330dec489606d5f0e0d02284a6db47ad369fff64ad664b21",
+        "spikeContractKey": "b2c02ffe3da083246892ba6af9280223da1eb5648c32b5ac70d83dd9143fcbd9",
+        "evaluationContractKey": "842cf233cff4f1d69df6b3b061ab87fd51951a44c22f6efec904ba97e44d2050"
+      }
+    },
+    "platform": "linux/arm64",
+    "executionBudget": {
+      "evaluationTimeoutMs": 30000,
+      "stdoutLimitBytes": 1048576,
+      "stderrLimitBytes": 1048576,
+      "recordedOutputBytes": 4096
+    },
+    "dockerRunArgs": [
+      "run",
+      "--rm",
+      "--name",
+      "<container-name>",
+      "--pull",
+      "never",
+      "--network",
+      "none",
+      "--read-only",
+      "--cap-drop",
+      "ALL",
+      "--security-opt",
+      "no-new-privileges",
+      "--pids-limit",
+      "128",
+      "--memory",
+      "512m",
+      "--memory-swap",
+      "512m",
+      "--cpus",
+      "1",
+      "--user",
+      "1000:1000",
+      "--tmpfs",
+      "/tmp:rw,noexec,nosuid,nodev,size=64m",
+      "--mount",
+      "<input-mount>",
+      "--mount",
+      "<result-mount>",
+      "<image>",
+      "/consumer/evaluator/main.mjs"
+    ]
+  },
+  "contractKey": "aad5918355291375e123debb4de18c72bfb63b3de58cf98a7c821a2df7f2f4cf",
+  "replayCommand": "node scripts/prepare-v03-reduction.mjs",
+  "result": {
+    "status": "one-minimal",
+    "blocker": null,
+    "initialSpecDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+    "violationIdentity": {
+      "invariantRegistrationId": "tx.total-timeout",
+      "normalizedObservedKind": "returned-value",
+      "normalizedObservedFields": {
+        "value": "after-advance"
+      },
+      "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+    },
+    "attempts": [
+      {
+        "selector": {
+          "kind": "actor",
+          "id": "checkout"
+        },
+        "removed": {
+          "actors": [
+            "checkout"
+          ],
+          "actions": [
+            "action-0001",
+            "action-0002",
+            "action-0003"
+          ],
+          "bindings": [
+            "tx"
+          ],
+          "transformations": [
+            0
+          ],
+          "fixtures": [
+            "action-0002",
+            "action-0003"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "dfe836e52f6d9bdf31418c32992df3e6554f65b395793d28c7a215638d40dc28",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-schema",
+          "message": "NightmareSeed actor count is invalid"
+        }
+      },
+      {
+        "selector": {
+          "kind": "action",
+          "id": "action-0001"
+        },
+        "removed": {
+          "actors": [
+            "checkout"
+          ],
+          "actions": [
+            "action-0001",
+            "action-0002",
+            "action-0003"
+          ],
+          "bindings": [
+            "tx"
+          ],
+          "transformations": [
+            0
+          ],
+          "fixtures": [
+            "action-0002",
+            "action-0003"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "dfe836e52f6d9bdf31418c32992df3e6554f65b395793d28c7a215638d40dc28",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-schema",
+          "message": "NightmareSeed actor count is invalid"
+        }
+      },
+      {
+        "selector": {
+          "kind": "action",
+          "id": "action-0002"
+        },
+        "removed": {
+          "actors": [],
+          "actions": [
+            "action-0002"
+          ],
+          "bindings": [],
+          "transformations": [
+            0
+          ],
+          "fixtures": [
+            "action-0002"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "2a39d34e9b6c71f8ee86aa0f71723cf350e0966e9af425e2b556ed15c01f30af",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-policy",
+          "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+        }
+      },
+      {
+        "selector": {
+          "kind": "action",
+          "id": "action-0003"
+        },
+        "removed": {
+          "actors": [],
+          "actions": [
+            "action-0003"
+          ],
+          "bindings": [],
+          "transformations": [],
+          "fixtures": [
+            "action-0003"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "cbcc03583a0a8a384e11a7c07c60842103ab1e518d74f68daa38d3f882c6579e",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-policy",
+          "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+        }
+      },
+      {
+        "selector": {
+          "kind": "binding",
+          "id": "tx"
+        },
+        "removed": {
+          "actors": [
+            "checkout"
+          ],
+          "actions": [
+            "action-0001",
+            "action-0002",
+            "action-0003"
+          ],
+          "bindings": [
+            "tx"
+          ],
+          "transformations": [
+            0
+          ],
+          "fixtures": [
+            "action-0002",
+            "action-0003"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "dfe836e52f6d9bdf31418c32992df3e6554f65b395793d28c7a215638d40dc28",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-schema",
+          "message": "NightmareSeed actor count is invalid"
+        }
+      },
+      {
+        "selector": {
+          "kind": "schedule-control",
+          "index": 0
+        },
+        "removed": {
+          "actors": [],
+          "actions": [],
+          "bindings": [],
+          "transformations": [
+            0
+          ],
+          "fixtures": []
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "b880a01bc176f629c8daeb2fc6aae2152eaee820ac95c53d1410fa329268c75e",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-policy",
+          "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+        }
+      },
+      {
+        "selector": {
+          "kind": "fixture",
+          "id": "action-0002"
+        },
+        "removed": {
+          "actors": [],
+          "actions": [
+            "action-0002"
+          ],
+          "bindings": [],
+          "transformations": [
+            0
+          ],
+          "fixtures": [
+            "action-0002"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "2a39d34e9b6c71f8ee86aa0f71723cf350e0966e9af425e2b556ed15c01f30af",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-policy",
+          "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+        }
+      },
+      {
+        "selector": {
+          "kind": "fixture",
+          "id": "action-0003"
+        },
+        "removed": {
+          "actors": [],
+          "actions": [
+            "action-0003"
+          ],
+          "bindings": [],
+          "transformations": [],
+          "fixtures": [
+            "action-0003"
+          ]
+        },
+        "beforeDigest": "11ccbfae2ade91ec8cf6e4b08d8ae650b2be838d2e5ec7a7c8d7fa798f343844",
+        "candidateDigest": "cbcc03583a0a8a384e11a7c07c60842103ab1e518d74f68daa38d3f882c6579e",
+        "status": "invalid",
+        "rejection": {
+          "kind": "rejected-policy",
+          "message": "NightmareSpec total virtual-time advance must exceed the transaction timeout: tx.total-timeout"
+        }
+      }
+    ],
+    "runs": [
+      {
+        "index": 0,
+        "phase": "initial",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "index": 1,
+        "phase": "clean-check",
+        "artifact": "clean",
+        "specDigest": "deac892b09424eebc935c85ba208d3555912002531cf0b68e3924bd1352193a9",
+        "planDigest": "a7d9d2e746b02797691a96c3d7dc387e0f042ed6cb4e49a85818f4657b286b30",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 676
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"deac892b09424eebc935c85ba208d3555912002531cf0b68e3924bd1352193a9\",\n  \"planDigest\": \"a7d9d2e746b02797691a96c3d7dc387e0f042ed6cb4e49a85818f4657b286b30\",\n  \"targetArtifactDigest\": \"907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"pass\",\n  \"observedKind\": \"thrown-error\",\n  \"observedFields\": {\n    \"name\": \"TransactionTimeoutError\",\n    \"message\": \"Transaction timeout\"\n  },\n  \"violationIdentity\": null,\n  \"payloadDigest\": \"1c406057acbcd6428f70f05e11257ca1a20a1000660185811f6848f299e20e6f\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "pass"
+            },
+            "trustedResultDigest": "1c406057acbcd6428f70f05e11257ca1a20a1000660185811f6848f299e20e6f",
+            "violationIdentity": null
+          }
+        }
+      },
+      {
+        "index": 2,
+        "phase": "replay",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "index": 3,
+        "phase": "replay",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "index": 4,
+        "phase": "replay",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "index": 5,
+        "phase": "replay",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      },
+      {
+        "index": 6,
+        "phase": "replay",
+        "artifact": "defect",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6",
+        "record": {
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutBytes": 0,
+          "stderrBytes": 0,
+          "timedOut": false,
+          "outputTruncated": false,
+          "cleanupError": null,
+          "resultEntries": [
+            {
+              "name": "result.json",
+              "type": "regular",
+              "size": 911
+            }
+          ],
+          "rawResult": "{\n  \"schemaVersion\": \"bug-dreamer/trusted-result/v1\",\n  \"specDigest\": \"3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f\",\n  \"planDigest\": \"45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6\",\n  \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\",\n  \"invariantRegistrationId\": \"tx.total-timeout\",\n  \"evaluatorStatus\": \"evaluated\",\n  \"execution\": \"candidate-failure\",\n  \"observedKind\": \"returned-value\",\n  \"observedFields\": {\n    \"value\": \"after-advance\"\n  },\n  \"violationIdentity\": {\n    \"invariantRegistrationId\": \"tx.total-timeout\",\n    \"normalizedObservedKind\": \"returned-value\",\n    \"normalizedObservedFields\": {\n      \"value\": \"after-advance\"\n    },\n    \"targetArtifactDigest\": \"370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6\"\n  },\n  \"payloadDigest\": \"c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069\"\n}\n",
+          "classification": {
+            "evaluator": "evaluated",
+            "execution": {
+              "status": "candidate-failure"
+            },
+            "trustedResultDigest": "c5d7d56345f39e92fccb0c15e3252657b9398188565240c5ae568546cdd15069",
+            "violationIdentity": {
+              "invariantRegistrationId": "tx.total-timeout",
+              "normalizedObservedKind": "returned-value",
+              "normalizedObservedFields": {
+                "value": "after-advance"
+              },
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            }
+          }
+        }
+      }
+    ],
+    "final": {
+      "input": {
+        "seed": {
+          "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+          "catalogVersion": "firsttx-phase2-f624b09-v1",
+          "id": "tx-total-timeout",
+          "invariantId": "tx.total-timeout",
+          "actors": [
+            "checkout"
+          ],
+          "actions": [
+            {
+              "actionId": "tx.start",
+              "actor": "checkout",
+              "arguments": {
+                "transactionId": "phase3-total-timeout",
+                "timeoutMs": 5000,
+                "transition": false
+              },
+              "bind": {
+                "name": "tx",
+                "type": "tx-handle"
+              }
+            },
+            {
+              "actionId": "tx.run",
+              "actor": "checkout",
+              "arguments": {
+                "tx": {
+                  "$binding": "tx"
+                },
+                "outcome": "return",
+                "value": "before-advance",
+                "errorName": null,
+                "errorMessage": null,
+                "log": null,
+                "retry": null
+              },
+              "bind": null
+            },
+            {
+              "actionId": "tx.run",
+              "actor": "checkout",
+              "arguments": {
+                "tx": {
+                  "$binding": "tx"
+                },
+                "outcome": "return",
+                "value": "after-advance",
+                "errorName": null,
+                "errorMessage": null,
+                "log": null,
+                "retry": null
+              },
+              "bind": null
+            }
+          ]
+        },
+        "request": {
+          "schemaVersion": "bug-dreamer/transformation-request/v1",
+          "transformations": [
+            {
+              "operatorId": "time.advance/v1",
+              "arguments": {
+                "afterInstanceId": "action-0002",
+                "advanceMs": 6000
+              }
+            }
+          ]
+        }
+      },
+      "spec": {
+        "schemaVersion": "bug-dreamer/nightmare-spec/v1",
+        "seedDigest": "e4c312e79ca66fc772a2bed230a0621b61676a667e850898ae5d83b7adc5e51b",
+        "targetRegistrationId": "firsttx-public-packages-f624b09-v1",
+        "invariantRegistrationId": "tx.total-timeout",
+        "catalogVersion": "firsttx-phase2-f624b09-v1",
+        "actors": [
+          "checkout"
+        ],
+        "baseActions": [
+          {
+            "instanceId": "action-0001",
+            "actionId": "tx.start",
+            "adapterId": "tx.start/v1",
+            "argumentSchemaId": "tx.start-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "transactionId": "phase3-total-timeout",
+              "timeoutMs": 5000,
+              "transition": false
+            },
+            "bind": {
+              "name": "tx",
+              "type": "tx-handle"
+            }
+          },
+          {
+            "instanceId": "action-0002",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "argumentSchemaId": "tx.run-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "before-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          },
+          {
+            "instanceId": "action-0003",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "argumentSchemaId": "tx.run-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "after-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          }
+        ],
+        "transformedActions": [
+          {
+            "instanceId": "action-0001",
+            "actionId": "tx.start",
+            "adapterId": "tx.start/v1",
+            "argumentSchemaId": "tx.start-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "transactionId": "phase3-total-timeout",
+              "timeoutMs": 5000,
+              "transition": false
+            },
+            "bind": {
+              "name": "tx",
+              "type": "tx-handle"
+            }
+          },
+          {
+            "instanceId": "action-0002",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "argumentSchemaId": "tx.run-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "before-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          },
+          {
+            "instanceId": "action-0003",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "argumentSchemaId": "tx.run-args/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "after-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          }
+        ],
+        "transformations": [
+          {
+            "operatorId": "time.advance/v1",
+            "operatorRegistrationDigest": "68593424a940a0372fec20bfa56b8b44befbee7ab7e95af2b4c53d2b07b309d4",
+            "arguments": {
+              "afterInstanceId": "action-0002",
+              "advanceMs": 6000
+            },
+            "beforeDigest": "310cd87cebd351b56db7ed319c5679d4b9391978181f43b52100781f1d546965",
+            "afterDigest": "94260c69841b83a100835a376fd59eedcc0bc6ccc40dad4e153c830d0ec71313"
+          }
+        ],
+        "scheduleControls": [
+          {
+            "kind": "virtual-time-advance",
+            "afterInstanceId": "action-0002",
+            "advanceMs": 6000
+          }
+        ],
+        "fixtures": [
+          {
+            "registrationId": "tx.step-outcome/v1",
+            "registrationDigest": "38bb550daaccb7fcc80afcc403856e524e5f781927181e43a52550f63f93dbbc",
+            "kind": "public-test-seam",
+            "producerArtifact": {
+              "moduleRegistrationId": "tx",
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            },
+            "publicActionTrace": [
+              "tx.run"
+            ],
+            "canonicalWirePayload": {
+              "outcome": "return",
+              "value": "before-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "materializerId": "tx.step-outcome/v1",
+            "stateDigest": "ec2e4b5c7045abac80a9ecf36541960142e7d4b1dc25478ad2499ce59222ce40",
+            "consumerActionInstanceId": "action-0002"
+          },
+          {
+            "registrationId": "tx.step-outcome/v1",
+            "registrationDigest": "38bb550daaccb7fcc80afcc403856e524e5f781927181e43a52550f63f93dbbc",
+            "kind": "public-test-seam",
+            "producerArtifact": {
+              "moduleRegistrationId": "tx",
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            },
+            "publicActionTrace": [
+              "tx.run"
+            ],
+            "canonicalWirePayload": {
+              "outcome": "return",
+              "value": "after-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "materializerId": "tx.step-outcome/v1",
+            "stateDigest": "8ecbf8d0d8565895a9d46d11c05da16cea3c97b5e6b784dc8db6e82d18805785",
+            "consumerActionInstanceId": "action-0003"
+          }
+        ],
+        "canonicalizer": {
+          "standard": "RFC 8785 JCS",
+          "package": "canonicalize",
+          "version": "4.0.0"
+        }
+      },
+      "plan": {
+        "schemaVersion": "bug-dreamer/execution-plan/v1",
+        "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+        "targetRegistrationId": "firsttx-public-packages-f624b09-v1",
+        "invariantRegistrationId": "tx.total-timeout",
+        "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6",
+        "evaluatorId": "tx.total-timeout/v1",
+        "normalizedObservedKind": "thrown-error",
+        "observedFields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "type": "string"
+          }
+        ],
+        "actions": [
+          {
+            "instanceId": "action-0001",
+            "actionId": "tx.start",
+            "adapterId": "tx.start/v1",
+            "actor": "checkout",
+            "arguments": {
+              "transactionId": "phase3-total-timeout",
+              "timeoutMs": 5000,
+              "transition": false
+            },
+            "bind": {
+              "name": "tx",
+              "type": "tx-handle"
+            }
+          },
+          {
+            "instanceId": "action-0002",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "before-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          },
+          {
+            "instanceId": "action-0003",
+            "actionId": "tx.run",
+            "adapterId": "tx.run/v1",
+            "actor": "checkout",
+            "arguments": {
+              "tx": {
+                "$binding": "tx"
+              },
+              "outcome": "return",
+              "value": "after-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "bind": null
+          }
+        ],
+        "bindings": [
+          {
+            "name": "tx",
+            "type": "tx-handle",
+            "producerActionInstanceId": "action-0001"
+          }
+        ],
+        "fixtureSetup": [
+          {
+            "registrationId": "tx.step-outcome/v1",
+            "registrationDigest": "38bb550daaccb7fcc80afcc403856e524e5f781927181e43a52550f63f93dbbc",
+            "kind": "public-test-seam",
+            "producerArtifact": {
+              "moduleRegistrationId": "tx",
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            },
+            "publicActionTrace": [
+              "tx.run"
+            ],
+            "canonicalWirePayload": {
+              "outcome": "return",
+              "value": "before-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "materializerId": "tx.step-outcome/v1",
+            "stateDigest": "ec2e4b5c7045abac80a9ecf36541960142e7d4b1dc25478ad2499ce59222ce40",
+            "consumerActionInstanceId": "action-0002"
+          },
+          {
+            "registrationId": "tx.step-outcome/v1",
+            "registrationDigest": "38bb550daaccb7fcc80afcc403856e524e5f781927181e43a52550f63f93dbbc",
+            "kind": "public-test-seam",
+            "producerArtifact": {
+              "moduleRegistrationId": "tx",
+              "targetArtifactDigest": "370e5e9af438dfe9f8814e5be864c57ab112c7d5314e92f2e73d4f29dbe044b6"
+            },
+            "publicActionTrace": [
+              "tx.run"
+            ],
+            "canonicalWirePayload": {
+              "outcome": "return",
+              "value": "after-advance",
+              "errorName": null,
+              "errorMessage": null,
+              "log": null,
+              "retry": null
+            },
+            "materializerId": "tx.step-outcome/v1",
+            "stateDigest": "8ecbf8d0d8565895a9d46d11c05da16cea3c97b5e6b784dc8db6e82d18805785",
+            "consumerActionInstanceId": "action-0003"
+          }
+        ],
+        "virtualTime": {
+          "originMs": 1000000000000
+        },
+        "scheduleControls": [
+          {
+            "kind": "virtual-time-advance",
+            "afterInstanceId": "action-0002",
+            "advanceMs": 6000
+          }
+        ]
+      },
+      "specDigest": "3057c83070e313ba1f35d620d1cab270070f757913c8514e9e4936c26074637f",
+      "planDigest": "45e87d14b9bcc5843c80de65aad180b00070eb4834facf1e5dd33de9f87b78d6"
+    },
+    "counts": {
+      "candidateAttempts": 8,
+      "validAttempts": 0,
+      "invalidAttempts": 8,
+      "acceptedRemovals": 0,
+      "evaluations": 7
+    }
+  }
+}

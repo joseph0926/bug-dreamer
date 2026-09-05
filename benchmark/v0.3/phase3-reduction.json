@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "bug-dreamer/phase3-reduction-registration/v1",
+  "registeredOn": "2026-09-05",
+  "spikeEvidencePath": "evidence/v0.3/phase3-spike.json",
+  "ruleVersion": "dependency-closure/v1",
+  "ruleOrder": ["actor", "action", "binding", "schedule-control", "fault", "fixture"],
+  "restartAfterAcceptedRemoval": true,
+  "argumentReduction": false,
+  "maxCandidateAttempts": 96,
+  "maxEvaluations": 64,
+  "replayRuns": 5,
+  "platform": "linux/arm64"
+}

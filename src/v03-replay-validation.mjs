@@ -1,11 +1,13 @@
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir, realpath } from 'node:fs/promises';
 import path from 'node:path';
 
 import { firstPartyEntryBlocks, lockfileSection } from './v03-contracts.mjs';
 import { buildTransformedSpec, loadPhase3Catalog } from './v03-operators.mjs';
 import { resolveContainedPath } from './v03-paths.mjs';
 import { validateRunRecord } from './v03-run-record.mjs';
+import { validateReductionEvidence } from './v03-reduction-validation.mjs';
+import { ReductionError } from './v03-reduction.mjs';
 import {
   V03SpecError,
   buildExecutionPlan,
@@ -48,6 +50,24 @@ function strictKeys(value, keys, label) {
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
+}
+
+async function listFiles(root, prefix = '') {
+  const entries = await readdir(path.join(root, prefix), { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const relativePath = path.join(prefix, entry.name);
+    if (entry.isDirectory()) files.push(...await listFiles(root, relativePath));
+    else if (entry.isFile()) files.push(relativePath);
+  }
+  return files.sort();
+}
+
+async function readCanonicalizerIntegrity(repositoryRoot) {
+  const lockfile = await readFile(path.join(repositoryRoot, 'pnpm-lock.yaml'), 'utf8');
+  const match = lockfile.match(/^ {2}canonicalize@4\.0\.0:\r?\n {4}resolution: \{integrity: (sha512-[A-Za-z0-9+/=]+)\}/mu);
+  assert(match !== null, 'canonicalize@4.0.0 integrity is missing from pnpm-lock.yaml');
+  return match[1];
 }
 
 function validImageId(value) {
@@ -129,7 +149,7 @@ function recomputeRun(recorded, plan, spec, catalog, label) {
   return classification;
 }
 
-export async function validateSpikeReplay(repositoryRoot) {
+export async function validateSpikeEvidence(repositoryRoot) {
   const readRepoFile = (relativePath) => readFile(path.join(repositoryRoot, relativePath));
   const readContainedFile = (relativePath) => readFile(resolveContainedPath(repositoryRoot, relativePath));
   const [evidenceBytes, registrationBytes, manifestBytes, { catalog: cleanCatalog, catalogBytes, operatorCatalog, operatorBytes }] = await Promise.all([
@@ -192,6 +212,8 @@ export async function validateSpikeReplay(repositoryRoot) {
   const baseCatalogJson = JSON.parse(catalogBytes.toString('utf8'));
   baseCatalogJson.target.artifactSha256 = evidence.defectArtifactDigest;
   const defectCatalogBytes = Buffer.from(`${JSON.stringify(baseCatalogJson, null, 2)}\n`);
+  const canonicalizeRoot = await realpath(path.join(repositoryRoot, 'node_modules/canonicalize'));
+  const canonicalizeFiles = (await listFiles(canonicalizeRoot)).filter((file) => file.split(path.sep)[0] !== 'node_modules');
   const expectedDefectBuildInputs = {
     contractImageId: evidence.images.defectConsumer.imageId,
     targetRevision: registration.targetRevision,
@@ -206,6 +228,13 @@ export async function validateSpikeReplay(repositoryRoot) {
     sourceSha256: await aggregateFiles(repositoryRoot, SOURCE_FILES),
     prepareScriptSha256: sha256(await readRepoFile('scripts/prepare-v03-spike.mjs')),
     operatorCatalogSha256: sha256(operatorBytes),
+    canonicalizer: {
+      package: 'canonicalize',
+      version: '4.0.0',
+      integritySha512: await readCanonicalizerIntegrity(repositoryRoot),
+      files: canonicalizeFiles,
+      aggregateSha256: await aggregateFiles(canonicalizeRoot, canonicalizeFiles),
+    },
   };
   assert(canonicalJson(evidence.defectBuildInputs) === canonicalJson(expectedDefectBuildInputs), 'Spike defect build inputs changed');
   assert(evidence.defectEvaluationContractKey === domainDigest('bug-dreamer/evaluation-contract/v1', expectedDefectBuildInputs), 'Spike defect evaluation contract key mismatch');
@@ -322,4 +351,15 @@ export async function validateSpikeReplay(repositoryRoot) {
     evaluatedSpecs: evidence.evaluatedSpecs,
     defectId: registration.defect.id,
   };
+}
+
+export async function validateSpikeReplay(repositoryRoot) {
+  const spike = await validateSpikeEvidence(repositoryRoot);
+  if (spike.verdict !== 'adopt') return spike;
+  try {
+    return { ...spike, reduction: await validateReductionEvidence(repositoryRoot) };
+  } catch (error) {
+    if (error instanceof ReductionError || error.code === 'ENOENT') throw new ReplayValidationError(error.message);
+    throw error;
+  }
 }

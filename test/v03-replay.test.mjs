@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -53,7 +53,8 @@ async function rejectsReplay(mutate, expected = ReplayValidationError) {
 
 test('accepts the recorded spike evidence through the mirrored repository root', async () => {
   await withMirroredRoot(() => {}, async (root) => {
-    assert.deepEqual(await validateSpikeReplay(root), {
+    const { reduction, ...spike } = await validateSpikeReplay(root);
+    assert.deepEqual(spike, {
       verdict: 'adopt',
       adoptedOperatorId: 'time.advance/v1',
       armCount: 3,
@@ -61,8 +62,32 @@ test('accepts the recorded spike evidence through the mirrored repository root',
       evaluatedSpecs: { baseline: 7, operator: 10 },
       defectId: 'tx-total-timeout-resets-per-step',
     });
+    assert.equal(reduction.status, 'one-minimal');
+    assert.equal(reduction.actionCount, 3);
+    assert.equal(reduction.evaluations, 7);
+    assert.equal(reduction.acceptedRemovals, 0);
   });
 });
+
+for (const [name, mutate] of [
+  ['missing structural attempt', (evidence) => evidence.result.attempts.pop()],
+  ['reordered attempts', (evidence) => evidence.result.attempts.reverse()],
+  ['forged dependency closure', (evidence) => { evidence.result.attempts[0].removed.actions = []; }],
+  ['changed final input', (evidence) => { evidence.result.final.input.seed.actors.push('forged'); }],
+  ['missing replay', (evidence) => evidence.result.runs.pop()],
+  ['extra replay', (evidence) => evidence.result.runs.push(structuredClone(evidence.result.runs.at(-1)))],
+  ['wrong artifact binding', (evidence) => { evidence.result.runs[0].artifact = 'clean'; }],
+  ['malformed replay payload', (evidence) => { evidence.result.runs.at(-1).record.rawResult = '{}'; }],
+  ['changed image identity', (evidence) => { evidence.bindings.images.defect.imageId = `sha256:${'f'.repeat(64)}`; }],
+  ['changed host source digest', (evidence) => { evidence.bindings.sources[0].sha256 = 'f'.repeat(64); }],
+  ['blocked minimization', (evidence) => { evidence.result.status = 'reduced-not-one-minimal'; }],
+]) {
+  test(`replay rejects reduction evidence with ${name}`, async () => {
+    await withMirroredRoot(mutate, async (root) => {
+      await assert.rejects(validateSpikeReplay(root), ReplayValidationError);
+    }, 'evidence/v0.3/phase3-reduction.json');
+  });
+}
 
 test('rejects a baseline run that records no result file', async () => {
   await rejectsReplay((evidence) => {
@@ -154,6 +179,33 @@ test('rejects a tampered defect integrity value', async () => {
     const { changedIntegrity } = evidence.defectConsumerLockfile;
     changedIntegrity.defect = `sha512-${'A'.repeat(86)}==`;
   });
+});
+
+test('rejects a tampered defect evaluator canonicalizer aggregate', async () => {
+  await rejectsReplay((evidence) => {
+    evidence.defectBuildInputs.canonicalizer.aggregateSha256 = 'f'.repeat(64);
+  });
+});
+
+test('rejects a tampered defect evaluator canonicalizer lockfile integrity', async () => {
+  await rejectsReplay((evidence) => {
+    evidence.defectBuildInputs.canonicalizer.integritySha512 = 'sha512-forged';
+  });
+});
+
+test('rejects canonicalizer package bytes that differ from the recorded defect evaluator input', async () => {
+  const root = await mirroredRoot(() => {}, SPIKE_EVIDENCE);
+  try {
+    await rm(path.join(root, 'node_modules'), { force: true });
+    const canonicalizeRoot = path.join(root, 'node_modules/canonicalize');
+    const installedCanonicalizeRoot = await realpath(path.join(repositoryRoot, 'node_modules/canonicalize'));
+    await cp(installedCanonicalizeRoot, canonicalizeRoot, { recursive: true });
+    const implementationPath = path.join(canonicalizeRoot, 'lib/canonicalize.js');
+    await writeFile(implementationPath, `${await readFile(implementationPath, 'utf8')}\n// tampered\n`);
+    await assert.rejects(validateSpikeReplay(root), ReplayValidationError);
+  } finally {
+    await rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
 });
 
 test('rejects an evidence path that escapes the repository root', async () => {

@@ -54,6 +54,13 @@ function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
+async function readCanonicalizerIntegrity(lockfilePath) {
+  const lockfile = await readFile(lockfilePath, 'utf8');
+  const match = lockfile.match(/^ {2}canonicalize@4\.0\.0:\r?\n {4}resolution: \{integrity: (sha512-[A-Za-z0-9+/=]+)\}/mu);
+  if (match === null) throw new Error('canonicalize@4.0.0 integrity is missing from pnpm-lock.yaml');
+  return match[1];
+}
+
 function parseArgs(args) {
   if (args.length !== 2 || args[0] !== '--target' || args[1].length === 0) {
     throw new TypeError('Usage: node scripts/prepare-v03-spike.mjs --target <firsttx-path>');
@@ -376,6 +383,13 @@ async function main() {
       sourceSha256: await aggregateFiles(repositoryRoot, sourceFiles),
       prepareScriptSha256: sha256(await readFile(prepareScriptPath)),
       operatorCatalogSha256: sha256(operatorBytes),
+      canonicalizer: {
+        package: 'canonicalize',
+        version: '4.0.0',
+        integritySha512: await readCanonicalizerIntegrity(path.join(repositoryRoot, 'pnpm-lock.yaml')),
+        files: canonicalizeFiles,
+        aggregateSha256: await aggregateFiles(canonicalizeRoot, canonicalizeFiles),
+      },
     };
     const defectEvaluationContractKey = domainDigest('bug-dreamer/evaluation-contract/v1', defectBuildInputs);
     await dockerBuild([

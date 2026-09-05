@@ -59,11 +59,11 @@
     },
     "defectTrust": {
       "tag": "bug-dreamer-v03-spike-trust:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:daafa44beaa4918d40afa03100e15cfca39dfb33a1450069b64dadbfc2828414"
+      "imageId": "sha256:3a238d779937670f330dec489606d5f0e0d02284a6db47ad369fff64ad664b21"
     },
     "defectSpike": {
       "tag": "bug-dreamer-v03-spike:f624b09f148c-tx-total-timeout-resets-per-step",
-      "imageId": "sha256:6c06e6a562bd339f0eecf309a74c7403ca90d6f38a12c04b1deb3803f0425657"
+      "imageId": "sha256:65bd925aa8398fe25f51568d3da65cc1a6fb4f0691b2271fa5af59b400de47c0"
     }
   },
   "defectConsumerLockfile": {
@@ -96,10 +96,24 @@
       "src/v03-trust.mjs"
     ],
     "sourceSha256": "98f765199147cb5b9288dd98d4ede8cf1e6684ebfe8f2337df48e003008b7b5a",
-    "prepareScriptSha256": "a19b59257eaf8374ff35d1414dd4e64e14319f2136bd90b888878754e5aeb645",
-    "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7"
+    "prepareScriptSha256": "ff3b8e1e536668db9a06b5a5ef3c02cb2114d5fca871cd225a4db4c6caa1320a",
+    "operatorCatalogSha256": "783f0153f5f6f67f3aebb7457db0958f7a14177cb33476b957bdce11a0233cb7",
+    "canonicalizer": {
+      "package": "canonicalize",
+      "version": "4.0.0",
+      "integritySha512": "sha512-FEdXzwWs+N3rZqEqpqleiY9M1A6IAf9oo1zHFABnLW9FcJ/jzsu+G/Ks3Hq3FglmPKe80GeGBw8ZXLEnwPB0vQ==",
+      "files": [
+        "LICENSE",
+        "README.md",
+        "bin/canonicalize.js",
+        "lib/canonicalize.d.ts",
+        "lib/canonicalize.js",
+        "package.json"
+      ],
+      "aggregateSha256": "d1510ca180d90b4b8b9b762afccdde659d652340cd0befb358feca114e6140e5"
+    }
   },
-  "defectEvaluationContractKey": "501943b30cbee07c254b833e9b48865c3cb68a00bae87c57b6afd7cfa9bd0f3f",
+  "defectEvaluationContractKey": "842cf233cff4f1d69df6b3b061ab87fd51951a44c22f6efec904ba97e44d2050",
   "spikeBuildInputs": {
     "registrationSha256": "1960d38ee4012068a65055efd14fe872323fffaa818f8d3a639a6a383c85b29d",
     "spikeDockerfileSha256": "8d46cc958d9cd1ebb7a836dc669960b556c1112aa557a7ab74f5b729ceb54ebd",
@@ -108,7 +122,7 @@
   },
   "spikeContractKeys": {
     "clean": "c9f707207b6d05922a0c9e75d01a3e0108692045211dca1748cb4b0a9d2b9ac1",
-    "defect": "7a66982f2a8af5baccdc65bf59896e4d53dac32213b31eb77f2fbcb8d82c5e34"
+    "defect": "b2c02ffe3da083246892ba6af9280223da1eb5648c32b5ac70d83dd9143fcbd9"
   },
   "executionBudget": {
     "evaluationTimeoutMs": 30000,
