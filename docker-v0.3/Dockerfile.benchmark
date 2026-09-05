@@ -1,0 +1,34 @@
+FROM node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203
+
+ARG TARGET_REVISION
+ARG ARTIFACT_SET_ID
+ARG BENCHMARK_IMAGE_CONTRACT_KEY
+ARG SOURCE_CLOSURE_SHA256
+ARG FIXTURE_TOOLS_LOCK_SHA256
+
+LABEL org.bug-dreamer.target-revision=$TARGET_REVISION
+LABEL org.bug-dreamer.artifact-set-id=$ARTIFACT_SET_ID
+LABEL org.bug-dreamer.benchmark-image-contract-key=$BENCHMARK_IMAGE_CONTRACT_KEY
+LABEL org.bug-dreamer.source-closure-sha256=$SOURCE_CLOSURE_SHA256
+LABEL org.bug-dreamer.fixture-tools-lock-sha256=$FIXTURE_TOOLS_LOCK_SHA256
+
+RUN corepack install --global pnpm@11.17.0 && corepack enable pnpm
+COPY artifacts/ /artifacts/
+COPY registrations/packages.json /registration/packages.json
+COPY registrations/image-manifest.json /registration/image-manifest.json
+COPY registrations/consumer-lock.yaml /consumer/pnpm-lock.yaml
+COPY harness/create-consumer.mjs /harness/create-consumer.mjs
+COPY harness/verify-image.mjs /harness/verify-image.mjs
+COPY evaluator/source/ /consumer/evaluator/source/
+COPY evaluator/vendor/canonicalize/ /consumer/evaluator/node_modules/canonicalize/
+COPY fixture-tools/ /fixture-tools/
+COPY harness/fail-closed.mjs /consumer/evaluator/fail-closed.mjs
+
+RUN mkdir -p /consumer && chown -R node:node /consumer
+USER node
+WORKDIR /consumer
+RUN node /harness/create-consumer.mjs && pnpm install --frozen-lockfile
+RUN node /harness/verify-image.mjs
+
+ENTRYPOINT ["node"]
+CMD ["/consumer/evaluator/fail-closed.mjs"]

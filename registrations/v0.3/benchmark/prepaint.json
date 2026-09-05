@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-module-interface/v1",
+  "id": "prepaint-benchmark-v1",
+  "moduleId": "prepaint",
+  "packageName": "@firsttx/prepaint",
+  "importSpecifier": "@firsttx/prepaint",
+  "targetRegistrationPath": "registrations/v0.3/packages.json",
+  "targetRegistrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+  "catalogVersion": "firsttx-phase4-prepaint-v1",
+  "actions": [
+    {
+      "id": "prepaint.boot",
+      "importSpecifier": "@firsttx/prepaint",
+      "adapterId": "prepaint.boot/v1",
+      "argumentSchemaId": "prepaint.boot-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "prepaint.vite-create",
+      "importSpecifier": "@firsttx/prepaint/plugin/vite",
+      "adapterId": "prepaint.vite-create/v1",
+      "argumentSchemaId": "prepaint.vite-create-args/v1",
+      "bindingOutputType": null
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "prepaint.browser/v1",
+      "kind": "external-environment",
+      "materializerId": "prepaint.browser/v1",
+      "consumerActionId": "prepaint.boot",
+      "payloadArgumentPointer": "/browser",
+      "publicActionTrace": ["prepaint.boot"]
+    },
+    {
+      "id": "prepaint.indexeddb/v1",
+      "kind": "documented-wire-state",
+      "materializerId": "prepaint.indexeddb/v1",
+      "consumerActionId": "prepaint.boot",
+      "payloadArgumentPointer": "/indexeddb",
+      "publicActionTrace": ["prepaint.boot"]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "prepaint.exact-route/v1",
+      "evaluatorId": "prepaint.exact-route/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/prepaint/README.md:60-71,152-171",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/prepaint/tests/policy.test.ts:27-33"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint.expired-pruned/v1",
+      "evaluatorId": "prepaint.expired-pruned/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/prepaint/README.md:71,118-125,160-164",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/prepaint/tests/policy.test.ts:54-81"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint.utf8-size-pruned/v1",
+      "evaluatorId": "prepaint.utf8-size-pruned/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/prepaint/README.md:71,118-125,160-164",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/prepaint/tests/policy.test.ts:43-52,54-81"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint.absolute-routes/v1",
+      "evaluatorId": "prepaint.absolute-routes/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/prepaint/tests/policy.test.ts:35-40",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/prepaint/src/types.ts:11-16", "packages/prepaint/src/plugin/vite.ts:23-31"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "prepaint-route-prefix-overcapture",
+      "materializerId": "prepaint.route-prefix-direct/v1",
+      "invariantId": "prepaint.exact-route/v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint-expired-snapshot-kept",
+      "materializerId": "prepaint.expired-direct/v1",
+      "invariantId": "prepaint.expired-pruned/v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint-oversize-snapshot-kept",
+      "materializerId": "prepaint.utf8-size-direct/v1",
+      "invariantId": "prepaint.utf8-size-pruned/v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "prepaint-relative-route-accepted",
+      "materializerId": "prepaint.relative-route-direct/v1",
+      "invariantId": "prepaint.absolute-routes/v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "synthetic-prepaint-nominal",
+      "materializerId": "prepaint.nominal-exact-route-direct/v1",
+      "invariantId": "prepaint.exact-route/v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    }
+  ]
+}

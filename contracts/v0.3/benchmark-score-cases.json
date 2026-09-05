@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-score-cases/v1",
+  "cases": [
+    { "id": "raw-and-replay-are-separate", "expected": "raw count may exceed replay-confirmed count" },
+    { "id": "different-violation-is-not-a-catch", "expected": "a normalized candidate whose identity differs from the frozen truth commitment is retained but not counted" },
+    { "id": "canonical-duplicate-counts-once", "expected": "duplicate groups contribute once to yield denominators and numerators" },
+    { "id": "wrong-expectation-and-undecided-differ", "expected": "wrong-expectation enters false-oracle numerator while undecided blocks the metric" },
+    { "id": "zero-denominator-is-not-applicable", "expected": "zero denominators never become numeric zero" },
+    { "id": "retention-denominator-is-fixed", "expected": "an E failure remains in the denominator" },
+    { "id": "invalid-d-anchor-blocks-adopt", "expected": "comparison anchor failure revises the pipeline" },
+    { "id": "p-raw-baseline-includes-nonreplayed-catches", "expected": "operator incrementality subtracts all complete P raw catches" },
+    { "id": "incomplete-p-blocks-incrementality", "expected": "missing or unrunnable P evidence revises the operator strategy" },
+    { "id": "pipeline-perfect-retention-adopts", "expected": "six complete rows across all modules with perfect retention adopt" },
+    { "id": "pipeline-complete-counterevidence-retires", "expected": "complete retention below 0.8 retires" },
+    { "id": "operator-two-new-confirmed-adopts", "expected": "two replay-confirmed IDs outside complete P raw adopt" },
+    { "id": "operator-zero-with-six-complete-and-coverage-retires", "expected": "zero increment with six complete applicable specs across all modules retires" },
+    { "id": "first-match-order", "expected": "abort, non-repairable trust, revise blockers, adopt, retire, otherwise revise are exhaustive" },
+    { "id": "approved-budgets-and-heldout-claims", "expected": "460 evaluations imply 13800 timeout-seconds, preparation is separate, and empty held-out forbids blind claims" }
+  ]
+}

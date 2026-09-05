@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-truth-commitments/v1",
+  "status": "source-reviewed-unmeasured",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "artifactBinding": "targetArtifactDigest-is-bound-at-epoch-seal",
+  "expectedSemantics": "Each expected value is the source-derived normalized violation observation for the registered single-patch defect under the frozen comparison input. It is not the clean contract-success observation and cannot be changed from measurement outcomes.",
+  "expectedDerivation": {
+    "defectRegistrationPath": "benchmark/manifest.json",
+    "defectLookup": "commitment canonicalTruthId equals manifest defect id",
+    "method": "Apply the one registered exact edit to the pinned committed source model, follow the frozen public action and fixture trace, then apply the registered normalized observation projection.",
+    "forbiddenInputs": ["measurement-results", "historical-benchmark-outcomes", "generated-claims"]
+  },
+  "commitments": [
+    {
+      "canonicalTruthId": "tx-rollback-forward-order",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-rollback-forward-order",
+      "invariantRegistrationId": "tx.rollback-reverse-order/v1",
+      "matcherId": "exact-jcs.tx-rollback-forward-order/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "thrown-error", "compensations": [
+        { "instanceId": "action-0002", "kind": "return", "errorMessage": null },
+        { "instanceId": "action-0003", "kind": "return", "errorMessage": null }
+      ] } } }
+    },
+    {
+      "canonicalTruthId": "tx-reuse-after-rollback-allowed",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-reuse-after-rollback",
+      "invariantRegistrationId": "tx.no-run-after-rollback/v1",
+      "matcherId": "exact-jcs.tx-reuse-after-rollback/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "returned-value", "name": null, "currentState": null, "attemptedAction": null, "attemptCount": 1 } } }
+    },
+    {
+      "canonicalTruthId": "tx-compensation-errors-swallowed",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-compensation-errors-swallowed",
+      "invariantRegistrationId": "tx.compensation-failure/v1",
+      "matcherId": "exact-jcs.tx-compensation-errors-swallowed/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": {
+        "kind": "thrown-error", "name": "Error", "failureCount": null,
+        "failureMessages": null, "completedSteps": null,
+        "compensations": [
+          { "instanceId": "action-0003", "kind": "throw", "errorMessage": "undo-second" },
+          { "instanceId": "action-0002", "kind": "return", "errorMessage": null }
+        ]
+      } } }
+    },
+    {
+      "canonicalTruthId": "tx-preaborted-signal-ignored",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-preaborted-signal",
+      "invariantRegistrationId": "tx.preaborted-signal/v1",
+      "matcherId": "exact-jcs.tx-preaborted-signal/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "returned-value", "name": null, "message": null, "attemptCount": 1 } } }
+    },
+    {
+      "canonicalTruthId": "tx-commit-after-rollback-allowed",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-commit-after-rollback",
+      "invariantRegistrationId": "tx.no-commit-after-rollback/v1",
+      "matcherId": "exact-jcs.tx-commit-after-rollback/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "returned-value", "name": null, "currentState": null, "attemptedAction": null } } }
+    },
+    {
+      "canonicalTruthId": "tx-retry-exhausted-drops-error-history",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-retry-error-history",
+      "invariantRegistrationId": "tx.retry-error-history/v1",
+      "matcherId": "exact-jcs.tx-retry-error-history/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "thrown-error", "name": "RetryExhaustedError", "attempts": 3, "errorMessages": ["retry-three"], "attemptCount": 3 } } }
+    },
+    {
+      "canonicalTruthId": "tx-completed-steps-never-tracked",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-completed-steps-tracking",
+      "invariantRegistrationId": "tx.completed-steps-compensated/v1",
+      "matcherId": "exact-jcs.tx-completed-steps/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "thrown-error", "compensations": [] } } }
+    },
+    {
+      "canonicalTruthId": "prepaint-route-prefix-overcapture",
+      "moduleId": "prepaint",
+      "duplicateGroup": "prepaint-route-prefix",
+      "invariantRegistrationId": "prepaint.exact-route/v1",
+      "matcherId": "exact-jcs.prepaint-route-prefix/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "overlayMounted": true, "dataPrepaint": true, "present": true, "payloadDigest": "37248967bf40ea9c5ffb1e5a734b8a8bf71a5a8841143618750a88c3f5eed6a5" } } }
+    },
+    {
+      "canonicalTruthId": "prepaint-expired-snapshot-kept",
+      "moduleId": "prepaint",
+      "duplicateGroup": "prepaint-expired-snapshot",
+      "invariantRegistrationId": "prepaint.expired-pruned/v1",
+      "matcherId": "exact-jcs.prepaint-expired-pruned/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "overlayMounted": false, "dataPrepaint": false, "present": true, "payloadDigest": "8de11d3469842d57fbaedf89f49e7a9037f9242742a3009625101abf2afcbd03" } } }
+    },
+    {
+      "canonicalTruthId": "prepaint-oversize-snapshot-kept",
+      "moduleId": "prepaint",
+      "duplicateGroup": "prepaint-oversize-snapshot",
+      "invariantRegistrationId": "prepaint.utf8-size-pruned/v1",
+      "matcherId": "exact-jcs.prepaint-utf8-size-pruned/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "overlayMounted": true, "dataPrepaint": true, "present": true, "payloadDigest": "b4b0c3f5bb70a28a178ecbcd72d61b9513fc58655d5e8e1d9c81c3558dd66994" } } }
+    },
+    {
+      "canonicalTruthId": "local-first-stale-flag-inverted",
+      "moduleId": "local-first",
+      "duplicateGroup": "local-first-stale-flag",
+      "invariantRegistrationId": "local.staleness-from-age-and-ttl/proposed-v1",
+      "matcherId": "exact-jcs.local-first-staleness/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "updatedAt": 999999992000, "age": 8000, "isStale": false, "isConflicted": false, "ttlMs": 5000 } } }
+    },
+    {
+      "canonicalTruthId": "local-first-error-not-notified",
+      "moduleId": "local-first",
+      "duplicateGroup": "local-first-error-notified",
+      "invariantRegistrationId": "local.error-transition-notifies/proposed-v1",
+      "matcherId": "exact-jcs.local-first-error-notification/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "notified": false, "errorName": "ValidationError" } } }
+    },
+    {
+      "canonicalTruthId": "prepaint-relative-route-accepted",
+      "moduleId": "prepaint",
+      "duplicateGroup": "prepaint-relative-route",
+      "invariantRegistrationId": "prepaint.absolute-routes/v1",
+      "matcherId": "exact-jcs.prepaint-absolute-route/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "returned", "name": "vite-plugin-firsttx", "messageClass": null } } }
+    },
+    {
+      "canonicalTruthId": "local-first-self-broadcast-not-filtered",
+      "moduleId": "local-first",
+      "duplicateGroup": "local-first-self-broadcast",
+      "invariantRegistrationId": "local.ignore-self-broadcast/proposed-v1",
+      "matcherId": "exact-jcs.local-first-self-broadcast/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "localMutationCallbacks": 1, "callbackCountAfterPeerRelay": 1, "senderSelfDeliveries": 0, "peerReceipts": 1, "peerRetransmissions": 1 } } }
+    },
+    {
+      "canonicalTruthId": "tx-retry-skips-final-attempt",
+      "moduleId": "tx",
+      "duplicateGroup": "tx-retry-final-attempt",
+      "invariantRegistrationId": "tx.retry-final-attempt/v1",
+      "matcherId": "exact-jcs.tx-retry-final-attempt/v1",
+      "expected": { "normalizedObservedKind": "returned-value", "normalizedObservedFields": { "value": { "kind": "thrown-error", "value": null, "attemptCount": 2 } } }
+    }
+  ],
+  "provenanceByCanonicalTruthId": {
+    "tx-rollback-forward-order": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/tx/README.md:3,11-13,136-150", "packages/tx/tests/transaction.test.ts:614-653"] },
+    "tx-reuse-after-rollback-allowed": { "sourceKind": "existing-test", "sourceRefs": ["packages/tx/tests/transaction.test.ts:422-452"] },
+    "tx-compensation-errors-swallowed": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/tx/README.md:468-471,734-736", "packages/tx/tests/transaction.test.ts:326-419"] },
+    "tx-preaborted-signal-ignored": { "sourceKind": "public-type-and-existing-test", "sourceRefs": ["packages/tx/src/types.ts:34-41", "packages/tx/tests/retry.test.ts:253-263"] },
+    "tx-commit-after-rollback-allowed": { "sourceKind": "existing-test", "sourceRefs": ["packages/tx/tests/transaction.test.ts:522-539"] },
+    "tx-retry-exhausted-drops-error-history": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/tx/README.md:475-510", "packages/tx/tests/transaction.test.ts:83-110"] },
+    "tx-completed-steps-never-tracked": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/tx/README.md:136-150", "packages/tx/tests/transaction.test.ts:614-653"] },
+    "prepaint-route-prefix-overcapture": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/prepaint/README.md:60-71,152-171", "packages/prepaint/tests/policy.test.ts:27-33"] },
+    "prepaint-expired-snapshot-kept": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/prepaint/README.md:71,118-125,160-164", "packages/prepaint/tests/policy.test.ts:54-81"] },
+    "prepaint-oversize-snapshot-kept": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/prepaint/README.md:71,118-125,160-164", "packages/prepaint/tests/policy.test.ts:43-52,54-81"] },
+    "local-first-stale-flag-inverted": { "sourceKind": "existing-test", "sourceRefs": ["packages/local-first/tests/model.test.ts:271-318", "packages/local-first/tests/model-ttl-optional.test.ts:29-79"] },
+    "local-first-error-not-notified": { "sourceKind": "existing-test", "sourceRefs": ["packages/local-first/tests/model.test.ts:418-446"] },
+    "prepaint-relative-route-accepted": { "sourceKind": "existing-test", "sourceRefs": ["packages/prepaint/tests/policy.test.ts:35-40"] },
+    "local-first-self-broadcast-not-filtered": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/local-first/README.md:458-476", "packages/local-first/tests/broadcast.test.ts:96-117"] },
+    "tx-retry-skips-final-attempt": { "sourceKind": "documentation-and-existing-test", "sourceRefs": ["packages/tx/README.md:245-276", "packages/tx/tests/retry.test.ts:47-63"] }
+  },
+  "runtimeOutcomeMayChangeExpectedIdentity": false,
+  "measurementState": "not-started"
+}

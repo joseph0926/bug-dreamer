@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-validation-cases/v1",
+  "cases": [
+    "actual-unsealed-registration-is-not-ready",
+    "checkpoint-order-and-immutable-tag",
+    "fresh-g-and-p-authoring-only",
+    "deny-listed-exposure-aborts",
+    "unavailable-counters-remain-null",
+    "phase3-prerequisites-never-score",
+    "source-and-image-closures-are-bound",
+    "manifest-order-and-row-completeness",
+    "run-record-artifact-digests",
+    "budget-ledger-source-facts",
+    "raw-result-reclassification",
+    "checked-score-exact-recomputation",
+    "frozen-universe-truth-and-comparison-inputs",
+    "preparation-receipt-source-and-image-bindings",
+    "raw-run-prepared-identity-binding",
+    "output-overflow-flag-and-classification"
+  ]
+}

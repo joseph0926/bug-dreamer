@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-spec-cases/v1",
+  "positive": [
+    "tx-identity-artifact-specific",
+    "local-first-forward-binding",
+    "prepaint-public-subpath",
+    "time-advance-chain",
+    "release-order-chain",
+    "step-outcome-chain"
+  ],
+  "negative": [
+    "unknown-field",
+    "reserved-actor",
+    "forward-binding",
+    "argument-policy",
+    "unknown-action",
+    "unknown-invariant",
+    "tampered-fixture-state",
+    "tampered-transformation-chain",
+    "operator-on-unsupported-module",
+    "wire-limit"
+  ]
+}

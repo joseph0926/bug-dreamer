@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-trust-cases/v1",
+  "positive": [
+    "pass",
+    "candidate-failure-kind-flip"
+  ],
+  "negative": [
+    "marker-forgery",
+    "missing-result",
+    "malformed-result",
+    "duplicate-key",
+    "wrong-payload-digest",
+    "wrong-spec-digest",
+    "wrong-plan-digest",
+    "wrong-artifact-digest",
+    "wrong-violation-identity",
+    "timeout",
+    "early-exit",
+    "log-limit"
+  ]
+}

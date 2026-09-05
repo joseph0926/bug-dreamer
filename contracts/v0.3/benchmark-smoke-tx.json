@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-smoke/v1",
+  "id": "synthetic-tx-nominal/v1",
+  "moduleId": "tx",
+  "developmentOnly": true,
+  "measurementEligible": false,
+  "historicalTruthId": null,
+  "artifactRole": "clean",
+  "comparisonRegistrationId": "synthetic.tx.nominal-retry/direct-v1",
+  "invariantRegistrationId": "tx.retry-final-attempt/v1",
+  "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sourceRefs": [
+    "packages/tx/README.md:245-276",
+    "packages/tx/tests/retry.test.ts:47-63"
+  ],
+  "seed": {
+    "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+    "catalogVersion": "firsttx-phase4-tx-f624b09-v1",
+    "id": "synthetic-tx-nominal-retry",
+    "invariantId": "tx.retry-final-attempt/v1",
+    "actors": ["smoke-client"],
+    "actions": [
+      {
+        "actionId": "tx.start",
+        "actor": "smoke-client",
+        "arguments": {
+          "transactionId": "synthetic-nominal-7321",
+          "timeoutMs": 9000,
+          "transition": false
+        },
+        "bind": { "name": "synthetic-tx", "type": "tx-handle" }
+      },
+      {
+        "actionId": "tx.run-scripted",
+        "actor": "smoke-client",
+        "arguments": {
+          "tx": { "$binding": "synthetic-tx" },
+          "attemptOutcomes": [
+            { "kind": "throw", "errorName": "Error", "errorMessage": "synthetic-transient-7321" },
+            { "kind": "return", "value": { "receipt": "synthetic-nominal-7321" } }
+          ],
+          "retry": { "maxAttempts": 2, "delayMs": 7, "backoff": "linear" },
+          "compensation": null,
+          "externalSignal": null,
+          "gate": null
+        },
+        "bind": null
+      }
+    ]
+  },
+  "comparisonInput": {
+    "actions": [
+      {
+        "instanceId": "action-0001",
+        "actionId": "tx.start",
+        "adapterId": "tx.start/v2",
+        "actor": "smoke-client",
+        "arguments": {
+          "transactionId": "synthetic-nominal-7321",
+          "timeoutMs": 9000,
+          "transition": false
+        },
+        "bind": { "name": "synthetic-tx", "type": "tx-handle" }
+      },
+      {
+        "instanceId": "action-0002",
+        "actionId": "tx.run-scripted",
+        "adapterId": "tx.run-scripted/v2",
+        "actor": "smoke-client",
+        "arguments": {
+          "tx": { "$binding": "synthetic-tx" },
+          "attemptOutcomes": [
+            { "kind": "throw", "errorName": "Error", "errorMessage": "synthetic-transient-7321" },
+            { "kind": "return", "value": { "receipt": "synthetic-nominal-7321" } }
+          ],
+          "retry": { "maxAttempts": 2, "delayMs": 7, "backoff": "linear" },
+          "compensation": null,
+          "externalSignal": null,
+          "gate": null
+        },
+        "bind": null
+      }
+    ],
+    "fixtureSetup": [
+      {
+        "registrationId": "tx.scripted-step-state/v1",
+        "registrationDigest": "aab38ec0ccb139e205269548d238cf937cf368fc0c8ada8f1da0f60c8644e9fe",
+        "kind": "public-test-seam",
+        "producerArtifact": {
+          "moduleRegistrationId": "tx",
+          "targetArtifactDigest": "907d52b700f05f2799bf3959bd4890bffdebbcbd2a9a258e45336bdefcbca9ed"
+        },
+        "publicActionTrace": ["tx.run-scripted"],
+        "canonicalWirePayload": {
+          "tx": { "$binding": "synthetic-tx" },
+          "attemptOutcomes": [
+            { "kind": "throw", "errorName": "Error", "errorMessage": "synthetic-transient-7321" },
+            { "kind": "return", "value": { "receipt": "synthetic-nominal-7321" } }
+          ],
+          "retry": { "maxAttempts": 2, "delayMs": 7, "backoff": "linear" },
+          "compensation": null,
+          "externalSignal": null,
+          "gate": null
+        },
+        "materializerId": "tx.scripted-step-state/v1",
+        "stateDigest": "f6e596c688b330b82f3b52acb52081643efb362cc2f6e580323c696e3f7f89db",
+        "consumerActionInstanceId": "action-0002"
+      }
+    ],
+    "virtualTime": { "originMs": 1000000000000 },
+    "scheduleControls": []
+  },
+  "runtimePolicy": {
+    "virtualTime": { "originMs": 1000000000000 }
+  },
+  "expectedClean": {
+    "execution": "pass",
+    "observedKind": "returned-value",
+    "observedFields": {
+      "value": {
+        "kind": "returned-value",
+        "value": { "receipt": "synthetic-nominal-7321" },
+        "attemptCount": 2
+      }
+    }
+  },
+  "preparationProbeRuns": 2
+}

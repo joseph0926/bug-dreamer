@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-comparison-inputs/v1",
+  "status": "source-reviewed-unmeasured",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "artifactBinding": {
+    "mode": "epoch-seal",
+    "rule": "Compile each fixed recipe separately for clean and its registered single-patch artifact, then bind that artifact's targetArtifactDigest without changing actions, publicActionTrace, virtual time, or schedule controls."
+  },
+  "pairedInputRule": {
+    "D": "comparison-direct-materializer",
+    "E": "trusted-interpreter",
+    "identity": "D and E consume the same canonical input recipe, public action trace, fixture payloads, virtual-time origin, and schedule controls for each artifact role."
+  },
+  "rows": [
+    {
+      "rowId": "tx-rollback-forward-order",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.rollback-reverse-order/direct-v1",
+      "invariantRegistrationId": "tx.rollback-reverse-order/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.run-scripted", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-rollback-forward-order", "invariantId": "tx.rollback-reverse-order/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "rollback-order", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "first" }], "retry": null, "compensation": { "kind": "return" }, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "second" }], "retry": null, "compensation": { "kind": "return" }, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "throw", "errorName": "Error", "errorMessage": "trigger-rollback" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-reuse-after-rollback-allowed",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.no-run-after-rollback/direct-v1",
+      "invariantRegistrationId": "tx.no-run-after-rollback/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-reuse-after-rollback", "invariantId": "tx.no-run-after-rollback/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "reuse-after-rollback", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "throw", "errorName": "Error", "errorMessage": "rollback" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "must-not-run" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-compensation-errors-swallowed",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.compensation-failure/direct-v1",
+      "invariantRegistrationId": "tx.compensation-failure/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.run-scripted", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-compensation-failure", "invariantId": "tx.compensation-failure/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "compensation-failure", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "first" }], "retry": null, "compensation": { "kind": "return" }, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "second" }], "retry": null, "compensation": { "kind": "throw", "errorName": "Error", "errorMessage": "undo-second" }, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "throw", "errorName": "Error", "errorMessage": "trigger-compensation" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-preaborted-signal-ignored",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.preaborted-signal/direct-v1",
+      "invariantRegistrationId": "tx.preaborted-signal/v1",
+      "publicActionTrace": ["tx.start", "env.abort-controller", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-preaborted-signal", "invariantId": "tx.preaborted-signal/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "preaborted", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "env.abort-controller", "actor": "client", "arguments": { "reasonName": "Error", "reasonMessage": "benchmark-preaborted", "abortBeforeUse": true }, "bind": { "name": "signal", "type": "abort-signal" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "must-not-run" }], "retry": null, "compensation": null, "externalSignal": { "$binding": "signal" }, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-commit-after-rollback-allowed",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.no-commit-after-rollback/direct-v1",
+      "invariantRegistrationId": "tx.no-commit-after-rollback/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.commit"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-commit-after-rollback", "invariantId": "tx.no-commit-after-rollback/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "commit-after-rollback", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "throw", "errorName": "Error", "errorMessage": "rollback" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.commit", "actor": "client", "arguments": { "tx": { "$binding": "transaction" } }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-retry-exhausted-drops-error-history",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.retry-error-history/direct-v1",
+      "invariantRegistrationId": "tx.retry-error-history/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-retry-error-history", "invariantId": "tx.retry-error-history/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "retry-error-history", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [
+            { "kind": "throw", "errorName": "Error", "errorMessage": "retry-one" },
+            { "kind": "throw", "errorName": "TypeError", "errorMessage": "retry-two" },
+            { "kind": "throw", "errorName": "RangeError", "errorMessage": "retry-three" }
+          ], "retry": { "maxAttempts": 3, "delayMs": 1, "backoff": "linear" }, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-completed-steps-never-tracked",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.completed-steps-compensated/direct-v1",
+      "invariantRegistrationId": "tx.completed-steps-compensated/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-completed-steps", "invariantId": "tx.completed-steps-compensated/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "completed-steps", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "return", "value": "completed" }], "retry": null, "compensation": { "kind": "return" }, "externalSignal": null, "gate": null }, "bind": null },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [{ "kind": "throw", "errorName": "Error", "errorMessage": "rollback" }], "retry": null, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "tx-retry-skips-final-attempt",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.retry-final-attempt/direct-v1",
+      "invariantRegistrationId": "tx.retry-final-attempt/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted"],
+      "inputRecipe": { "kind": "benchmark-seed", "seed": {
+        "schemaVersion": "bug-dreamer/nightmare-seed/v1", "catalogVersion": "firsttx-phase4-tx-f624b09-v1", "id": "retention-tx-retry-final-attempt", "invariantId": "tx.retry-final-attempt/v1", "actors": ["client"],
+        "actions": [
+          { "actionId": "tx.start", "actor": "client", "arguments": { "transactionId": "retry-final-attempt", "timeoutMs": 9000, "transition": false }, "bind": { "name": "transaction", "type": "tx-handle" } },
+          { "actionId": "tx.run-scripted", "actor": "client", "arguments": { "tx": { "$binding": "transaction" }, "attemptOutcomes": [
+            { "kind": "throw", "errorName": "Error", "errorMessage": "retry-one" },
+            { "kind": "throw", "errorName": "Error", "errorMessage": "retry-two" },
+            { "kind": "return", "value": { "receipt": "final-attempt" } }
+          ], "retry": { "maxAttempts": 3, "delayMs": 1, "backoff": "linear" }, "compensation": null, "externalSignal": null, "gate": null }, "bind": null }
+        ]
+      } }
+    },
+    {
+      "rowId": "local-first-stale-flag-inverted", "moduleId": "local-first", "comparisonRegistrationId": "local-first-stale-flag-inverted", "invariantRegistrationId": "local.staleness-from-age-and-ttl/proposed-v1", "publicActionTrace": ["local.define-model", "local.storage-set", "local.subscribe", "local.get-cached-history"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "local-first-stale-flag-inverted", "source": "harness-v0.3/benchmark/local-first-environment.mjs#registeredLocalFirstScenario" }
+    },
+    {
+      "rowId": "local-first-error-not-notified", "moduleId": "local-first", "comparisonRegistrationId": "local-first-error-not-notified", "invariantRegistrationId": "local.error-transition-notifies/proposed-v1", "publicActionTrace": ["local.define-model", "local.storage-set", "local.subscribe", "local.get-cached-error"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "local-first-error-not-notified", "source": "harness-v0.3/benchmark/local-first-environment.mjs#registeredLocalFirstScenario" }
+    },
+    {
+      "rowId": "local-first-self-broadcast-not-filtered", "moduleId": "local-first", "comparisonRegistrationId": "local-first-self-broadcast-not-filtered", "invariantRegistrationId": "local.ignore-self-broadcast/proposed-v1", "publicActionTrace": ["local.define-model", "local.replace", "local.subscribe", "local.patch"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "local-first-self-broadcast-not-filtered", "source": "harness-v0.3/benchmark/local-first-environment.mjs#registeredLocalFirstScenario" }
+    },
+    {
+      "rowId": "prepaint-route-prefix-overcapture", "moduleId": "prepaint", "comparisonRegistrationId": "prepaint-route-prefix-overcapture", "invariantRegistrationId": "prepaint.exact-route/v1", "publicActionTrace": ["prepaint.boot"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "prepaint-route-prefix-overcapture", "source": "harness-v0.3/benchmark/prepaint-environment.mjs#registeredPrepaintScenario" }
+    },
+    {
+      "rowId": "prepaint-expired-snapshot-kept", "moduleId": "prepaint", "comparisonRegistrationId": "prepaint-expired-snapshot-kept", "invariantRegistrationId": "prepaint.expired-pruned/v1", "publicActionTrace": ["prepaint.boot"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "prepaint-expired-snapshot-kept", "source": "harness-v0.3/benchmark/prepaint-environment.mjs#registeredPrepaintScenario" }
+    },
+    {
+      "rowId": "prepaint-oversize-snapshot-kept", "moduleId": "prepaint", "comparisonRegistrationId": "prepaint-oversize-snapshot-kept", "invariantRegistrationId": "prepaint.utf8-size-pruned/v1", "publicActionTrace": ["prepaint.boot"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "prepaint-oversize-snapshot-kept", "source": "harness-v0.3/benchmark/prepaint-environment.mjs#registeredPrepaintScenario" }
+    },
+    {
+      "rowId": "prepaint-relative-route-accepted", "moduleId": "prepaint", "comparisonRegistrationId": "prepaint-relative-route-accepted", "invariantRegistrationId": "prepaint.absolute-routes/v1", "publicActionTrace": ["prepaint.vite-create"],
+      "inputRecipe": { "kind": "registered-scenario", "registrationId": "prepaint-relative-route-accepted", "source": "harness-v0.3/benchmark/prepaint-environment.mjs#registeredPrepaintScenario" }
+    }
+  ],
+  "developmentDiagnostics": [
+    {
+      "rowId": "tx-total-timeout-resets-per-step",
+      "moduleId": "tx",
+      "comparisonRegistrationId": "tx.total-timeout/direct-v1",
+      "invariantRegistrationId": "tx.total-timeout/v1",
+      "publicActionTrace": ["tx.start", "tx.run-scripted", "tx.run-scripted"],
+      "inputRecipe": {
+        "kind": "registered-phase3-anchor",
+        "registrationRef": "benchmark/v0.3/phase3-reduction.json",
+        "evidenceMayNotDefineExpectation": true
+      },
+      "metricEligible": false,
+      "retentionEligible": false
+    }
+  ],
+  "runtimeOutcomeMayChangeInputMembership": false,
+  "measurementState": "not-started"
+}

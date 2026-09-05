@@ -7,6 +7,7 @@ import { SpecValidationError, validateSpecContracts } from '../src/v03-spec-vali
 import { TrustValidationError, validateTrustContracts } from '../src/v03-trust-validation.mjs';
 import { OperatorValidationError, validateOperatorContracts } from '../src/v03-operators-validation.mjs';
 import { ReplayValidationError, validateSpikeReplay } from '../src/v03-replay-validation.mjs';
+import { V03BenchmarkValidationError, validateActualPhase4Benchmark } from '../src/v03-benchmark-validation.mjs';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SUBCOMMANDS = new Set([
@@ -57,6 +58,7 @@ async function main() {
     trust: () => validateTrustContracts(repositoryRoot),
     operators: () => validateOperatorContracts(repositoryRoot),
     replay: () => validateSpikeReplay(repositoryRoot),
+    benchmark: () => validateActualPhase4Benchmark(repositoryRoot),
   };
   if (validators[input.subcommand] === undefined) {
     process.stderr.write(`${input.subcommand} validation is not implemented yet\n`);
@@ -73,7 +75,8 @@ async function main() {
       || error instanceof SpecValidationError
       || error instanceof TrustValidationError
       || error instanceof OperatorValidationError
-      || error instanceof ReplayValidationError;
+      || error instanceof ReplayValidationError
+      || error instanceof V03BenchmarkValidationError;
     const message = expected ? error.message : `Unexpected validation error: ${error.message}`;
     process.stderr.write(`${message}\n`);
     process.exitCode = 1;

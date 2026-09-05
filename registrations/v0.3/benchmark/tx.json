@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-module-interface/v1",
+  "id": "tx-public-benchmark/v1",
+  "moduleId": "tx",
+  "packageName": "@firsttx/tx",
+  "importSpecifier": "@firsttx/tx",
+  "targetRegistrationPath": "registrations/v0.3/packages.json",
+  "targetRegistrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+  "catalogVersion": "firsttx-phase4-tx-f624b09-v1",
+  "actions": [
+    {
+      "id": "tx.start",
+      "importSpecifier": "@firsttx/tx",
+      "adapterId": "tx.start/v2",
+      "argumentSchemaId": "tx.start-args/v2",
+      "bindingOutputType": "tx-handle"
+    },
+    {
+      "id": "tx.run-scripted",
+      "importSpecifier": "@firsttx/tx",
+      "adapterId": "tx.run-scripted/v2",
+      "argumentSchemaId": "tx.run-scripted-args/v2",
+      "bindingOutputType": null
+    },
+    {
+      "id": "tx.commit",
+      "importSpecifier": "@firsttx/tx",
+      "adapterId": "tx.commit/v2",
+      "argumentSchemaId": "tx.commit-args/v2",
+      "bindingOutputType": null
+    },
+    {
+      "id": "env.abort-controller",
+      "importSpecifier": "@firsttx/tx",
+      "adapterId": "env.abort-controller/v1",
+      "argumentSchemaId": "env.abort-controller-args/v1",
+      "bindingOutputType": "abort-signal"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "tx.scripted-step-state/v1",
+      "kind": "public-test-seam",
+      "materializerId": "tx.scripted-step-state/v1",
+      "consumerActionId": "tx.run-scripted",
+      "payloadArgumentPointer": "",
+      "publicActionTrace": ["tx.run-scripted"]
+    },
+    {
+      "id": "env.abort-signal-state/v1",
+      "kind": "external-environment",
+      "materializerId": "env.abort-signal-state/v1",
+      "consumerActionId": "env.abort-controller",
+      "payloadArgumentPointer": "",
+      "publicActionTrace": ["env.abort-controller"]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "tx.rollback-reverse-order/v1",
+      "evaluatorId": "tx.rollback-reverse-order/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:3,11-13,136-150; packages/tx/tests/transaction.test.ts:614-653",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.total-timeout/v1",
+      "evaluatorId": "tx.total-timeout/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:217-240,514-544; packages/tx/tests/transaction.test.ts:249-263",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.no-run-after-rollback/v1",
+      "evaluatorId": "tx.no-run-after-rollback/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/tx/tests/transaction.test.ts:422-452",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.compensation-failure/v1",
+      "evaluatorId": "tx.compensation-failure/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:468-471,734-736; packages/tx/tests/transaction.test.ts:326-419",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.preaborted-signal/v1",
+      "evaluatorId": "tx.preaborted-signal/v1",
+      "sourceKind": "public-type",
+      "sourceRef": "packages/tx/src/types.ts:34-41",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "corroborating",
+      "corroboratingRefs": [
+        "packages/tx/src/types.ts:34-41",
+        "packages/tx/tests/retry.test.ts:253-263"
+      ],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.no-commit-after-rollback/v1",
+      "evaluatorId": "tx.no-commit-after-rollback/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/tx/tests/transaction.test.ts:522-539",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.retry-error-history/v1",
+      "evaluatorId": "tx.retry-error-history/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:475-510; packages/tx/tests/transaction.test.ts:83-110",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.completed-steps-compensated/v1",
+      "evaluatorId": "tx.completed-steps-compensated/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:136-150; packages/tx/tests/transaction.test.ts:614-653",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "tx.retry-final-attempt/v1",
+      "evaluatorId": "tx.retry-final-attempt/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/tx/README.md:245-276; packages/tx/tests/retry.test.ts:47-63",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": [],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    }
+  ],
+  "comparisons": [
+    { "id": "tx.rollback-reverse-order/direct-v1", "materializerId": "tx.rollback-reverse-order/direct-v1", "invariantId": "tx.rollback-reverse-order/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.total-timeout/direct-v1", "materializerId": "tx.total-timeout/direct-v1", "invariantId": "tx.total-timeout/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.no-run-after-rollback/direct-v1", "materializerId": "tx.no-run-after-rollback/direct-v1", "invariantId": "tx.no-run-after-rollback/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.compensation-failure/direct-v1", "materializerId": "tx.compensation-failure/direct-v1", "invariantId": "tx.compensation-failure/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.preaborted-signal/direct-v1", "materializerId": "tx.preaborted-signal/direct-v1", "invariantId": "tx.preaborted-signal/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.no-commit-after-rollback/direct-v1", "materializerId": "tx.no-commit-after-rollback/direct-v1", "invariantId": "tx.no-commit-after-rollback/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.retry-error-history/direct-v1", "materializerId": "tx.retry-error-history/direct-v1", "invariantId": "tx.retry-error-history/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.completed-steps-compensated/direct-v1", "materializerId": "tx.completed-steps-compensated/direct-v1", "invariantId": "tx.completed-steps-compensated/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "tx.retry-final-attempt/direct-v1", "materializerId": "tx.retry-final-attempt/direct-v1", "invariantId": "tx.retry-final-attempt/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] },
+    { "id": "synthetic.tx.nominal-retry/direct-v1", "materializerId": "synthetic.tx.nominal-retry/direct-v1", "invariantId": "tx.retry-final-attempt/v1", "normalizedObservedKind": "returned-value", "observedFields": [{ "name": "value", "type": "json" }] }
+  ]
+}

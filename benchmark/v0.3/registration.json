@@ -1,0 +1,386 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-registration/v1",
+  "status": "approved-unsealed",
+  "approvedOn": "2026-09-05",
+  "requiresUserCheckpoints": true,
+  "target": {
+    "registrationPath": "registrations/v0.3/packages.json",
+    "registrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+    "revision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+    "moduleOrder": [
+      "tx",
+      "local-first",
+      "prepaint"
+    ]
+  },
+  "sourceArtifacts": {
+    "approvedPolicyDraft": {
+      "path": "benchmark/v0.3/phase4-policy.draft.json",
+      "sha256": "f338dfc4cb05a612d05cab772e3990f90bde9aa4a1365563deeece422ea39a8f"
+    },
+    "inventoryDraft": {
+      "path": "benchmark/v0.3/phase4-inventory.draft.json",
+      "sha256": "898a82d28e534a839886de993bc8bfeca59ca876516e923156bebd3e52aaedbe",
+      "rowCount": 20,
+      "moduleDistribution": {
+        "tx": 10,
+        "local-first": 6,
+        "prepaint": 4
+      },
+      "currentInterpreterSupportedRows": 1,
+      "historicalKnownClaims": true
+    },
+    "phase3": {
+      "verdict": "adopt",
+      "spikeRegistration": {
+        "path": "benchmark/v0.3/phase3-spike.json",
+        "sha256": "1960d38ee4012068a65055efd14fe872323fffaa818f8d3a639a6a383c85b29d"
+      },
+      "spikeEvidence": {
+        "path": "evidence/v0.3/phase3-spike.json",
+        "sha256": "d421b5a71c6b731f64762a2200dc976f7f5bbc92eec45fe3005c78bc22b3d548"
+      },
+      "reductionRegistration": {
+        "path": "benchmark/v0.3/phase3-reduction.json",
+        "sha256": "1eff3c8626ef8b95cd6eb80f5e40799f9709d73f2a86293e0bb0cda6f718e380"
+      },
+      "reductionEvidence": {
+        "path": "evidence/v0.3/phase3-reduction.json",
+        "sha256": "4a978fd7351bfad016381ca7b3ce95f6600422e8682e5753983cacc6b3ef50b2"
+      },
+      "cleanEvaluationContractKey": "0c08c61bbef849abb799afffb717e72779b3a7427165389e475326061b67064f",
+      "defectEvaluationContractKey": "842cf233cff4f1d69df6b3b061ab87fd51951a44c22f6efec904ba97e44d2050",
+      "scoreContribution": false
+    }
+  },
+  "universe": {
+    "auditInventoryPath": "benchmark/v0.3/phase4-inventory.draft.json",
+    "development": [
+      "tx-total-timeout-resets-per-step"
+    ],
+    "existingPublic": [
+      "tx-rollback-forward-order",
+      "tx-reuse-after-rollback-allowed",
+      "tx-compensation-errors-swallowed",
+      "tx-preaborted-signal-ignored",
+      "tx-concurrent-step-guard-removed",
+      "tx-commit-after-rollback-allowed",
+      "tx-retry-exhausted-drops-error-history",
+      "tx-completed-steps-never-tracked",
+      "prepaint-route-prefix-overcapture",
+      "prepaint-expired-snapshot-kept",
+      "prepaint-oversize-snapshot-kept",
+      "local-first-stale-flag-inverted",
+      "local-first-history-change-not-reflected",
+      "local-first-cache-unsubscribe-noop",
+      "local-first-error-not-notified",
+      "prepaint-relative-route-accepted",
+      "local-first-self-broadcast-not-filtered",
+      "local-first-unsubscribe-removes-all",
+      "tx-retry-skips-final-attempt"
+    ],
+    "heldOutTemporal": [],
+    "heldOutClaimsAllowed": false,
+    "metricEligibleRowIds": null,
+    "retentionDenominatorRowIds": null,
+    "adapterRegistrationIds": null,
+    "truthCommitmentRef": null,
+    "freezeBefore": "checkpointA",
+    "postCheckpointDenominatorDeletionForbidden": true
+  },
+  "arms": [
+    {
+      "id": "G",
+      "procedure": "generic-data-only-seed-authoring",
+      "inputSet": "fresh-G-seeds",
+      "executionPath": "identity-interpreter"
+    },
+    {
+      "id": "P",
+      "procedure": "invariant-first-data-only-seed-authoring",
+      "inputSet": "fresh-P-seeds",
+      "executionPath": "identity-interpreter"
+    },
+    {
+      "id": "A",
+      "procedure": "fixed-time-advance-request-policy",
+      "inputSet": "frozen-P-seeds",
+      "executionPath": "time.advance/v1"
+    },
+    {
+      "id": "B",
+      "procedure": "fixed-release-order-request-policy",
+      "inputSet": "frozen-P-seeds",
+      "executionPath": "schedule.release-order/v1"
+    },
+    {
+      "id": "C",
+      "procedure": "fixed-step-outcome-request-policy",
+      "inputSet": "frozen-P-seeds",
+      "executionPath": "fault.step-outcome/v1"
+    },
+    {
+      "id": "D",
+      "procedure": "comparison-direct-materializer",
+      "inputSet": "retention-denominator-rows",
+      "executionPath": "trusted-comparison"
+    },
+    {
+      "id": "E",
+      "procedure": "trusted-interpreter-retention",
+      "inputSet": "retention-denominator-rows",
+      "executionPath": "trusted-interpreter"
+    }
+  ],
+  "generation": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "medium",
+    "freshSessions": {
+      "G": 1,
+      "P": 1
+    },
+    "submittedTaskTurnsPerSession": 1,
+    "seedMaximumPerModulePerArm": 2,
+    "seedMaximumPerArm": 6,
+    "replacementAfterRejection": false,
+    "unavailableCounters": {
+      "internalModelCalls": null,
+      "inputTokens": null,
+      "outputTokens": null
+    },
+    "unavailableCounterReason": "The environment exposes no reliable per-task internal inference-call or token counter; equal visible turns do not establish compute parity."
+  },
+  "budgets": {
+    "evaluation": {
+      "timeoutMs": 30000,
+      "stdoutLimitBytes": 1048576,
+      "stderrLimitBytes": 1048576,
+      "recordedOutputBytes": 4096
+    },
+    "operatorRequestsPerPSeedPerArm": 1,
+    "initialDockerEvaluations": {
+      "perGenerationOrOperatorArm": 46,
+      "generationOrOperatorArmCount": 5,
+      "perRetentionArm": 40,
+      "retentionArmCount": 2,
+      "maximum": 310
+    },
+    "replay": {
+      "generationOrOperatorCandidateMaximumPerArm": 2,
+      "generationOrOperatorArmCount": 5,
+      "generationOrOperatorCandidateMaximum": 10,
+      "DMaximum": 0,
+      "EMaximum": 20,
+      "candidateMaximum": 30,
+      "separateRunsPerCandidate": 5,
+      "dockerEvaluationMaximum": 150
+    },
+    "measurement": {
+      "dockerEvaluationMaximum": 460,
+      "timeoutSecondsMaximum": 13800,
+      "monotonicWallClockSecondsMaximum": 18000
+    },
+    "preparation": {
+      "separateFromMeasurement": true,
+      "dockerBuildMaximum": 24,
+      "dockerInspectOrProbeMaximum": 72,
+      "failedAttemptMaximum": 0,
+      "monotonicWallClockSecondsMaximum": 7200,
+      "recordedCounters": [
+        "builds",
+        "inspects",
+        "probeContainers",
+        "failures",
+        "cleanups",
+        "cleanupFailures",
+        "elapsedSeconds"
+      ]
+    }
+  },
+  "pairing": {
+    "artifactSpecificSpecAndPlan": true,
+    "specAndPlanDigestsMayDiffer": true,
+    "knownSinglePatchFtoPUsesInitialPair": true,
+    "extraPatchArtifactAllowed": false,
+    "cleanResultShareRequires": [
+      "seedDigest",
+      "transformationRequestDigest",
+      "actionSemanticsDigest",
+      "invariantSemanticsDigest",
+      "fixtureStateDigest",
+      "targetArtifactDigest",
+      "evaluationContractKey",
+      "planPolicyDigest"
+    ],
+    "rejectedSeedReplacementAllowed": false
+  },
+  "observations": {
+    "rawTwoSidedCandidate": "Initial registered-identity defect failure plus paired clean pass and known single-patch F-to-P pass; not replay-confirmed and never adopt evidence.",
+    "replayConfirmedCatch": "Raw two-sided candidate plus five separate matching defect replays; Phase 4 scoring state only, not public confirmation.",
+    "D": "Two-sided comparison anchor only; never replay-confirmed or public.",
+    "E": "Every frozen retention-denominator row receives five separate replays; only a valid D anchor, initial E raw candidate, and all five matching E replays enter the retention numerator."
+  },
+  "metrics": {
+    "zeroDenominator": "not-applicable",
+    "rawTwoSidedCandidateRate": "unique raw two-sided canonical truth IDs / metric-eligible canonical truth IDs",
+    "replayConfirmedCatchRate": "unique replay-confirmed canonical truth IDs / metric-eligible canonical truth IDs",
+    "validBugYieldPerAcceptedSeed": "user-accepted unique replay-confirmed truth IDs / accepted seeds entering evaluation",
+    "falseOracleRate": "wrong-expectation user verdicts / user-reviewed candidate failures",
+    "fiveOfFiveRate": "replay-confirmed candidates / candidates whose registered replay began",
+    "operatorIncrementalYield": "replay-confirmed IDs in A union B union C minus P complete raw two-sided IDs",
+    "operatorApplicabilityRate": "accepted applicable transformed specs / recorded operator requests",
+    "interpreterRetention": "E rows with valid D anchor, initial E raw candidate, and five matching E replays / frozen retention denominator rows",
+    "unrunnableRate": "unrunnable started evaluations / started evaluations",
+    "budgetUtilization": "consumed observable units / registered observable-unit limit"
+  },
+  "truthTable": {
+    "rawRequires": [
+      "matching-initial-defect-candidate-failure",
+      "paired-clean-pass",
+      "known-single-patch-F-to-P-pass"
+    ],
+    "confirmedRequires": [
+      "raw-two-sided-candidate",
+      "five-separate-matching-defect-replays"
+    ],
+    "retainedNonSuccessStates": [
+      "miss",
+      "two-sided-failure",
+      "different-violation",
+      "structural-rejection",
+      "unrunnable",
+      "incomplete",
+      "oracle-blocked",
+      "duplicate",
+      "budget-exhausted",
+      "not-run",
+      "clean-regression",
+      "comparison-anchor-failure"
+    ],
+    "operatorBaselineGuard": "Any incomplete registered P initial pair blocks operator incrementality.",
+    "retentionDenominatorMutation": "forbidden-after-checkpointA"
+  },
+  "verdicts": {
+    "firstMatchOrder": [
+      "epoch-abort",
+      "non-repairable-trust-failure-retire",
+      "incomplete-or-zero-denominator-or-coverage-gap-or-normal-budget-exhaustion-or-high-infrastructure-rate-or-clean-regression-or-repairable-issue-revise",
+      "strategy-adopt",
+      "sufficient-counterevidence-retire",
+      "otherwise-revise"
+    ],
+    "generationProcedure": {
+      "adopt": "P replay-confirmed set is a superset of G, P false-oracle rate is no greater, reviewed denominators are nonzero, all G/P pairs and replays are complete, and budgets pass.",
+      "retire": "With adequate complete coverage, P has fewer replay-confirmed IDs and a higher false-oracle rate than G.",
+      "otherwise": "revise"
+    },
+    "interpreterPipeline": {
+      "adopt": "Frozen denominator has at least six rows and one per module, all D anchors are valid, E preserves every identity in five separate replays, trust passes, and budgets pass.",
+      "retire": "With at least six rows, every module represented, valid D anchors, and complete replay, retention is below 0.8; a non-repairable trust failure retires earlier.",
+      "otherwise": "revise"
+    },
+    "operatorStrategy": {
+      "adopt": "A union B union C has at least two replay-confirmed IDs outside P complete raw set, every P pair is complete, no incremental clean failure exists, and budgets pass.",
+      "retire": "With at least six complete applicable transformed specs across every module having an eligible operator row and complete P baseline, incremental yield is zero.",
+      "otherwise": "revise"
+    }
+  },
+  "review": {
+    "independentEligibilityReview": "Before checkpointA, a non-author reviewer recommends source-based eligibility without arm identity or measured results.",
+    "finalHumanVerdictOwner": "user",
+    "userSheetArmMasked": true,
+    "rowOrder": "registered-canonical-truth-id-order",
+    "unmaskAfterVerdict": true,
+    "undecidedTreatment": "retain-row-and-block-dependent-metric-and-verdict"
+  },
+  "fastCheck": {
+    "status": "disabled-outside-approved-policy",
+    "arm": null,
+    "budget": 0
+  },
+  "trustedModuleInterface": {
+    "schemaVersion": "bug-dreamer/v03-benchmark-module-interface/v1",
+    "descriptorPathPattern": "registrations/v0.3/benchmark/<module-id>.json",
+    "interpreterEntrypointPattern": "harness-v0.3/benchmark/<module-id>.mjs",
+    "comparisonEntrypointPattern": "harness-v0.3/benchmark/<module-id>-direct.mjs",
+    "sharedOraclePattern": "harness-v0.3/benchmark/<module-id>-oracle.mjs",
+    "schemaEntrypointPattern": "harness-v0.3/benchmark/<module-id>-schema.mjs",
+    "schemaRequiredExport": "validateActionArguments",
+    "interpreterExports": [
+      "descriptor",
+      "validateActionArguments",
+      "materializeFixture",
+      "executeAction",
+      "evaluateInvariant"
+    ],
+    "comparisonExports": [
+      "descriptor",
+      "materializeComparison"
+    ],
+    "allowedSharedImports": [
+      "oracle",
+      "normalizer",
+      "result-serializer",
+      "canonicalizer",
+      "environment-primitive"
+    ],
+    "forbiddenCrossImports": [
+      "comparison-entrypoint-imports-spec-plan-or-interpreter",
+      "interpreter-entrypoint-imports-direct-materializer"
+    ],
+    "existingPhase2SpecPathModified": false,
+    "futureBenchmarkSpecPath": "src/v03-benchmark-spec.mjs",
+    "resealRule": "Any descriptor, implementation, benchmark spec/plan builder, evaluator, or copied canonicalizer change changes affected evaluation contract keys and requires preparation before measurement."
+  },
+  "executionOrder": {
+    "arms": [
+      "G",
+      "P",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "modules": [
+      "tx",
+      "local-first",
+      "prepaint"
+    ],
+    "withinModule": "registered-seed-or-retention-row-then-canonical-truth-id",
+    "duplicates": "first-registered-canonical-truth-id-per-group",
+    "replacementAfterReplayAttempt": false,
+    "containerConcurrency": 1
+  },
+  "checkpoints": {
+    "commitA": null,
+    "commitB": null,
+    "sealedRef": null
+  },
+  "authorBundle": {
+    "manifestDigest": null,
+    "sessionRecordDigest": null
+  },
+  "images": {
+    "artifactFactoryImageId": null,
+    "evaluatorImageManifestDigest": null,
+    "evaluationContractKeysDigest": null
+  },
+  "benchmarkEpochId": null,
+  "readiness": {
+    "authoringReady": false,
+    "measurementReady": false,
+    "blockers": [
+      "metric-eligible-row-ids-not-frozen",
+      "retention-denominator-row-ids-not-frozen",
+      "adapter-registration-ids-not-frozen",
+      "truth-commitment-not-frozen",
+      "checkpointA-not-recorded",
+      "author-bundle-not-recorded",
+      "image-identities-not-recorded",
+      "checkpointB-not-recorded",
+      "sealed-ref-not-recorded",
+      "benchmark-epoch-id-not-derived"
+    ]
+  }
+}

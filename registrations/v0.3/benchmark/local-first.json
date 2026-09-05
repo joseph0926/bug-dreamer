@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-module-interface/v1",
+  "id": "local-first-benchmark-v1",
+  "moduleId": "local-first",
+  "packageName": "@firsttx/local-first",
+  "importSpecifier": "@firsttx/local-first",
+  "targetRegistrationPath": "registrations/v0.3/packages.json",
+  "targetRegistrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+  "catalogVersion": "firsttx-phase4-local-first-v1",
+  "actions": [
+    {
+      "id": "local.define-model",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.define-model/v1",
+      "argumentSchemaId": "local.define-model-args/v1",
+      "bindingOutputType": "model-handle"
+    },
+    {
+      "id": "local.storage-set",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.storage-set/v1",
+      "argumentSchemaId": "local.storage-set-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "local.subscribe",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.subscribe/v1",
+      "argumentSchemaId": "local.subscribe-args/v1",
+      "bindingOutputType": "unsubscribe-handle"
+    },
+    {
+      "id": "local.replace",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.replace/v1",
+      "argumentSchemaId": "local.replace-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "local.patch",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.patch/v1",
+      "argumentSchemaId": "local.patch-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "local.get-history",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.get-history/v1",
+      "argumentSchemaId": "local.get-history-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "local.get-cached-history",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.get-cached-history/v1",
+      "argumentSchemaId": "local.get-cached-history-args/v1",
+      "bindingOutputType": null
+    },
+    {
+      "id": "local.get-cached-error",
+      "importSpecifier": "@firsttx/local-first",
+      "adapterId": "local.get-cached-error/v1",
+      "argumentSchemaId": "local.get-cached-error-args/v1",
+      "bindingOutputType": null
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "local.indexeddb/v1",
+      "kind": "external-environment",
+      "materializerId": "local.indexeddb/v1",
+      "consumerActionId": "local.define-model",
+      "payloadArgumentPointer": "/indexedDbFixture",
+      "publicActionTrace": ["local.define-model"]
+    },
+    {
+      "id": "local.zod-schema/v1",
+      "kind": "public-test-seam",
+      "materializerId": "local.zod-schema/v1",
+      "consumerActionId": "local.define-model",
+      "payloadArgumentPointer": "/schemaFixture",
+      "publicActionTrace": ["local.define-model"]
+    },
+    {
+      "id": "local.callback-log/v1",
+      "kind": "public-test-seam",
+      "materializerId": "local.callback-log/v1",
+      "consumerActionId": "local.subscribe",
+      "payloadArgumentPointer": "/callbackFixture",
+      "publicActionTrace": ["local.subscribe"]
+    },
+    {
+      "id": "local.broadcast-peer/v1",
+      "kind": "external-environment",
+      "materializerId": "local.broadcast-peer/v1",
+      "consumerActionId": "local.patch",
+      "payloadArgumentPointer": "/broadcastFixture",
+      "publicActionTrace": ["local.patch"]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "local.staleness-from-age-and-ttl/proposed-v1",
+      "evaluatorId": "local.staleness/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/local-first/tests/model.test.ts:271-318; packages/local-first/tests/model-ttl-optional.test.ts:29-79",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/local-first/src/types.ts:68-79"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "local.error-transition-notifies/proposed-v1",
+      "evaluatorId": "local.error-transition-notifies/v1",
+      "sourceKind": "existing-test",
+      "sourceRef": "packages/local-first/tests/model.test.ts:418-446",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/local-first/src/model.ts:16-34"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "local.ignore-self-broadcast/proposed-v1",
+      "evaluatorId": "local.ignore-self-broadcast/v1",
+      "sourceKind": "documentation",
+      "sourceRef": "packages/local-first/README.md:458-476",
+      "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+      "authoredBeforeGeneration": true,
+      "visibility": "public",
+      "strength": "normative",
+      "corroboratingRefs": ["packages/local-first/tests/broadcast.test.ts:96-117"],
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "local-first-stale-flag-inverted",
+      "materializerId": "local.staleness/direct-v1-through-public-root",
+      "invariantId": "local.staleness-from-age-and-ttl/proposed-v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "local-first-error-not-notified",
+      "materializerId": "local.error-notification/direct-v1-through-public-root",
+      "invariantId": "local.error-transition-notifies/proposed-v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "local-first-self-broadcast-not-filtered",
+      "materializerId": "local.self-broadcast/direct-v1-through-public-root",
+      "invariantId": "local.ignore-self-broadcast/proposed-v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    },
+    {
+      "id": "synthetic-local-first-nominal",
+      "materializerId": "local.synthetic-staleness/direct-v1-through-public-root",
+      "invariantId": "local.staleness-from-age-and-ttl/proposed-v1",
+      "normalizedObservedKind": "returned-value",
+      "observedFields": [{ "name": "value", "type": "json" }]
+    }
+  ]
+}

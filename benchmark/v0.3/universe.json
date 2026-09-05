@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-universe/v1",
+  "status": "source-reviewed-unmeasured",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sources": {
+    "inventory": { "path": "benchmark/v0.3/phase4-inventory.draft.json", "sha256": "898a82d28e534a839886de993bc8bfeca59ca876516e923156bebd3e52aaedbe" },
+    "adapterReview": { "path": "registrations/v0.3/benchmark/adapter-proposals.json", "sha256": "1f10b34fdf3e57f62b57673e55b5f6adeb7b8f7e5f66c1e10108069cbacf762c" }
+  },
+  "metricEligibleTruthIds": [
+    "tx-rollback-forward-order",
+    "tx-reuse-after-rollback-allowed",
+    "tx-compensation-errors-swallowed",
+    "tx-preaborted-signal-ignored",
+    "tx-commit-after-rollback-allowed",
+    "tx-retry-exhausted-drops-error-history",
+    "tx-completed-steps-never-tracked",
+    "prepaint-route-prefix-overcapture",
+    "prepaint-expired-snapshot-kept",
+    "prepaint-oversize-snapshot-kept",
+    "local-first-stale-flag-inverted",
+    "local-first-error-not-notified",
+    "prepaint-relative-route-accepted",
+    "local-first-self-broadcast-not-filtered",
+    "tx-retry-skips-final-attempt"
+  ],
+  "retentionRows": [
+    { "rowId": "tx-rollback-forward-order", "moduleId": "tx", "canonicalTruthId": "tx-rollback-forward-order", "duplicateGroup": "tx-rollback-forward-order" },
+    { "rowId": "tx-reuse-after-rollback-allowed", "moduleId": "tx", "canonicalTruthId": "tx-reuse-after-rollback-allowed", "duplicateGroup": "tx-reuse-after-rollback" },
+    { "rowId": "tx-compensation-errors-swallowed", "moduleId": "tx", "canonicalTruthId": "tx-compensation-errors-swallowed", "duplicateGroup": "tx-compensation-errors-swallowed" },
+    { "rowId": "tx-preaborted-signal-ignored", "moduleId": "tx", "canonicalTruthId": "tx-preaborted-signal-ignored", "duplicateGroup": "tx-preaborted-signal" },
+    { "rowId": "tx-commit-after-rollback-allowed", "moduleId": "tx", "canonicalTruthId": "tx-commit-after-rollback-allowed", "duplicateGroup": "tx-commit-after-rollback" },
+    { "rowId": "tx-retry-exhausted-drops-error-history", "moduleId": "tx", "canonicalTruthId": "tx-retry-exhausted-drops-error-history", "duplicateGroup": "tx-retry-error-history" },
+    { "rowId": "tx-completed-steps-never-tracked", "moduleId": "tx", "canonicalTruthId": "tx-completed-steps-never-tracked", "duplicateGroup": "tx-completed-steps-tracking" },
+    { "rowId": "prepaint-route-prefix-overcapture", "moduleId": "prepaint", "canonicalTruthId": "prepaint-route-prefix-overcapture", "duplicateGroup": "prepaint-route-prefix" },
+    { "rowId": "prepaint-expired-snapshot-kept", "moduleId": "prepaint", "canonicalTruthId": "prepaint-expired-snapshot-kept", "duplicateGroup": "prepaint-expired-snapshot" },
+    { "rowId": "prepaint-oversize-snapshot-kept", "moduleId": "prepaint", "canonicalTruthId": "prepaint-oversize-snapshot-kept", "duplicateGroup": "prepaint-oversize-snapshot" },
+    { "rowId": "local-first-stale-flag-inverted", "moduleId": "local-first", "canonicalTruthId": "local-first-stale-flag-inverted", "duplicateGroup": "local-first-stale-flag" },
+    { "rowId": "local-first-error-not-notified", "moduleId": "local-first", "canonicalTruthId": "local-first-error-not-notified", "duplicateGroup": "local-first-error-notified" },
+    { "rowId": "prepaint-relative-route-accepted", "moduleId": "prepaint", "canonicalTruthId": "prepaint-relative-route-accepted", "duplicateGroup": "prepaint-relative-route" },
+    { "rowId": "local-first-self-broadcast-not-filtered", "moduleId": "local-first", "canonicalTruthId": "local-first-self-broadcast-not-filtered", "duplicateGroup": "local-first-self-broadcast" },
+    { "rowId": "tx-retry-skips-final-attempt", "moduleId": "tx", "canonicalTruthId": "tx-retry-skips-final-attempt", "duplicateGroup": "tx-retry-final-attempt" }
+  ],
+  "developmentDiagnostics": [
+    {
+      "rowId": "tx-total-timeout-resets-per-step",
+      "moduleId": "tx",
+      "canonicalTruthId": "tx-total-timeout-resets-per-step",
+      "duplicateGroup": "tx-total-timeout",
+      "reason": "development-exposed-phase3-anchor-excluded-from-adoption-and-retention"
+    }
+  ],
+  "blockedRows": [
+    { "rowId": "tx-concurrent-step-guard-removed", "moduleId": "tx", "duplicateGroup": "tx-concurrent-step-guard", "reasons": ["oracle-implementation-only"] },
+    { "rowId": "local-first-history-change-not-reflected", "moduleId": "local-first", "duplicateGroup": "local-first-history-change-not-reflected", "reasons": ["missing-public-action", "oracle-implementation-only"] },
+    { "rowId": "local-first-cache-unsubscribe-noop", "moduleId": "local-first", "duplicateGroup": "local-first-cache-unsubscribe", "reasons": ["oracle-strength-unreviewed"] },
+    { "rowId": "local-first-unsubscribe-removes-all", "moduleId": "local-first", "duplicateGroup": "local-first-unsubscribe-one", "reasons": ["missing-public-action", "oracle-strength-unreviewed"] }
+  ],
+  "auditRows": [
+    { "rowId": "tx-rollback-forward-order", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-total-timeout-resets-per-step", "moduleId": "tx", "disposition": "development-diagnostic-only" },
+    { "rowId": "tx-reuse-after-rollback-allowed", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-compensation-errors-swallowed", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-preaborted-signal-ignored", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-concurrent-step-guard-removed", "moduleId": "tx", "disposition": "blocked" },
+    { "rowId": "tx-commit-after-rollback-allowed", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-retry-exhausted-drops-error-history", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "tx-completed-steps-never-tracked", "moduleId": "tx", "disposition": "metric-and-retention" },
+    { "rowId": "prepaint-route-prefix-overcapture", "moduleId": "prepaint", "disposition": "metric-and-retention" },
+    { "rowId": "prepaint-expired-snapshot-kept", "moduleId": "prepaint", "disposition": "metric-and-retention" },
+    { "rowId": "prepaint-oversize-snapshot-kept", "moduleId": "prepaint", "disposition": "metric-and-retention" },
+    { "rowId": "local-first-stale-flag-inverted", "moduleId": "local-first", "disposition": "metric-and-retention" },
+    { "rowId": "local-first-history-change-not-reflected", "moduleId": "local-first", "disposition": "blocked" },
+    { "rowId": "local-first-cache-unsubscribe-noop", "moduleId": "local-first", "disposition": "blocked" },
+    { "rowId": "local-first-error-not-notified", "moduleId": "local-first", "disposition": "metric-and-retention" },
+    { "rowId": "prepaint-relative-route-accepted", "moduleId": "prepaint", "disposition": "metric-and-retention" },
+    { "rowId": "local-first-self-broadcast-not-filtered", "moduleId": "local-first", "disposition": "metric-and-retention" },
+    { "rowId": "local-first-unsubscribe-removes-all", "moduleId": "local-first", "disposition": "blocked" },
+    { "rowId": "tx-retry-skips-final-attempt", "moduleId": "tx", "disposition": "metric-and-retention" }
+  ],
+  "runtimeOutcomeMayChangeMembership": false,
+  "measurementState": "not-started"
+}

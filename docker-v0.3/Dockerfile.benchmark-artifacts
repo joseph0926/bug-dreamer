@@ -1,0 +1,18 @@
+FROM node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203 AS factory
+
+RUN corepack install --global pnpm@11.17.0 && corepack enable pnpm
+WORKDIR /target
+COPY target/ ./
+RUN pnpm install --frozen-lockfile
+
+COPY preparation/manifest.json /preparation/manifest.json
+COPY preparation/inventory.json /preparation/inventory.json
+COPY preparation/packages.json /preparation/packages.json
+COPY harness-v0.3/benchmark-build/materialize-artifacts.mjs /preparation/materialize-artifacts.mjs
+RUN node /preparation/materialize-artifacts.mjs
+
+FROM scratch
+ARG TARGET_REVISION
+LABEL org.bug-dreamer.target-revision=$TARGET_REVISION
+LABEL org.bug-dreamer.artifact-factory=true
+COPY --from=factory /prepared /prepared

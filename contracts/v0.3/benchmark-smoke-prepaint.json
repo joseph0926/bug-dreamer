@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-smoke/v1",
+  "id": "synthetic-prepaint-nominal",
+  "moduleId": "prepaint",
+  "developmentOnly": true,
+  "measurementEligible": false,
+  "historicalTruthId": null,
+  "artifactRole": "clean",
+  "comparisonRegistrationId": "synthetic-prepaint-nominal",
+  "invariantRegistrationId": "prepaint.exact-route/v1",
+  "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sourceRefs": [
+    "packages/prepaint/README.md:60-71,118-125,152-171",
+    "packages/prepaint/tests/boot.test.ts:46-68",
+    "packages/prepaint/tests/policy.test.ts:27-33"
+  ],
+  "seed": {
+    "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+    "catalogVersion": "firsttx-phase4-prepaint-v1",
+    "id": "synthetic-prepaint-nominal-seed",
+    "invariantId": "prepaint.exact-route/v1",
+    "actors": ["browser"],
+    "actions": [
+      {
+        "actionId": "prepaint.boot",
+        "actor": "browser",
+        "arguments": {
+          "policy": {
+            "routes": ["/smoke-dashboard"],
+            "ttlMs": 10000,
+            "maxSnapshotBytes": 1024,
+            "includeStyles": true
+          },
+          "browser": {
+            "schemaVersion": "bug-dreamer/prepaint-browser-fixture/v1",
+            "url": "https://benchmark.invalid/smoke-dashboard",
+            "html": "<!doctype html><html><head></head><body><div id=\"root\"></div></body></html>",
+            "clockMs": 1000000000000
+          },
+          "indexeddb": {
+            "schemaVersion": "bug-dreamer/prepaint-indexeddb-fixture/v1",
+            "database": "firsttx-prepaint",
+            "version": 2,
+            "store": "snapshots",
+            "records": [
+              {
+                "route": "/smoke-dashboard",
+                "body": "<main id=\"smoke\">Ready</main>",
+                "timestamp": 999999999999,
+                "styles": []
+              }
+            ]
+          }
+        },
+        "bind": null
+      }
+    ]
+  },
+  "comparisonInput": {
+    "policy": {
+      "routes": ["/smoke-dashboard"],
+      "ttlMs": 10000,
+      "maxSnapshotBytes": 1024,
+      "includeStyles": true
+    },
+    "browser": {
+      "schemaVersion": "bug-dreamer/prepaint-browser-fixture/v1",
+      "url": "https://benchmark.invalid/smoke-dashboard",
+      "html": "<!doctype html><html><head></head><body><div id=\"root\"></div></body></html>",
+      "clockMs": 1000000000000
+    },
+    "indexeddb": {
+      "schemaVersion": "bug-dreamer/prepaint-indexeddb-fixture/v1",
+      "database": "firsttx-prepaint",
+      "version": 2,
+      "store": "snapshots",
+      "records": [
+        {
+          "route": "/smoke-dashboard",
+          "body": "<main id=\"smoke\">Ready</main>",
+          "timestamp": 999999999999,
+          "styles": []
+        }
+      ]
+    }
+  },
+  "runtimePolicy": {
+    "virtualTime": {
+      "originMs": 1000000000000
+    }
+  },
+  "expectedClean": {
+    "execution": "pass",
+    "observedKind": "returned-value",
+    "observedFields": {
+      "value": {
+        "overlayMounted": true,
+        "dataPrepaint": true,
+        "present": true,
+        "payloadDigest": "2269b57da60d66af4bec86ae214b1395f47271dce96718c8080ef5c420c9b576"
+      }
+    }
+  },
+  "preparationProbeRuns": 2
+}

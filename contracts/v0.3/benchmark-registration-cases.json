@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-registration-cases/v1",
+  "registrationMutations": [
+    {
+      "id": "reject-status-claim",
+      "path": ["status"],
+      "value": "measured",
+      "error": "status is invalid"
+    },
+    {
+      "id": "reject-unknown-field",
+      "path": ["unexpected"],
+      "value": true,
+      "error": "fields changed"
+    },
+    {
+      "id": "reject-budget-change",
+      "path": ["budgets", "measurement", "dockerEvaluationMaximum"],
+      "value": 459,
+      "error": "budgets changed"
+    },
+    {
+      "id": "reject-policy-prose-drift",
+      "path": ["metrics", "interpreterRetention"],
+      "value": "some other formula",
+      "error": "static policy changed"
+    },
+    {
+      "id": "reject-empty-metric-ids",
+      "path": ["universe", "metricEligibleRowIds"],
+      "value": [],
+      "error": "must be null or a non-empty array"
+    },
+    {
+      "id": "reject-phase3-score",
+      "path": ["sourceArtifacts", "phase3", "scoreContribution"],
+      "value": true,
+      "error": "Phase 3 reference is invalid"
+    },
+    {
+      "id": "reject-false-readiness",
+      "path": ["readiness", "measurementReady"],
+      "value": true,
+      "error": "Readiness state is not derived"
+    }
+  ],
+  "trustedModuleDescriptor": {
+    "schemaVersion": "bug-dreamer/v03-benchmark-module-interface/v1",
+    "id": "tx-benchmark-v1",
+    "moduleId": "tx",
+    "packageName": "@firsttx/tx",
+    "importSpecifier": "@firsttx/tx",
+    "targetRegistrationPath": "registrations/v0.3/packages.json",
+    "targetRegistrationSha256": "d5d619cb76d5bbab3a797952a08fcc819f6024880ebb7a415d4dde1837236b13",
+    "catalogVersion": "firsttx-phase4-tx-v1",
+    "actions": [
+      {
+        "id": "tx.start",
+        "importSpecifier": "@firsttx/tx",
+        "adapterId": "tx.start/v1",
+        "argumentSchemaId": "tx.start-args/v1",
+        "bindingOutputType": "tx-handle"
+      }
+    ],
+    "fixtures": [
+      {
+        "id": "tx.step-outcome/v1",
+        "kind": "public-test-seam",
+        "materializerId": "tx.step-outcome/v1",
+        "consumerActionId": "tx.start",
+        "payloadArgumentPointer": "",
+        "publicActionTrace": ["tx.start"]
+      }
+    ],
+    "invariants": [
+      {
+        "id": "tx.example",
+        "evaluatorId": "tx.example/v1",
+        "sourceKind": "documentation",
+        "sourceRef": "packages/tx/README.md#example",
+        "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+        "authoredBeforeGeneration": true,
+        "visibility": "public",
+        "strength": "normative",
+        "corroboratingRefs": [],
+        "normalizedObservedKind": "returned-value",
+        "observedFields": [
+          {
+            "name": "value",
+            "type": "json"
+          }
+        ]
+      }
+    ],
+    "comparisons": [
+      {
+        "id": "tx.example-comparison",
+        "materializerId": "tx.example-comparison/v1",
+        "invariantId": "tx.example",
+        "normalizedObservedKind": "returned-value",
+        "observedFields": [
+          {
+            "name": "value",
+            "type": "json"
+          }
+        ]
+      }
+    ]
+  },
+  "trustedModuleMutations": [
+    {
+      "id": "reject-private-import",
+      "path": ["importSpecifier"],
+      "value": "@firsttx/tx/retry",
+      "error": "not the registered public root"
+    },
+    {
+      "id": "reject-private-action-import",
+      "path": ["actions", 0, "importSpecifier"],
+      "value": "@firsttx/tx/retry",
+      "error": "not a registered public specifier"
+    },
+    {
+      "id": "reject-implementation-oracle",
+      "path": ["invariants", 0, "sourceKind"],
+      "value": "implementation-only",
+      "error": "source kind is invalid"
+    },
+    {
+      "id": "reject-comparison-shape-drift",
+      "path": ["comparisons", 0, "normalizedObservedKind"],
+      "value": "thrown-error",
+      "error": "observation contract differs"
+    }
+  ],
+  "measurementRows": {
+    "accepted": {
+      "schemaVersion": "bug-dreamer/v03-benchmark-measurement-row/v1",
+      "epochId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 0,
+      "armId": "G",
+      "moduleId": "tx",
+      "inputId": "g-tx-01",
+      "canonicalTruthId": "tx-rollback-forward-order",
+      "duplicateGroup": "tx-rollback-forward-order",
+      "artifactRole": "clean",
+      "targetArtifactDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "phase": "initial",
+      "replayIndex": null,
+      "executionPath": "interpreter",
+      "specDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "runRecordRef": "evidence/v0.3/phase4/runs/0000.json",
+      "axes": {
+        "specAcceptance": "accepted",
+        "plan": "planned",
+        "evaluator": "evaluated",
+        "execution": "pass"
+      },
+      "observation": {
+        "normalizedObservedKind": "returned-value",
+        "normalizedObservedFields": {
+          "value": true
+        },
+        "violationIdentity": null,
+        "resultPayloadDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "reasonCode": null,
+      "budget": {
+        "charged": true,
+        "evaluationOrdinal": 1
+      }
+    },
+    "rejected": {
+      "schemaVersion": "bug-dreamer/v03-benchmark-measurement-row/v1",
+      "epochId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sequence": 1,
+      "armId": "P",
+      "moduleId": "local-first",
+      "inputId": "p-local-first-01",
+      "canonicalTruthId": "local-first-stale-flag-inverted",
+      "duplicateGroup": "local-first-stale-flag-inverted",
+      "artifactRole": "single-patch-defect",
+      "targetArtifactDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "phase": "initial",
+      "replayIndex": null,
+      "executionPath": "interpreter",
+      "specDigest": null,
+      "planDigest": null,
+      "runRecordRef": null,
+      "axes": {
+        "specAcceptance": "rejected-policy",
+        "plan": "not-run",
+        "evaluator": "not-run",
+        "execution": "not-run"
+      },
+      "observation": null,
+      "reasonCode": "missing-public-fixture",
+      "budget": {
+        "charged": false,
+        "evaluationOrdinal": null
+      }
+    }
+  },
+  "measurementMutations": [
+    {
+      "id": "reject-replay-index",
+      "base": "accepted",
+      "path": ["replayIndex"],
+      "value": 1,
+      "error": "replay index is invalid"
+    },
+    {
+      "id": "reject-downstream-after-rejection",
+      "base": "rejected",
+      "path": ["axes", "execution"],
+      "value": "candidate-failure",
+      "error": "downstream execution"
+    },
+    {
+      "id": "reject-budget-disagreement",
+      "base": "accepted",
+      "path": ["budget", "charged"],
+      "value": false,
+      "error": "charge disagrees"
+    }
+  ],
+  "budgetLedger": {
+    "schemaVersion": "bug-dreamer/v03-benchmark-budget-ledger/v1",
+    "epochId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "generation": {
+      "freshSessions": 2,
+      "submittedTaskTurns": 2,
+      "emittedSeeds": 12,
+      "acceptedSeeds": 12,
+      "operatorRequests": 18,
+      "transformedSpecs": 18
+    },
+    "measurement": {
+      "dockerEvaluations": 460,
+      "replayCandidates": 30,
+      "replayRuns": 150,
+      "elapsedSeconds": 18000
+    },
+    "preparation": {
+      "builds": 24,
+      "inspects": 24,
+      "probeContainers": 48,
+      "failures": 0,
+      "cleanups": 48,
+      "cleanupFailures": 0,
+      "elapsedSeconds": 7200
+    },
+    "stoppedBy": null
+  },
+  "budgetMutations": [
+    {
+      "id": "reject-measurement-overrun",
+      "path": ["measurement", "dockerEvaluations"],
+      "value": 461,
+      "error": "exceeds the approved budget"
+    },
+    {
+      "id": "reject-preparation-retry",
+      "path": ["preparation", "failures"],
+      "value": 1,
+      "error": "exceeds the approved budget"
+    }
+  ]
+}

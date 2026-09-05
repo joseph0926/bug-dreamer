@@ -1,0 +1,564 @@
+{
+  "schemaVersion": "bug-dreamer/v03-phase4-inventory-draft/v1",
+  "status": "draft-static-source-audit",
+  "normative": false,
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sourceInventory": "benchmark/manifest.json",
+  "sourceAudit": {
+    "targetHeadMatchedPinnedRevision": true,
+    "targetWorktreeDirty": true,
+    "dirtyPathsObserved": [
+      "packages/tx/src/hooks.ts",
+      "packages/tx/src/index.ts",
+      "packages/tx/src/retry.ts",
+      "packages/tx/src/transaction.ts",
+      "packages/tx/src/types.ts",
+      "packages/tx/src/utils.ts",
+      "packages/tx/tests/transaction.test.ts",
+      "packages/tx/tests/utils.test.ts"
+    ],
+    "citationReadMode": "Every firsttx citation and line claim was checked from committed blobs using git show f624b09f148c3368a51807f48d3237db20cef9c6:<path>; dirty working-tree file bytes were not used as pinned evidence.",
+    "method": "Static repository reads of committed blobs at the pinned revision only; no target, scenario, Docker, two-sided, or measured benchmark execution was performed.",
+    "limitations": "Eligibility, duplicate identity, observation equivalence, and public reachability remain proposals until registered contracts, adapters, independent review, and measured evidence exist."
+  },
+  "expectedCounts": {
+    "total": 20,
+    "byModule": {
+      "packages/tx": 10,
+      "packages/local-first": 6,
+      "packages/prepaint": 4
+    }
+  },
+  "statusVocabulary": {
+    "confirmed-source": "The cited bytes exist at the pinned revision and independently state or test the claimed behavior.",
+    "current-supported": "The checked-in v0.3 interpreter already has the required action, fixture, and invariant path.",
+    "adapter-candidate": "A public-root or registered exported-subpath path appears statically possible after approved adapter work; execution and eligibility are not claimed.",
+    "review-blocked": "A public action, fixture, independent oracle, or observation-equivalence premise remains unverified.",
+    "development-excluded": "The row was exposed during pipeline development and cannot contribute to blind discovery yield."
+  },
+  "pairedObservationRule": {
+    "armD": "The comparison direct materializer must use declared package exports and allowed environmental seams and emit the registered normalized observation only.",
+    "armE": "The trusted interpreter must execute the row's registered data-only action path and emit the same normalized observation schema.",
+    "equivalence": "D and E must bind the same clean or single-patch artifact, invariant registration, observation kind and allow-listed fields, fixture state digest, and deterministic time or schedule policy. A matching candidate requires the same registered violation identity; private legacy-check output is not an equivalence oracle."
+  },
+  "rows": [
+    {
+      "id": "tx-rollback-forward-order",
+      "module": "packages/tx",
+      "category": "timing",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-rollback-forward-order.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run-with-compensation", "tx.run-with-compensation", "tx.run"],
+        "fixtures": ["registered-step-outcome", "registered-compensation-event-log"],
+        "comparisonMaterializer": "tx.rollback-event-trace/direct-v1",
+        "invariant": "tx.rollback-reverse-completion-order/proposed-v1",
+        "normalizedObservation": "ordered event names including compensation order"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/tx/README.md", "location": "lines 3, 11-13, 136-149", "claim": "Completed steps are compensated in reverse order." },
+          { "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 614-653", "claim": "The mixed failure trace ends with step2-compensate then step1-compensate." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["No compensation callback action or compensation-event observation is currently registered."] },
+      "pairedObservation": "D and E must return the identical ordered compensation trace from the same public startTransaction run.",
+      "duplicate": { "group": "tx-rollback-forward-order", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-adapters", "notFinal": true }
+    },
+    {
+      "id": "tx-total-timeout-resets-per-step",
+      "module": "packages/tx",
+      "category": "timing",
+      "partition": { "proposed": "development", "developmentExposed": true, "exposureRefs": ["benchmark/v0.3/phase3-spike.json", "evidence/v0.3/phase3-spike.json", "evidence/v0.3/phase3-reduction.json"] },
+      "manifestCheck": "benchmark/checks/tx-total-timeout-resets-per-step.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run", "tx.run", "time.advance/v1"],
+        "fixtures": ["tx.step-outcome/v1", "registered-virtual-clock"],
+        "comparisonMaterializer": "tx.total-timeout/direct-v1",
+        "invariant": "tx.total-timeout",
+        "normalizedObservation": "returned-value or thrown-error name and message"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/tx/README.md", "location": "lines 222-239, 516-544", "claim": "timeout is a transaction option and timeout failures use TransactionTimeoutError." },
+          { "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 249-264", "claim": "Earlier step elapsed time counts against a later step." }
+        ]
+      },
+      "support": { "currentInterpreter": "current-supported", "afterApprovedAdapters": "current-supported", "blockers": [] },
+      "pairedObservation": "D and E must observe TransactionTimeoutError on clean and the same returned value violation on the defect under the registered virtual-time path.",
+      "duplicate": { "group": "tx-total-timeout", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "development-excluded", "notFinal": true, "reasons": ["Phase 3 development exposure; retain in the 20-row inventory and retention diagnostics but exclude from blind discovery yield."] }
+    },
+    {
+      "id": "tx-reuse-after-rollback-allowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-reuse-after-rollback-allowed.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run", "tx.run"],
+        "fixtures": ["tx.step-outcome/v1"],
+        "comparisonMaterializer": "tx.terminal-run/direct-v1",
+        "invariant": "tx.no-run-after-rollback/proposed-v1",
+        "normalizedObservation": "final tx.run thrown-error name"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [{ "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 422-452", "claim": "tx.run after rollback rejects with TransactionStateError." }]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Actions exist, but no terminal-state invariant evaluator is registered."] },
+      "pairedObservation": "D and E must normalize only the final run outcome and error name after the same rollback-producing prefix.",
+      "duplicate": { "group": "tx-reuse-after-rollback", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-invariant-registration", "notFinal": true }
+    },
+    {
+      "id": "tx-compensation-errors-swallowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-compensation-errors-swallowed.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run-with-compensation", "tx.run"],
+        "fixtures": ["registered-step-outcome", "registered-compensation-outcome"],
+        "comparisonMaterializer": "tx.compensation-failure/direct-v1",
+        "invariant": "tx.compensation-failure-surfaced/proposed-v1",
+        "normalizedObservation": "thrown-error name and registered failure count"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/tx/README.md", "location": "lines 466-470, 734-736", "claim": "CompensationFailedError contains compensation failures." },
+          { "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 326-419, 455-478", "claim": "Compensation failures are surfaced and collected." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["No compensation outcome seam or structured compensation-error observation exists."] },
+      "pairedObservation": "D and E must emit the same CompensationFailedError name and allow-listed failure count from public tx.run calls.",
+      "duplicate": { "group": "tx-compensation-errors-swallowed", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-adapters", "notFinal": true }
+    },
+    {
+      "id": "tx-preaborted-signal-ignored",
+      "module": "packages/tx",
+      "category": "concurrency",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-preaborted-signal-ignored.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "env.abort-controller-create", "env.abort", "tx.run-with-signal"],
+        "fixtures": ["registered-preaborted-signal", "registered-step-call-counter"],
+        "comparisonMaterializer": "tx.preaborted-signal/direct-v1",
+        "invariant": "tx.preaborted-signal-short-circuits/proposed-v1",
+        "normalizedObservation": "thrown error message and step call count"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "public-type", "path": "packages/tx/src/types.ts", "location": "StepOptions.signal declaration", "claim": "tx.run accepts an AbortSignal environmental input." },
+          { "kind": "existing-test", "path": "packages/tx/tests/retry.test.ts", "location": "lines 253-263", "claim": "An already-aborted signal rejects immediately without invoking the step." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Seed schema and tx.run adapter do not accept a registered AbortSignal fixture."] },
+      "pairedObservation": "D and E must bind the same abort reason and report both final error and zero step invocations.",
+      "duplicate": { "group": "tx-preaborted-signal", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-adapters", "notFinal": true }
+    },
+    {
+      "id": "tx-concurrent-step-guard-removed",
+      "module": "packages/tx",
+      "category": "concurrency",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-concurrent-step-guard-removed.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run", "tx.run", "schedule.release-order/v1"],
+        "fixtures": ["registered-deferred-step-completion"],
+        "comparisonMaterializer": "tx.concurrent-run/direct-v1",
+        "invariant": "tx.single-inflight-run/unconfirmed-v1",
+        "normalizedObservation": "second run outcome and thrown-error name"
+      },
+      "oracle": {
+        "assessment": "implementation-only-unconfirmed",
+        "sources": [{ "kind": "implementation-only", "path": "packages/tx/src/transaction.ts", "location": "in-flight guard around run", "claim": "The implementation rejects overlapping runs, but the audited public README and tests do not independently specify this exact guarantee." }],
+        "unresolved": "The legacy check's generic 'single in-flight' citation is not an independent public oracle. Find a normative source or two independent corroborating sources before eligibility."
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "review-blocked", "blockers": ["Schedule control exists, but an independent public invariant is missing."] },
+      "pairedObservation": "If oracle eligibility is later established, D and E must pair the same two deferred public tx.run calls and normalize the second outcome.",
+      "duplicate": { "group": "tx-concurrent-step-guard", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "exclude-candidate", "notFinal": true, "reasons": ["oracle-not-independent"] }
+    },
+    {
+      "id": "tx-commit-after-rollback-allowed",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-commit-after-rollback-allowed.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run", "tx.commit"],
+        "fixtures": ["tx.step-outcome/v1"],
+        "comparisonMaterializer": "tx.terminal-commit/direct-v1",
+        "invariant": "tx.no-commit-after-rollback/proposed-v1",
+        "normalizedObservation": "commit-result status and error name"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [{ "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 522-539", "claim": "commit after rollback throws TransactionStateError." }]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["tx.commit is interpreted, but no commit-result invariant evaluator is registered."] },
+      "pairedObservation": "D and E must normalize the commit result after the same rollback-producing run.",
+      "duplicate": { "group": "tx-commit-after-rollback", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-invariant-registration", "notFinal": true }
+    },
+    {
+      "id": "tx-retry-exhausted-drops-error-history",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-retry-exhausted-drops-error-history.test.ts",
+      "legacyImport": { "specifier": "@target/retry", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run-with-attempt-sequence"],
+        "fixtures": ["registered-per-attempt-outcomes", "registered-virtual-clock"],
+        "comparisonMaterializer": "tx.retry-history/direct-v1-through-public-run",
+        "invariant": "tx.retry-error-history/proposed-v1",
+        "normalizedObservation": "RetryExhaustedError attempts and ordered error messages"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 83-105", "claim": "Public tx.run retry exposes all attempt errors." },
+          { "kind": "existing-test", "path": "packages/tx/tests/retry.test.ts", "location": "lines 83-104", "claim": "RetryExhaustedError contains chronological per-attempt errors." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check imports a private retry subpath; replacement must use public tx.run.", "Current step fixture repeats one fixed outcome and the evaluator allow-list omits error arrays."] },
+      "pairedObservation": "D and E must use public tx.run and emit identical attempts and ordered messages without executing the private retry helper.",
+      "duplicate": { "group": "tx-retry-error-history", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "tx-completed-steps-never-tracked",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-completed-steps-never-tracked.test.ts",
+      "legacyImport": { "specifier": "@target/index", "boundary": "legacy-alias-public-root-equivalent", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run-with-compensation", "tx.run"],
+        "fixtures": ["registered-step-outcome", "registered-compensation-event-log"],
+        "comparisonMaterializer": "tx.completed-step-rollback/direct-v1",
+        "invariant": "tx.completed-steps-compensated/proposed-v1",
+        "normalizedObservation": "ordered event names including completed-step compensation"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/tx/README.md", "location": "lines 136-149", "claim": "Completed steps are rolled back when a later step fails." },
+          { "kind": "existing-test", "path": "packages/tx/tests/transaction.test.ts", "location": "lines 614-653", "claim": "Completed-step compensations appear after the failure." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["No compensation callback fixture or event observation is registered."] },
+      "pairedObservation": "D and E must emit the same completed-step compensation trace.",
+      "duplicate": { "group": "tx-completed-steps-tracking", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-adapters", "notFinal": true }
+    },
+    {
+      "id": "prepaint-route-prefix-overcapture",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/prepaint-route-prefix-overcapture.test.ts",
+      "legacyImport": { "specifier": "@target/policy", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["prepaint.setup-capture", "env.dispatch-capture-trigger", "env.read-snapshot-store"],
+        "fixtures": ["registered-DOM-location", "registered-IndexedDB", "registered-capture-trigger"],
+        "comparisonMaterializer": "prepaint.route-capture/direct-v1-through-public-root",
+        "invariant": "prepaint.exact-route-match/proposed-v1",
+        "normalizedObservation": "whether a snapshot was stored for the non-exact route"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/prepaint/README.md", "location": "line 71", "claim": "Route matching is exact." },
+          { "kind": "existing-test", "path": "packages/prepaint/tests/policy.test.ts", "location": "lines 27-33", "claim": "A prefix route is not allowed." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check calls private policy helpers.", "A public setupCapture path and deterministic DOM/IndexedDB observation must be registered and proven to reach the edited policy code."] },
+      "pairedObservation": "D and E must use public setupCapture and observe the same store write or absence for an exact versus prefix route pair.",
+      "duplicate": { "group": "prepaint-route-prefix", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "prepaint-expired-snapshot-kept",
+      "module": "packages/prepaint",
+      "category": "timing",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/prepaint-expired-snapshot-kept.test.ts",
+      "legacyImport": { "specifier": "@target/policy", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["env.materialize-prepaint-snapshot", "prepaint.setup-capture", "env.read-snapshot-store"],
+        "fixtures": ["registered-IndexedDB-snapshot", "registered-virtual-clock", "registered-DOM-location"],
+        "comparisonMaterializer": "prepaint.prune-expired/direct-v1-through-public-root",
+        "invariant": "prepaint.expired-snapshot-pruned/proposed-v1",
+        "normalizedObservation": "stored snapshot presence after public prune trigger"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/prepaint/README.md", "location": "lines 71, 162", "claim": "The policy governs stored-record pruning and includes ttlMs." },
+          { "kind": "existing-test", "path": "packages/prepaint/tests/policy.test.ts", "location": "lines 54-81", "claim": "A snapshot older than ttlMs is pruned." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check calls private policy helpers.", "Public setupCapture-triggered pruning and store inspection need registered fixture/materializer contracts."] },
+      "pairedObservation": "D and E must materialize the same timestamped snapshot and observe identical post-prune presence through the public setup path.",
+      "duplicate": { "group": "prepaint-expired-snapshot", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "prepaint-oversize-snapshot-kept",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/prepaint-oversize-snapshot-kept.test.ts",
+      "legacyImport": { "specifier": "@target/policy", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["env.materialize-prepaint-snapshot", "prepaint.setup-capture", "env.read-snapshot-store"],
+        "fixtures": ["registered-IndexedDB-snapshot", "registered-multibyte-payload", "registered-DOM-location"],
+        "comparisonMaterializer": "prepaint.prune-oversize/direct-v1-through-public-root",
+        "invariant": "prepaint.utf8-size-limit/proposed-v1",
+        "normalizedObservation": "stored snapshot presence after public prune trigger"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "documentation", "path": "packages/prepaint/README.md", "location": "lines 71, 163", "claim": "maxSnapshotBytes measures the UTF-8 JSON payload and governs pruning." },
+          { "kind": "existing-test", "path": "packages/prepaint/tests/policy.test.ts", "location": "lines 43-52, 72-81", "claim": "Multibyte payload size and size-limit pruning are asserted." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check calls private policy helpers.", "Public pruning path and deterministic UTF-8 snapshot fixture are not registered."] },
+      "pairedObservation": "D and E must bind the same canonical UTF-8 payload bytes and observe identical post-prune store state.",
+      "duplicate": { "group": "prepaint-oversize-snapshot", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "local-first-stale-flag-inverted",
+      "module": "packages/local-first",
+      "category": "timing",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-stale-flag-inverted.test.ts",
+      "legacyImport": { "specifier": "@target/cache-manager", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.storage-set", "local.get-history"],
+        "fixtures": ["registered-IndexedDB-record", "registered-virtual-clock", "registered-zod-schema"],
+        "comparisonMaterializer": "local.staleness/direct-v1-through-public-root",
+        "invariant": "local.staleness-from-age-and-ttl/proposed-v1",
+        "normalizedObservation": "history age and isStale"
+      },
+      "oracle": {
+        "assessment": "confirmed-source-with-boundary-conflict",
+        "sources": [
+          { "kind": "public-type", "path": "packages/local-first/src/types.ts", "location": "lines 68-79", "claim": "ModelHistory exposes age and isStale; its comment says age > ttl." },
+          { "kind": "existing-test", "path": "packages/local-first/tests/model.test.ts", "location": "lines 271-318", "claim": "Fresh data is not stale and data beyond TTL is stale." },
+          { "kind": "existing-test", "path": "packages/local-first/tests/model-ttl-optional.test.ts", "location": "lines 29-79", "claim": "TTL controls staleness, including zero and Infinity cases." }
+        ],
+        "unresolved": "The exact age-equals-TTL boundary conflicts across comments, tests, and implementation; benchmark values must avoid that boundary or register a reviewed rule."
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check imports CacheManager privately.", "Public defineModel, Storage, and getHistory actions plus IndexedDB and virtual-time fixtures are not registered."] },
+      "pairedObservation": "D and E must use public defineModel/Storage and observe the same age/isStale away from the disputed equality boundary.",
+      "duplicate": { "group": "local-first-stale-flag", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization-and-boundary-rule", "notFinal": true }
+    },
+    {
+      "id": "local-first-history-change-not-reflected",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-history-change-not-reflected.test.ts",
+      "legacyImport": { "specifier": "@target/cache-manager", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.materialize-history-only-change", "local.get-combined-snapshot"],
+        "fixtures": ["registered-IndexedDB-record", "registered-history-only-transition"],
+        "comparisonMaterializer": "local.history-snapshot/direct-v1-through-public-root",
+        "invariant": "local.combined-snapshot-reflects-history/unconfirmed-v1",
+        "normalizedObservation": "combined snapshot history fields and optional identity token"
+      },
+      "oracle": {
+        "assessment": "implementation-only-unconfirmed",
+        "sources": [
+          { "kind": "public-type", "path": "packages/local-first/src/model.ts", "location": "lines 16-34", "claim": "The public Model surface exposes getCachedHistory and getCombinedSnapshot." },
+          { "kind": "implementation-only", "path": "packages/local-first/src/cache-manager.ts", "location": "combined snapshot memoization guard", "claim": "Referential replacement on a history-only change is currently an implementation rule, not an independently located public promise." }
+        ],
+        "unresolved": "No public action that deterministically produces only the required history transition and no independent referential-identity oracle were confirmed. Historical nightmare 5 is itself provisional internal-contract evidence, not a substitute oracle."
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "review-blocked", "blockers": ["Private CacheManager check.", "Missing public history-only action.", "Independent oracle unconfirmed."] },
+      "pairedObservation": "Do not define D/E equivalence through private setHistory; first establish a public history-only transition and a reviewed normalized observation.",
+      "duplicate": { "group": "local-first-history-change-not-reflected", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "exclude-candidate", "notFinal": true, "reasons": ["missing-public-action", "oracle-not-independent"] }
+    },
+    {
+      "id": "local-first-cache-unsubscribe-noop",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-cache-unsubscribe-noop.test.ts",
+      "legacyImport": { "specifier": "@target/cache-manager", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.subscribe", "local.unsubscribe", "local.replace"],
+        "fixtures": ["registered-zod-schema", "registered-IndexedDB", "registered-callback-counter"],
+        "comparisonMaterializer": "local.unsubscribe/direct-v1-through-public-root",
+        "invariant": "local.unsubscribe-stops-notification/proposed-v1",
+        "normalizedObservation": "callback count before and after unsubscribe"
+      },
+      "oracle": {
+        "assessment": "corroboration-review-needed",
+        "sources": [
+          { "kind": "documentation", "path": "packages/local-first/README.md", "location": "line 167", "claim": "subscribe returns an unsubscribe function for change listening." },
+          { "kind": "public-type", "path": "packages/local-first/src/model.ts", "location": "lines 16-34", "claim": "Public Model.subscribe returns () => void." },
+          { "kind": "existing-test", "path": "packages/local-first/tests/broadcast.test.ts", "location": "lines 96-117", "claim": "Public Model subscription returns a cleanup function, but this test does not assert that later notifications stop after cleanup." }
+        ],
+        "unresolved": "The pinned documentation and public type expose a returned function but do not explicitly specify post-unsubscribe notification behavior. Independent-source strength must be reviewed before metric eligibility."
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "review-blocked", "blockers": ["Legacy check imports CacheManager privately.", "Public model subscription handles and deterministic notification actions are not registered.", "Oracle strength requires review."] },
+      "pairedObservation": "D and E must subscribe and unsubscribe through public Model and compare the same callback-count trace.",
+      "duplicate": { "group": "local-first-cache-unsubscribe", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "exclude-candidate-pending-oracle-review", "notFinal": true, "reasons": ["oracle-strength-unconfirmed"] }
+    },
+    {
+      "id": "local-first-error-not-notified",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-error-not-notified.test.ts",
+      "legacyImport": { "specifier": "@target/cache-manager", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.storage-set", "local.subscribe", "local.get-cached-error"],
+        "fixtures": ["registered-invalid-IndexedDB-record", "registered-zod-schema", "registered-callback-counter"],
+        "comparisonMaterializer": "local.error-notification/direct-v1-through-public-root",
+        "invariant": "local.error-transition-notifies/proposed-v1",
+        "normalizedObservation": "callback count and cached error name"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "existing-test", "path": "packages/local-first/tests/model.test.ts", "location": "lines 418-446", "claim": "A validation error reached through public Model.subscribe notifies and becomes the cached error." },
+          { "kind": "public-type", "path": "packages/local-first/src/model.ts", "location": "lines 16-34", "claim": "Public Model exposes subscribe and getCachedError." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check imports CacheManager privately.", "Public model, storage fixture, and callback observations are not registered."] },
+      "pairedObservation": "D and E must induce the same invalid stored record through an allowed fixture and normalize callback count plus error name.",
+      "duplicate": { "group": "local-first-error-notified", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "prepaint-relative-route-accepted",
+      "module": "packages/prepaint",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/prepaint-relative-route-accepted.test.ts",
+      "legacyImport": { "specifier": "@target/policy", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["prepaint.vite-plugin-create"],
+        "fixtures": [],
+        "comparisonMaterializer": "prepaint.relative-policy/direct-v1-through-exported-vite-subpath",
+        "invariant": "prepaint.routes-absolute/proposed-v1",
+        "normalizedObservation": "thrown-error name and allow-listed message token"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "existing-test", "path": "packages/prepaint/tests/policy.test.ts", "location": "lines 35-40", "claim": "Relative routes are rejected as invalid." },
+          { "kind": "public-type", "path": "packages/prepaint/src/types.ts", "location": "PrepaintPolicy.routes declaration", "claim": "The policy is public input; the rejection rule needs the existing test as its normative behavior source." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check calls private normalizePrepaintPolicy, which returns null rather than proving the public error channel.", "The exported @firsttx/prepaint/plugin/vite path must be statically registered and shown to reach validate/serialize policy before eligibility."] },
+      "pairedObservation": "D and E must both use the registered exported Vite subpath and normalize the same invalid-policy failure, not the private policy helper return value.",
+      "duplicate": { "group": "prepaint-relative-route", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "local-first-self-broadcast-not-filtered",
+      "module": "packages/local-first",
+      "category": "concurrency",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-self-broadcast-not-filtered.test.ts",
+      "legacyImport": { "specifier": "@target/broadcast", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.subscribe", "local.replace", "local.patch"],
+        "fixtures": ["registered-echoing-BroadcastChannel", "registered-IndexedDB", "registered-callback-counter"],
+        "comparisonMaterializer": "local.self-broadcast/direct-v1-through-public-root",
+        "invariant": "local.ignore-self-broadcast/proposed-v1",
+        "normalizedObservation": "subscriber callback count after local echo"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "existing-test", "path": "packages/local-first/tests/broadcast.test.ts", "location": "lines 96-117", "claim": "A model does not reload or notify for its own broadcast." },
+          { "kind": "documentation", "path": "packages/local-first/README.md", "location": "lines 460-476", "claim": "BroadcastChannel propagates changes to other tabs." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check imports ModelBroadcaster privately.", "A registered BroadcastChannel environment seam must echo the sender deterministically while public Model operations remain the only product actions."] },
+      "pairedObservation": "D and E must share the same deterministic echo-channel transcript and compare the public subscriber callback count.",
+      "duplicate": { "group": "local-first-self-broadcast", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    },
+    {
+      "id": "local-first-unsubscribe-removes-all",
+      "module": "packages/local-first",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/local-first-unsubscribe-removes-all.test.ts",
+      "legacyImport": { "specifier": "@target/broadcast", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["local.define-model", "local.subscribe", "local.subscribe", "local.unsubscribe-one", "env.deliver-external-broadcast"],
+        "fixtures": ["registered-BroadcastChannel", "registered-IndexedDB", "registered-callback-counters"],
+        "comparisonMaterializer": "local.multi-subscriber-unsubscribe/direct-v1-through-public-root",
+        "invariant": "local.unsubscribe-is-listener-scoped/unconfirmed-v1",
+        "normalizedObservation": "callback count for removed and surviving listeners"
+      },
+      "oracle": {
+        "assessment": "corroboration-review-needed",
+        "sources": [
+          { "kind": "documentation", "path": "packages/local-first/README.md", "location": "line 167", "claim": "subscribe returns an unsubscribe function." },
+          { "kind": "public-type", "path": "packages/local-first/src/model.ts", "location": "lines 16-34", "claim": "Each public subscribe call returns its own function." }
+        ],
+        "unresolved": "No pinned public test was confirmed to assert two same-key listeners with one removed. Independent-source strength must be reviewed rather than inferred from conventional unsubscribe semantics."
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "review-blocked", "blockers": ["Legacy check imports ModelBroadcaster privately.", "Public two-listener delivery path needs an environmental broadcast seam.", "Oracle strength requires review."] },
+      "pairedObservation": "If admitted, D and E must unsubscribe through the returned public handle and compare both callback counters after one external delivery.",
+      "duplicate": { "group": "local-first-unsubscribe-one", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "exclude-candidate-pending-oracle-review", "notFinal": true, "reasons": ["oracle-strength-unconfirmed"] }
+    },
+    {
+      "id": "tx-retry-skips-final-attempt",
+      "module": "packages/tx",
+      "category": "cross-feature",
+      "partition": { "proposed": "existingPublic", "developmentExposed": false },
+      "manifestCheck": "benchmark/checks/tx-retry-skips-final-attempt.test.ts",
+      "legacyImport": { "specifier": "@target/retry", "boundary": "private-subpath", "confirmed": true },
+      "required": {
+        "actions": ["tx.start", "tx.run-with-attempt-sequence"],
+        "fixtures": ["registered-per-attempt-outcomes", "registered-virtual-clock", "registered-step-call-counter"],
+        "comparisonMaterializer": "tx.retry-final-attempt/direct-v1-through-public-run",
+        "invariant": "tx.retry-may-succeed-on-final-attempt/proposed-v1",
+        "normalizedObservation": "returned value and attempt count"
+      },
+      "oracle": {
+        "assessment": "confirmed-source",
+        "sources": [
+          { "kind": "existing-test", "path": "packages/tx/tests/retry.test.ts", "location": "lines 47-63", "claim": "A step may succeed on the last configured attempt." },
+          { "kind": "documentation", "path": "packages/tx/README.md", "location": "lines 247-268", "claim": "maxAttempts is the maximum number of retry attempts exposed through tx.run options." }
+        ]
+      },
+      "support": { "currentInterpreter": "not-supported", "afterApprovedAdapters": "adapter-candidate", "blockers": ["Legacy check imports a private retry subpath.", "Current tx.step-outcome fixture cannot vary by attempt; replacement must use public tx.run with a registered outcome sequence."] },
+      "pairedObservation": "D and E must run the same registered fail, fail, return sequence through public tx.run and emit the same return value and call count.",
+      "duplicate": { "group": "tx-retry-final-attempt", "historicalNightmareRefs": "unknown" },
+      "metricEligibility": { "proposed": "candidate-after-public-rematerialization", "notFinal": true }
+    }
+  ]
+}

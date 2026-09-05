@@ -1,0 +1,253 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-adapter-proposals/v1",
+  "status": "static-proposal-not-registration",
+  "normative": false,
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "inventorySource": {
+    "path": "benchmark/v0.3/phase4-inventory.draft.json",
+    "sha256AtReview": "898a82d28e534a839886de993bc8bfeca59ca876516e923156bebd3e52aaedbe"
+  },
+  "sourceAudit": {
+    "readMode": "All firsttx source, test, package, and README evidence was read with git show f624b09f148c3368a51807f48d3237db20cef9c6:<path>.",
+    "targetWorktreeUsed": false,
+    "targetWorktreeDirty": true,
+    "executionPerformed": false,
+    "claim": "This file proposes registered data and trusted adapters. It contains no runtime result, two-sided result, defect catch, public finding, or new human verdict."
+  },
+  "trustRules": {
+    "productImports": ["@firsttx/tx", "@firsttx/local-first", "@firsttx/prepaint", "@firsttx/prepaint/plugin/vite"],
+    "forbidden": ["private package subpaths", "target source imports", "private field access", "prototype patching", "product-code mutation", "generator-authored functions or assertions"],
+    "environmentSeams": "Trusted fixtures may install standards-facing globals before importing the product and may materialize documented IndexedDB state. They may not call product-private modules or change product prototypes.",
+    "metricEligibilitySeparation": "Denominator eligibility is frozen from pre-generation oracle strength, public-path reachability, development exclusion, and duplicate policy. Later two-sided execution determines runtime catch or invalidity but must not retroactively choose the denominator from outcomes. No row becomes caught, retained, or publishable until registered two-sided evidence and all later gates exist."
+  },
+  "dependencyAssessment": {
+    "alreadyInCleanConsumer": [
+      { "package": "react", "version": "19.2.7", "use": "No React hook is needed by the recommended local-first rows." },
+      { "package": "react-dom", "version": "19.2.7", "use": "Not a DOM implementation and not sufficient for prepaint boot fixtures." },
+      { "package": "vite", "version": "7.3.6", "use": "Available for the exported prepaint Vite plugin proposal." },
+      { "package": "esbuild", "version": "0.25.12", "use": "Already allowed for the Vite plugin build path." },
+      { "package": "zod", "version": "3.25.76", "use": "Available for public local-first defineModel schemas." }
+    ],
+    "platformGlobalsUsableWithoutPackages": ["AbortController", "EventTarget", "MessageEvent", "performance", "URL", "registered virtual timers"],
+    "trustedHandwrittenSeams": [
+      { "id": "benchmark.broadcast-relay/v1", "reason": "A deterministic BroadcastChannel-compatible environment can be installed before product import. The sender never receives its own postMessage; a separately instantiated external peer receives the public message and retransmits it once, without touching a product prototype." },
+      { "id": "benchmark.callback-log/v1", "reason": "Trusted callbacks record invocation counts and canonical labels only." }
+    ],
+    "existingPinnedTargetTestDependenciesReusableOnlyInFixtureClosure": [
+      { "package": "fake-indexeddb", "declaredRange": "^6.2.2", "lockedVersion": "6.2.5", "lockfileIntegrity": "sha512-CGnyrvbhPlWYMngksqrSSUT1BAVP49dZocrHuK0SvtR0D5TMs5wP0o3j7jexDJW01KSadjBp1M/71o/KR3nD1w==", "neededBy": ["packages/local-first", "packages/prepaint"] },
+      { "package": "jsdom", "declaredRange": "^29.1.1", "lockedVersion": "29.1.1", "lockfileIntegrity": "sha512-ECi4Fi2f7BdJtUKTflYRTiaMxIB0O6zfR1fX0GXpUrf6flp8QIYn1UT20YQqdSOfk2dfkCwS8LAFoJDEppNK5Q==", "neededBy": ["packages/prepaint"] }
+    ],
+    "additionalPackagesRequiredForRecommendedRuntimeRows": [],
+    "fixtureClosureCondition": "Reuse only the pinned target test-dependency artifacts inside a separately declared benchmark fixture closure. Bind exact resolved versions, lockfile integrities, the full transitive closure, and all evaluator build inputs into the evaluation contract key. Do not install on the host and do not modify the target package.json or lockfile.",
+    "installationPerformed": false
+  },
+  "actionProposals": [
+    {
+      "id": "tx.start/v2",
+      "publicEntry": "@firsttx/tx:startTransaction",
+      "arguments": { "transactionId": "string", "timeoutMs": "integer 1..10000", "transition": "false only for these rows" },
+      "binding": "tx-handle",
+      "notes": "Calls only the exported factory."
+    },
+    {
+      "id": "tx.run-scripted/v2",
+      "publicEntry": "tx-handle.run",
+      "arguments": {
+        "tx": "tx-handle binding",
+        "attemptOutcomes": "array 1..5 of {kind:return,value:json} or {kind:throw,errorName:string,errorMessage:string}",
+        "retry": "null or {maxAttempts:integer 1..5,delayMs:integer 0..1000,backoff:linear|exponential}",
+        "compensation": "null or {kind:return} or {kind:throw,errorName:string,errorMessage:string}",
+        "externalSignal": "null or abort-signal binding",
+        "gate": "null or registered completion-gate id"
+      },
+      "binding": null,
+      "notes": "Trusted adapter creates the step and compensation functions from registered data. No function body crosses the seed boundary. Each invocation increments trusted attempt and compensation logs."
+    },
+    {
+      "id": "tx.commit/v2",
+      "publicEntry": "tx-handle.commit",
+      "arguments": { "tx": "tx-handle binding" },
+      "binding": null
+    },
+    {
+      "id": "env.abort-controller/v1",
+      "publicEntry": "platform AbortController",
+      "arguments": { "reasonName": "string", "reasonMessage": "string", "abortBeforeUse": "boolean" },
+      "binding": "abort-signal"
+    },
+    {
+      "id": "local.define-model/v1",
+      "publicEntry": "@firsttx/local-first:defineModel",
+      "arguments": { "name": "lowercase registered id", "schemaId": "registered Zod schema id", "version": "positive integer", "ttlMs": "non-negative finite integer or registered Infinity token", "initialData": "json or null-with-presence-flag" },
+      "binding": "model-handle"
+    },
+    {
+      "id": "local.storage-set/v1",
+      "publicEntry": "@firsttx/local-first:Storage.getInstance().set",
+      "arguments": { "key": "registered model name", "record": "{_v:integer,updatedAt:integer,data:json}" },
+      "binding": null,
+      "notes": "Storage and set are public exports/methods in the pinned package."
+    },
+    {
+      "id": "local.subscribe/v1",
+      "publicEntry": "model-handle.subscribe",
+      "arguments": { "model": "model-handle", "callbackLogId": "registered callback log" },
+      "binding": "unsubscribe-handle"
+    },
+    {
+      "id": "local.unsubscribe/v1",
+      "publicEntry": "returned unsubscribe-handle",
+      "arguments": { "unsubscribe": "unsubscribe-handle" },
+      "binding": null
+    },
+    {
+      "id": "local.replace/v1",
+      "publicEntry": "model-handle.replace",
+      "arguments": { "model": "model-handle", "data": "schema-valid json" },
+      "binding": null
+    },
+    {
+      "id": "local.patch/v1",
+      "publicEntry": "model-handle.patch",
+      "arguments": { "model": "model-handle", "registeredPatchId": "allow-listed deterministic field patch", "value": "json" },
+      "binding": null,
+      "notes": "The trusted adapter owns the allow-listed patch function; seed data cannot supply code."
+    },
+    {
+      "id": "local.get-history/v1",
+      "publicEntry": "model-handle.getHistory",
+      "arguments": { "model": "model-handle" },
+      "binding": null
+    },
+    {
+      "id": "local.get-cached-error/v1",
+      "publicEntry": "model-handle.getCachedError",
+      "arguments": { "model": "model-handle" },
+      "binding": null
+    },
+    {
+      "id": "env.broadcast-relay/v1",
+      "publicEntry": "registered BroadcastChannel-compatible environment seam",
+      "arguments": { "mode": "separate-peer-receive-then-retransmit-once", "releaseAfterActionInstanceId": "registered instance id", "senderSelfDelivery": false },
+      "binding": null,
+      "notes": "Installed before public package import. A distinct peer channel receives the sender's public postMessage and retransmits the same registered data once. The sender is never directly self-delivered. This reproduces the README and pre-existing broadcast-test environment through defineModel's public path and never accesses ModelBroadcaster or its fields."
+    },
+    {
+      "id": "prepaint.boot/v1",
+      "publicEntry": "@firsttx/prepaint:boot",
+      "arguments": { "policy": "{routes:string[],ttlMs:positive integer,maxSnapshotBytes:positive safe integer,includeStyles:boolean}" },
+      "binding": null
+    },
+    {
+      "id": "prepaint.vite-create/v1",
+      "publicEntry": "@firsttx/prepaint/plugin/vite:firstTx",
+      "arguments": { "policy": "json policy candidate", "inline": "false", "minify": "false" },
+      "binding": null,
+      "notes": "Invalid relative-route policy is validated synchronously while the exported plugin is created; no Vite hook or build is needed for that row."
+    }
+  ],
+  "fixtureProposals": [
+    {
+      "id": "tx.scripted-step-state/v1",
+      "kind": "public-test-seam",
+      "state": { "attemptOutcomes": "canonical ordered array", "attemptIndex": "trusted counter", "compensationOutcome": "canonical object or null", "eventLog": "ordered allow-listed labels" },
+      "materializer": "trusted in-memory closure owned by tx.run-scripted/v2"
+    },
+    {
+      "id": "env.abort-signal-state/v1",
+      "kind": "external-environment",
+      "state": { "aborted": "boolean", "reasonName": "string", "reasonMessage": "string" },
+      "materializer": "platform AbortController before tx.run"
+    },
+    {
+      "id": "local.indexeddb/v1",
+      "kind": "documented-wire-state",
+      "state": { "database": "firsttx-local-first", "version": 2, "stores": ["models", "tx_journal", "settings"], "records": "canonical key/value list" },
+      "materializer": "exact-pinned fake-indexeddb installed as global indexedDB before package import; records written through exported Storage when a public write suffices"
+    },
+    {
+      "id": "local.broadcast-relay/v1",
+      "kind": "external-environment",
+      "state": { "channels": "fresh per container", "senderSelfDelivery": false, "externalPeer": "distinct peer instance", "delivery": "external peer receives then retransmits the exact public message once", "releaseOrder": "registered action instance ids" },
+      "materializer": "trusted BroadcastChannel-compatible global installed before package import; distinct peer behavior and transcript are fixture data"
+    },
+    {
+      "id": "benchmark.callback-log/v1",
+      "kind": "public-test-seam",
+      "state": { "entries": "ordered {callbackId,ordinal} array" },
+      "materializer": "trusted callbacks passed only through public subscribe APIs"
+    },
+    {
+      "id": "prepaint.browser/v1",
+      "kind": "external-environment",
+      "state": { "url": "https URL with registered pathname", "html": "fixed minimal document", "clockMs": "registered virtual time", "indexedDb": "prepaint.indexeddb/v1" },
+      "materializer": "exact-pinned jsdom globals plus exact-pinned fake-indexeddb installed before package import"
+    },
+    {
+      "id": "prepaint.indexeddb/v1",
+      "kind": "documented-wire-state",
+      "state": { "database": "firsttx-prepaint", "version": 2, "store": "snapshots", "records": "canonical Snapshot records keyed by route" },
+      "materializer": "exact-pinned fake-indexeddb; trusted fixture writes only documented Snapshot fields before public boot"
+    }
+  ],
+  "invariantProposals": [
+    { "id": "tx.rollback-reverse-order/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:3,11-13,136-150", "packages/tx/tests/transaction.test.ts:614-653"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "event-trace", "observedFields": ["events"] },
+    { "id": "tx.total-timeout/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:217-240,514-544", "packages/tx/tests/transaction.test.ts:249-263"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "run-outcome", "observedFields": ["kind", "name", "message", "value"] },
+    { "id": "tx.no-run-after-rollback/v1", "sourceKind": "existing-test", "sourceRefs": ["packages/tx/tests/transaction.test.ts:422-452"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "run-outcome", "observedFields": ["kind", "name"] },
+    { "id": "tx.compensation-failure/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:468-471,734-736", "packages/tx/tests/transaction.test.ts:326-419"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "run-outcome", "observedFields": ["kind", "name", "failureCount", "failureMessages"] },
+    { "id": "tx.preaborted-signal/v1", "sourceKind": "public-type+existing-test", "sourceRefs": ["packages/tx/src/types.ts:34-41", "packages/tx/tests/retry.test.ts:253-263"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "two-independent-corroborating-sources", "sourceIndependence": "The exported StepOptions documentation independently states that signal cancels the current step; a pre-existing executable retry test separately requires an already-aborted signal to reject without invoking the step. This is not promoted to normative strength.", "observedKind": "run-outcome", "observedFields": ["kind", "name", "message", "attemptCount"] },
+    { "id": "tx.no-commit-after-rollback/v1", "sourceKind": "existing-test", "sourceRefs": ["packages/tx/tests/transaction.test.ts:522-539"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "commit-outcome", "observedFields": ["kind", "name"] },
+    { "id": "tx.retry-error-history/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:475-510", "packages/tx/tests/transaction.test.ts:83-110"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "run-outcome", "observedFields": ["kind", "name", "attempts", "errorMessages"] },
+    { "id": "tx.completed-steps-compensated/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:136-150", "packages/tx/tests/transaction.test.ts:614-653"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "event-trace", "observedFields": ["events"] },
+    { "id": "tx.retry-final-attempt/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/tx/README.md:245-276", "packages/tx/tests/retry.test.ts:47-63"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "run-outcome", "observedFields": ["kind", "value", "attemptCount"] },
+    { "id": "local.staleness/v1", "sourceKind": "public-type+existing-test", "sourceRefs": ["packages/local-first/src/types.ts:68-79", "packages/local-first/tests/model.test.ts:271-318", "packages/local-first/tests/model-ttl-optional.test.ts:29-76"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative-away-from-equality-boundary", "observedKind": "model-history", "observedFields": ["updatedAt", "age", "isStale"], "policy": "Registered ages must be strictly less than or strictly greater than ttl; equality is excluded because pinned sources conflict." },
+    { "id": "local.error-transition-notifies/v1", "sourceKind": "public-type+existing-test", "sourceRefs": ["packages/local-first/src/model.ts:16-34", "packages/local-first/tests/model.test.ts:418-446"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "callback-and-error", "observedFields": ["callbackCount", "errorName"] },
+    { "id": "local.ignore-self-broadcast/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/local-first/README.md:458-476", "packages/local-first/tests/broadcast.test.ts:96-117"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "callback-log", "observedFields": ["callbackCount"] },
+    { "id": "prepaint.exact-route/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/prepaint/README.md:60-71,152-171", "packages/prepaint/tests/policy.test.ts:27-33"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "boot-state", "observedFields": ["overlayMounted", "dataPrepaint"] },
+    { "id": "prepaint.expired-pruned/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/prepaint/README.md:71,118-125,160-164", "packages/prepaint/tests/policy.test.ts:54-81"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "snapshot-store", "observedFields": ["present"] },
+    { "id": "prepaint.utf8-size-pruned/v1", "sourceKind": "documentation+existing-test", "sourceRefs": ["packages/prepaint/README.md:71,118-125,160-164", "packages/prepaint/tests/policy.test.ts:43-52,54-81"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "snapshot-store", "observedFields": ["present"] },
+    { "id": "prepaint.absolute-routes/v1", "sourceKind": "existing-test+public-input-type", "sourceRefs": ["packages/prepaint/tests/policy.test.ts:35-40", "packages/prepaint/src/types.ts:11-16", "packages/prepaint/src/plugin/vite.ts:23-31"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "normative", "observedKind": "plugin-create-outcome", "observedFields": ["kind", "name", "messageClass"] },
+    { "id": "tx.single-inflight-run/unregistered", "sourceKind": "implementation-only", "sourceRefs": ["packages/tx/src/transaction.ts:34-41"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "internal", "strength": "implementation-only", "observedKind": "run-outcome", "observedFields": ["kind", "name"] },
+    { "id": "local.combined-snapshot-history/unregistered", "sourceKind": "implementation-only", "sourceRefs": ["packages/local-first/src/cache-manager.ts:89-129"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "internal", "strength": "implementation-only", "observedKind": "combined-snapshot", "observedFields": ["history"] },
+    { "id": "local.unsubscribe-stops-notification/unregistered", "sourceKind": "documentation+public-type", "sourceRefs": ["packages/local-first/README.md:161-170", "packages/local-first/src/model.ts:16-34"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "corroborating-unreviewed", "observedKind": "callback-log", "observedFields": ["callbackCount"] },
+    { "id": "local.listener-scoped-unsubscribe/unregistered", "sourceKind": "documentation+public-type", "sourceRefs": ["packages/local-first/README.md:161-170", "packages/local-first/src/model.ts:16-34"], "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6", "authoredBeforeGeneration": true, "visibility": "public", "strength": "corroborating-unreviewed", "observedKind": "callback-log", "observedFields": ["removedCount", "survivingCount"] }
+  ],
+  "rows": [
+    { "id": "tx-rollback-forward-order", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.run-scripted/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.rollback-reverse-order/v1", "armD": "trusted direct materializer invokes the same exported startTransaction and handle methods", "armE": "registered actions invoke that identical public trace", "observationEquivalence": "events exact JCS equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-rollback-forward-order", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-total-timeout-resets-per-step", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "time.advance/v1", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1", "registered-virtual-clock"], "invariant": "tx.total-timeout/v1", "armD": "existing trusted timeout direct materializer with the same virtual advance", "armE": "current trusted interpreter path", "observationEquivalence": "run outcome exact normalized equality", "runtimeRecommendation": "retain-current", "metricEligibilityRecommendation": "retention-diagnostic-only", "developmentExcluded": true, "developmentExposureRefs": ["benchmark/v0.3/phase3-spike.json", "evidence/v0.3/phase3-spike.json", "evidence/v0.3/phase3-reduction.json"], "duplicateGroup": "tx-total-timeout", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-reuse-after-rollback-allowed", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.no-run-after-rollback/v1", "armD": "direct public-handle sequence", "armE": "registered public-handle sequence", "observationEquivalence": "final run kind/name equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-reuse-after-rollback", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-compensation-errors-swallowed", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.compensation-failure/v1", "armD": "direct public-handle sequence with trusted compensation closures", "armE": "registered scripted run sequence", "observationEquivalence": "kind/name/failureCount/failureMessages equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-compensation-errors-swallowed", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-preaborted-signal-ignored", "module": "packages/tx", "runtimePath": ["tx.start/v2", "env.abort-controller/v1", "tx.run-scripted/v2"], "fixtures": ["env.abort-signal-state/v1", "tx.scripted-step-state/v1"], "invariant": "tx.preaborted-signal/v1", "armD": "direct public-handle run with the registered platform signal", "armE": "registered signal binding into scripted run", "observationEquivalence": "kind/name/message/attemptCount equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-preaborted-signal", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-concurrent-step-guard-removed", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.run-scripted/v2", "schedule.release-order/v1"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.single-inflight-run/unregistered", "armD": "statically public-reachable overlapping handle calls", "armE": "schedule-controlled registered calls", "observationEquivalence": "second run kind/name equality if an oracle is later admitted", "runtimeRecommendation": "adapter-mechanically-possible-but-do-not-register-for-metric", "metricEligibilityRecommendation": "blocked", "blockedReasons": ["oracle-implementation-only"], "developmentExcluded": false, "duplicateGroup": "tx-concurrent-step-guard", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-commit-after-rollback-allowed", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.commit/v2"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.no-commit-after-rollback/v1", "armD": "direct public-handle sequence", "armE": "registered public-handle sequence", "observationEquivalence": "commit kind/name equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-commit-after-rollback", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-retry-exhausted-drops-error-history", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1", "registered-virtual-clock"], "invariant": "tx.retry-error-history/v1", "armD": "direct public tx.run retry; private executeWithRetry is forbidden", "armE": "registered scripted attempt sequence through public tx.run", "observationEquivalence": "name/attempts/errorMessages equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-retry-error-history", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-completed-steps-never-tracked", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1"], "invariant": "tx.completed-steps-compensated/v1", "armD": "direct public handle with trusted event log", "armE": "registered scripted public runs", "observationEquivalence": "events exact JCS equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-completed-steps-tracking", "historicalNightmareRefs": "unknown" },
+    { "id": "prepaint-route-prefix-overcapture", "module": "packages/prepaint", "runtimePath": ["prepaint.boot/v1"], "fixtures": ["prepaint.browser/v1", "prepaint.indexeddb/v1"], "invariant": "prepaint.exact-route/v1", "armD": "direct call to exported boot with stored /checkout-admin snapshot and policy /checkout", "armE": "registered boot action with identical fixture digests", "observationEquivalence": "overlayMounted/dataPrepaint equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "prepaint-route-prefix", "historicalNightmareRefs": "unknown" },
+    { "id": "prepaint-expired-snapshot-kept", "module": "packages/prepaint", "runtimePath": ["prepaint.boot/v1"], "fixtures": ["prepaint.browser/v1", "prepaint.indexeddb/v1", "registered-virtual-clock"], "invariant": "prepaint.expired-pruned/v1", "armD": "direct exported boot over a documented stored Snapshot", "armE": "registered boot action over identical state", "observationEquivalence": "post-boot store presence equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "prepaint-expired-snapshot", "historicalNightmareRefs": "unknown" },
+    { "id": "prepaint-oversize-snapshot-kept", "module": "packages/prepaint", "runtimePath": ["prepaint.boot/v1"], "fixtures": ["prepaint.browser/v1", "prepaint.indexeddb/v1"], "invariant": "prepaint.utf8-size-pruned/v1", "armD": "direct exported boot over a canonical multibyte Snapshot", "armE": "registered boot action over identical bytes", "observationEquivalence": "post-boot store presence and fixture payload digest equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "prepaint-oversize-snapshot", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-stale-flag-inverted", "module": "packages/local-first", "runtimePath": ["local.define-model/v1", "local.storage-set/v1", "local.get-history/v1"], "fixtures": ["local.indexeddb/v1", "registered-virtual-clock"], "invariant": "local.staleness/v1", "armD": "direct exported defineModel/Storage/getHistory calls", "armE": "registered actions with identical record and clock", "observationEquivalence": "updatedAt/age/isStale equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-away-from-equality-boundary-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "local-first-stale-flag", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-history-change-not-reflected", "module": "packages/local-first", "runtimePath": [], "fixtures": [], "invariant": "local.combined-snapshot-history/unregistered", "armD": "legacy direct path requires private CacheManager.setHistory", "armE": "no public action was found that creates a semantically different history-only transition", "observationEquivalence": "not-defined", "runtimeRecommendation": "exclude", "metricEligibilityRecommendation": "blocked", "blockedReasons": ["missing-public-action", "oracle-implementation-only"], "developmentExcluded": false, "duplicateGroup": "local-first-history-change-not-reflected", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-cache-unsubscribe-noop", "module": "packages/local-first", "runtimePath": ["local.define-model/v1", "local.subscribe/v1", "local.unsubscribe/v1", "local.replace/v1"], "fixtures": ["local.indexeddb/v1", "benchmark.callback-log/v1"], "invariant": "local.unsubscribe-stops-notification/unregistered", "armD": "direct public Model subscribe/unsubscribe/replace", "armE": "registered handle sequence", "observationEquivalence": "callbackCount equality", "runtimeRecommendation": "adapter-mechanically-possible-but-do-not-register-for-metric", "metricEligibilityRecommendation": "blocked", "blockedReasons": ["oracle-strength-unreviewed"], "developmentExcluded": false, "duplicateGroup": "local-first-cache-unsubscribe", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-error-not-notified", "module": "packages/local-first", "runtimePath": ["local.define-model/v1", "local.storage-set/v1", "local.subscribe/v1", "local.get-cached-error/v1"], "fixtures": ["local.indexeddb/v1", "benchmark.callback-log/v1"], "invariant": "local.error-transition-notifies/v1", "armD": "direct exported model and Storage methods", "armE": "registered public actions", "observationEquivalence": "callbackCount/errorName equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "local-first-error-notified", "historicalNightmareRefs": "unknown" },
+    { "id": "prepaint-relative-route-accepted", "module": "packages/prepaint", "runtimePath": ["prepaint.vite-create/v1"], "fixtures": [], "invariant": "prepaint.absolute-routes/v1", "armD": "direct exported firstTx({policy}) call", "armE": "registered Vite plugin creation action", "observationEquivalence": "plugin-create kind/name/messageClass equality", "runtimeRecommendation": "implement-no-new-package", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "prepaint-relative-route", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-self-broadcast-not-filtered", "module": "packages/local-first", "runtimePath": ["local.define-model/v1", "local.subscribe/v1", "local.replace/v1", "env.broadcast-relay/v1"], "fixtures": ["local.indexeddb/v1", "local.broadcast-relay/v1", "benchmark.callback-log/v1"], "invariant": "local.ignore-self-broadcast/v1", "armD": "direct public model operations under registered exact-message relay", "armE": "registered public actions under the identical relay transcript", "observationEquivalence": "callbackCount and relay transcript digest equality", "runtimeRecommendation": "implement-with-pinned-fixture-closure", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "local-first-self-broadcast", "historicalNightmareRefs": "unknown" },
+    { "id": "local-first-unsubscribe-removes-all", "module": "packages/local-first", "runtimePath": [], "fixtures": [], "invariant": "local.listener-scoped-unsubscribe/unregistered", "armD": "legacy check calls private ModelBroadcaster.subscribe", "armE": "no public method invokes the broadcaster unsubscribe handle; defineModel discards it", "observationEquivalence": "not-defined", "runtimeRecommendation": "exclude", "metricEligibilityRecommendation": "blocked", "blockedReasons": ["missing-public-action", "oracle-strength-unreviewed"], "developmentExcluded": false, "duplicateGroup": "local-first-unsubscribe-one", "historicalNightmareRefs": "unknown" },
+    { "id": "tx-retry-skips-final-attempt", "module": "packages/tx", "runtimePath": ["tx.start/v2", "tx.run-scripted/v2"], "fixtures": ["tx.scripted-step-state/v1", "registered-virtual-clock"], "invariant": "tx.retry-final-attempt/v1", "armD": "direct public tx.run with fail/fail/return outcomes", "armE": "registered scripted outcomes through public tx.run", "observationEquivalence": "kind/value/attemptCount equality", "runtimeRecommendation": "implement", "metricEligibilityRecommendation": "statically-eligible-for-denominator-freeze", "developmentExcluded": false, "duplicateGroup": "tx-retry-final-attempt", "historicalNightmareRefs": "unknown" }
+  ],
+  "summary": {
+    "totalRows": 20,
+    "staticDenominatorFreezeProposal": {
+      "candidateEligibleCount": 15,
+      "candidateEligibleRows": ["tx-rollback-forward-order", "tx-reuse-after-rollback-allowed", "tx-compensation-errors-swallowed", "tx-preaborted-signal-ignored", "tx-commit-after-rollback-allowed", "tx-retry-exhausted-drops-error-history", "tx-completed-steps-never-tracked", "prepaint-route-prefix-overcapture", "prepaint-expired-snapshot-kept", "prepaint-oversize-snapshot-kept", "local-first-stale-flag-inverted", "local-first-error-not-notified", "prepaint-relative-route-accepted", "local-first-self-broadcast-not-filtered", "tx-retry-skips-final-attempt"],
+      "basis": "pre-generation source/oracle review plus static public-path reachability; no runtime outcome was used",
+      "finalReviewOwner": "root oracle review",
+      "runtimeEvidenceEffect": "After freeze, two-sided execution may classify a row as caught or invalid, but may not select the denominator based on whether the defect was caught."
+    },
+    "developmentExcludedButRuntimeDiagnostic": 1,
+    "blockedRows": ["tx-concurrent-step-guard-removed", "local-first-history-change-not-reflected", "local-first-cache-unsubscribe-noop", "local-first-unsubscribe-removes-all"],
+    "pinnedFixtureClosureRows": {
+      "fake-indexeddb": ["local-first-stale-flag-inverted", "local-first-error-not-notified", "local-first-self-broadcast-not-filtered", "prepaint-route-prefix-overcapture", "prepaint-expired-snapshot-kept", "prepaint-oversize-snapshot-kept"],
+      "jsdom": ["prepaint-route-prefix-overcapture", "prepaint-expired-snapshot-kept", "prepaint-oversize-snapshot-kept"]
+    }
+  }
+}

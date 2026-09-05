@@ -24,7 +24,7 @@ test('Phase 2 validators reject arbitrary options as invalid usage', async () =>
 
 test('later-phase validators remain explicitly unimplemented', async () => {
   await assert.rejects(
-    execFileAsync(process.execPath, ['scripts/validate-v03.mjs', 'benchmark'], { cwd: repositoryRoot }),
+    execFileAsync(process.execPath, ['scripts/validate-v03.mjs', 'evidence'], { cwd: repositoryRoot }),
     (error) => error.code === 1 && error.stderr.includes('not implemented yet'),
   );
 });

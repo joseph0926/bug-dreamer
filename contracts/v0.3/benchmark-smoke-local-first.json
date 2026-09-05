@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-smoke/v1",
+  "id": "synthetic-local-first-nominal",
+  "moduleId": "local-first",
+  "developmentOnly": true,
+  "measurementEligible": false,
+  "historicalTruthId": null,
+  "artifactRole": "clean",
+  "comparisonRegistrationId": "synthetic-local-first-nominal",
+  "invariantRegistrationId": "local.staleness-from-age-and-ttl/proposed-v1",
+  "sourceCommit": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "sourceRefs": [
+    {
+      "kind": "documentation",
+      "path": "packages/local-first/README.md",
+      "location": "lines 145-170",
+      "claim": "defineModel exposes TTL, Storage-backed snapshots, getHistory, and staleness metadata through the public model API."
+    },
+    {
+      "kind": "existing-test",
+      "path": "packages/local-first/tests/model.test.ts",
+      "location": "lines 271-318",
+      "claim": "A record whose age is below TTL is fresh and a record whose age exceeds TTL is stale."
+    }
+  ],
+  "seed": {
+    "schemaVersion": "bug-dreamer/nightmare-seed/v1",
+    "catalogVersion": "firsttx-phase4-local-first-v1",
+    "id": "synthetic-local-first-nominal-e",
+    "invariantId": "local.staleness-from-age-and-ttl/proposed-v1",
+    "actors": ["client"],
+    "actions": [
+      {
+        "actionId": "local.define-model",
+        "actor": "client",
+        "arguments": {
+          "name": "synthetic-profile",
+          "schemaId": "local.count-record/v1",
+          "version": 1,
+          "ttlMs": 7000,
+          "hasInitialData": false,
+          "initialData": null,
+          "schemaFixture": {
+            "schemaVersion": "bug-dreamer/local-first-schema-fixture/v1",
+            "schemaId": "local.count-record/v1"
+          },
+          "indexedDbFixture": {
+            "schemaVersion": "bug-dreamer/local-first-indexeddb-fixture/v1",
+            "database": "firsttx-local-first",
+            "version": 2,
+            "stores": ["models", "tx_journal", "settings"]
+          }
+        },
+        "bind": { "name": "model", "type": "model-handle" }
+      },
+      {
+        "actionId": "local.storage-set",
+        "actor": "client",
+        "arguments": {
+          "modelName": "synthetic-profile",
+          "record": {
+            "_v": 1,
+            "updatedAt": 999999999000,
+            "data": { "count": 42 }
+          }
+        },
+        "bind": null
+      },
+      {
+        "actionId": "local.subscribe",
+        "actor": "client",
+        "arguments": {
+          "modelBinding": "model",
+          "callbackLogId": "primary",
+          "callbackFixture": {
+            "schemaVersion": "bug-dreamer/local-first-callback-fixture/v1",
+            "logId": "primary"
+          },
+          "captureMode": "cached-history"
+        },
+        "bind": { "name": "unsubscribe", "type": "unsubscribe-handle" }
+      },
+      {
+        "actionId": "local.get-cached-history",
+        "actor": "client",
+        "arguments": { "modelBinding": "model", "callbackLogId": "primary", "ttlMs": 7000 },
+        "bind": null
+      }
+    ]
+  },
+  "comparisonInput": {
+    "row": { "id": "synthetic-local-first-nominal" },
+    "policy": {}
+  },
+  "runtimePolicy": {
+    "virtualTime": { "originMs": 1000000000000 }
+  },
+  "expectedClean": {
+    "execution": "pass",
+    "observedKind": "returned-value",
+    "observedFields": {
+      "value": {
+        "updatedAt": 999999999000,
+        "age": 1000,
+        "isStale": false,
+        "isConflicted": false,
+        "ttlMs": 7000
+      }
+    }
+  },
+  "preparationProbeRuns": 2
+}

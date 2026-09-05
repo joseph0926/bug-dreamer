@@ -1,0 +1,659 @@
+{
+  "schemaVersion": "bug-dreamer/v03-phase4-policy-draft/v1",
+  "status": "draft-not-registered",
+  "purpose": "One limited-demonstration policy recommendation for premeasurement review. This file is not the benchmark registration and authorizes no implementation, generation, Docker execution, scoring, or verdict.",
+  "scope": {
+    "approvedOn": "2026-09-05",
+    "phase4Owns": "Public action, fixture, invariant, and comparison adapters required to evaluate the pre-registered benchmark across packages/tx, packages/local-first, and packages/prepaint.",
+    "phase5Owns": "Application of the adopted pipeline to the three registered clean modules and independent reproduction of public candidates.",
+    "phase4DoesNotOwn": [
+      "clean-real-module-application",
+      "public-candidate-independent-reproduction",
+      "public-confirmation"
+    ]
+  },
+  "sourceDrafts": {
+    "executionPlan": "docs/PHASE4-EXECUTION-PLAN.md",
+    "inventory": {
+      "path": "benchmark/v0.3/phase4-inventory.draft.json",
+      "sha256": "898a82d28e534a839886de993bc8bfeca59ca876516e923156bebd3e52aaedbe",
+      "status": "draft-static-source-audit",
+      "rowCount": 20,
+      "moduleDistribution": {
+        "packages/tx": 10,
+        "packages/local-first": 6,
+        "packages/prepaint": 4
+      },
+      "currentInterpreterSupportedRows": 1,
+      "oracleAssessment": {
+        "confirmedSource": 15,
+        "unconfirmedOrBoundaryConflicted": 5
+      },
+      "rule": "Recompute this digest and reconcile every proposed gate before registration. Static candidate status is not metric eligibility."
+    }
+  },
+  "phase3DevelopmentAnchor": {
+    "defectId": "tx-total-timeout-resets-per-step",
+    "partition": "development",
+    "reason": "The timeout defect was used to design and validate the Phase 3 operator path and cannot contribute to blind discovery yield."
+  },
+  "prerequisiteEvidence": {
+    "status": "completed-not-phase4-score",
+    "reason": "An independent contract-integrity review found that the defect evaluator key did not directly close over copied canonicalizer files. The correction was independent of Phase 4 arm and outcome policy.",
+    "cleanEvaluationContractKey": "0c08c61bbef849abb799afffb717e72779b3a7427165389e475326061b67064f",
+    "defectEvaluationContractKey": "842cf233cff4f1d69df6b3b061ab87fd51951a44c22f6efec904ba97e44d2050",
+    "resealedEvidence": [
+      "evidence/v0.3/phase3-spike.json",
+      "evidence/v0.3/phase3-reduction.json"
+    ],
+    "verification": {
+      "tests": "189/189",
+      "validators": [
+        "history",
+        "contracts",
+        "spec",
+        "trust",
+        "operators",
+        "replay"
+      ]
+    },
+    "scoreContribution": false
+  },
+  "generation": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "medium",
+    "freshSessionRequired": true,
+    "inheritConversationTurns": false,
+    "authoringArms": [
+      "G",
+      "P"
+    ],
+    "denyReviewTaskIds": [
+      "01a06f53-181f-71e1-b0e8-181cd7d3c19a",
+      "01a06f53-1a66-7273-af6a-b25d99fbfa91",
+      "01a06f53-1d05-7ed0-aa5a-2579508fef77"
+    ],
+    "allowedInputs": [
+      "clean-pinned-module-source",
+      "public-documentation",
+      "public-tests-and-types",
+      "approved-invariant-identifiers-and-provenance",
+      "registered-action-catalog",
+      "nightmare-seed-schema",
+      "arm-specific-authoring-prompt"
+    ],
+    "deniedInputs": [
+      "benchmark-defect-manifest",
+      "historical-private-checks",
+      "defect-patches",
+      "truth-tables-with-item-answers",
+      "historical-or-current-results",
+      "phase3-spike-and-reduction-truth",
+      "earlier-arm-outputs",
+      "git-history-and-diffs-revealing-fixes",
+      "issues-prs-or-external-pages-revealing-fixes",
+      "review-task-conversations-or-summaries"
+    ],
+    "authorBundleUnavailableCounters": {
+      "internalModelCalls": {
+        "value": null,
+        "reason": "No reliable internal inference-call counter is exposed."
+      },
+      "inputTokens": {
+        "value": null,
+        "reason": "No reliable per-task input-token counter is exposed for this workflow."
+      },
+      "outputTokens": {
+        "value": null,
+        "reason": "No reliable per-task output-token counter is exposed for this workflow."
+      },
+      "rule": "Do not infer or fabricate unavailable counts."
+    }
+  },
+  "arms": [
+    {
+      "id": "G",
+      "status": "proposed",
+      "procedure": "generic-data-only-seed-authoring",
+      "evaluationPath": "trusted-identity-interpreter",
+      "comparison": "G-vs-P"
+    },
+    {
+      "id": "P",
+      "status": "proposed",
+      "procedure": "invariant-first-data-only-seed-authoring",
+      "evaluationPath": "trusted-identity-interpreter",
+      "comparison": "G-vs-P-and-operator-control"
+    },
+    {
+      "id": "A",
+      "status": "proposed",
+      "procedure": "frozen-P-seeds-with-fixed-time-advance-request-policy",
+      "operatorId": "time.advance/v1",
+      "comparison": "P-vs-A"
+    },
+    {
+      "id": "B",
+      "status": "proposed",
+      "procedure": "frozen-P-seeds-with-fixed-release-order-request-policy",
+      "operatorId": "schedule.release-order/v1",
+      "comparison": "P-vs-B"
+    },
+    {
+      "id": "C",
+      "status": "proposed",
+      "procedure": "frozen-P-seeds-with-fixed-step-outcome-request-policy",
+      "operatorId": "fault.step-outcome/v1",
+      "comparison": "P-vs-C"
+    },
+    {
+      "id": "D",
+      "status": "proposed",
+      "procedure": "eligible-retention-rows-through-comparison-direct-materializer",
+      "comparison": "paired-D-vs-E"
+    },
+    {
+      "id": "E",
+      "status": "proposed",
+      "procedure": "same-eligible-retention-rows-through-trusted-interpreter",
+      "comparison": "paired-D-vs-E"
+    }
+  ],
+  "fastCheck": {
+    "status": "disabled-outside-current-policy-bundle",
+    "arm": null,
+    "dependencyChanges": 0,
+    "generationBudget": 0,
+    "evaluationBudget": 0,
+    "verdict": "not-run"
+  },
+  "universePolicy": {
+    "fullAuditCount": 20,
+    "fullAuditRule": "Every historical planted defect remains present exactly once in the audit inventory, including ineligible and duplicate rows.",
+    "historicalKnownClaimLimit": "All 20 rows are historical known claims. They may support bounded remeasurement and retention only; none may be presented as blind discovery.",
+    "metricEligibleRule": "Only rows passing the pre-registered public-action, fixture, invariant, independent-oracle, comparison-path, and interpreter-path gates enter the corresponding metric denominator.",
+    "metricEligibleRowIds": {
+      "value": null,
+      "status": "draft-pending-adapter-and-independent-oracle-review",
+      "requiredBefore": "checkpointA"
+    },
+    "adapterRegistrationIds": {
+      "value": null,
+      "status": "draft-not-implemented-or-registered",
+      "requiredBefore": "checkpointA"
+    },
+    "reportBothCounts": true,
+    "partitions": {
+      "development": "Used to design, tune, debug, or validate the v0.3 procedure; diagnostic only and excluded from discovery yield.",
+      "existingPublic": "Historical planted defects or published findings; eligible only for explicitly registered remeasurement or retention metrics.",
+      "heldOutTemporal": "Selected by a pre-registered temporal cutoff and procedure with truth hidden from measured authoring."
+    },
+    "heldOutTemporal": {
+      "securedRows": 0,
+      "status": "not-yet-secured",
+      "emptySetPolicy": "Temporal metrics are not-applicable and the epoch makes no blind temporal-yield or generalization claim.",
+      "cannotClaim": [
+        "blind-defect-yield",
+        "temporal-generalization",
+        "absence-of-defects"
+      ]
+    },
+    "ineligibleRowPolicy": "Keep the row with its gate outcomes and exclusion reason. Never delete it or describe the full audit count as the eligible denominator.",
+    "retentionDenominator": {
+      "rowIds": null,
+      "status": "draft-pending-adapters-and-independent-oracle-review",
+      "freezeBefore": "checkpointA",
+      "selectionRule": "Register a static ordered list from the 20-row inventory only after each row has an independently supported oracle, public action and fixture path, comparison direct materializer, trusted interpreter path, and one registered normalized observation identity.",
+      "postCheckpointDeletionForbidden": true,
+      "EOutcomesThatRemainInDenominator": [
+        "structural-rejection",
+        "evaluator-timeout",
+        "unrunnable",
+        "not-run",
+        "different-violation-identity",
+        "pass-loss",
+        "clean-side-regression"
+      ],
+      "DAnchorFailure": "Keep the row, record comparison-anchor-failure, and block interpreter-pipeline adopt. Never repair the denominator after results are visible."
+    }
+  },
+  "executionPairing": {
+    "artifactSpecificBuild": "Build and validate a separate spec and plan for every clean or single-patch artifact against that artifact's registered catalog. Spec and plan digests may differ across artifacts.",
+    "pairValidation": "Validate target artifact, catalog, invariant, normalized observation schema, fixture state, and action semantics for every clean-defect pair.",
+    "cleanResultSharing": "A clean result may be shared only when seed bytes, transformation request, resolved action and invariant semantics, fixture state, target artifact, evaluator contract key, and plan-relevant policy are identical. The scorer must record the shared run reference for every consuming row.",
+    "moduleSeedRejection": "Record the rejection and do not generate or substitute another seed. Missing module coverage leads to revise under the verdict tables.",
+    "knownSinglePatchFtoP": "The initial clean and registered single-patch defect pair is the F-to-P check. If a row would require a third or differently patched artifact, it is not run without a separately approved budget and registration change."
+  },
+  "budgets": {
+    "status": "recommended-limited-demo-not-approved",
+    "observableCounters": {
+      "freshGenerationSessions": {
+        "G": 1,
+        "P": 1,
+        "total": 2
+      },
+      "submittedGenerationTaskTurns": {
+        "perSession": 1,
+        "total": 2,
+        "definition": "One user-visible task prompt submitted to each fresh generation session. Tool calls and hidden inference calls are not counted as task turns.",
+        "fairnessLimit": "Equal user-visible task turns do not prove equal internal model calls, tokens, compute, latency, or search effort. Those unavailable counters remain null and cannot support parity claims."
+      },
+      "emittedSeedFilesMaximum": {
+        "perAuthoringArm": 6,
+        "perModulePerArm": 2,
+        "total": 12
+      },
+      "acceptedSeedsEnteringEvaluationMaximum": {
+        "perAuthoringArm": 6,
+        "total": 12,
+        "rule": "Rejected outputs remain recorded and are not replaced after the session ends."
+      },
+      "operatorRequests": {
+        "perPSeedPerOperatorArm": 1,
+        "perOperatorArm": 6,
+        "operatorArmCount": 3,
+        "total": 18
+      },
+      "transformedSpecs": {
+        "perOperatorArm": 6,
+        "total": 18
+      },
+      "replayCandidates": {
+        "generationAndOperatorArms": {
+          "arms": [
+            "G",
+            "P",
+            "A",
+            "B",
+            "C"
+          ],
+          "perArmMaximum": 2,
+          "totalMaximum": 10,
+          "selection": "Before results, register canonical truth-ID order and duplicate groups. Within each arm, scan registered module order, seed order, and canonical truth-ID order; collapse each duplicate group to its first registered truth ID and replay the first two remaining raw two-sided candidates. Do not promote replacements after an attempted replay.",
+          "orderingAndDuplicatePolicyFrozenBefore": "checkpointA"
+        },
+        "comparisonArmD": {
+          "maximum": 0,
+          "reason": "D establishes the two-sided comparison anchor only and is neither replay-confirmed nor a public catch."
+        },
+        "interpreterArmE": {
+          "maximum": 20,
+          "selection": "Replay every statically registered retention-denominator row. The actual count is the frozen retentionDenominator.rowIds length, never a post-result quota selection."
+        },
+        "totalMaximum": 30
+      },
+      "dockerEvaluations": {
+        "defectDistribution": {
+          "packages/tx": 10,
+          "packages/local-first": 6,
+          "packages/prepaint": 4
+        },
+        "generationOrOperatorArmInitialMaximum": 46,
+        "generationOrOperatorArmCount": 5,
+        "generationAndOperatorInitialMaximum": 230,
+        "retentionArmInitialMaximum": 40,
+        "retentionArmCount": 2,
+        "retentionInitialMaximum": 80,
+        "allArmsInitialMaximum": 310,
+        "additionalRunsPerReplayCandidate": 5,
+        "additionalReplayCandidateMaximum": 30,
+        "additionalRepeatMaximum": 150,
+        "epochMaximum": 460,
+        "calculation": "For each of G/P/A/B/C: 2 seeds per module times (same-module defect count plus one clean run) = 2*(10+1)+2*(6+1)+2*(4+1)=46; five arms=230. For each D/E: 20 paired rows times defect and clean=40; two arms=80. Initial maximum=310. At most 10 G/P/A/B/C candidates and all 20 possible E denominator rows receive five separate replay runs, adding 30*5=150. D receives no replay. Maximum=460.",
+        "eligibilityRule": "The maximum assumes all 20 rows are eligible. Ineligible rows record not-run with a reason and consume no Docker evaluation."
+      },
+      "evaluationTimeoutSeconds": {
+        "perDockerEvaluation": 30,
+        "maximumTimeoutSecondsAt460Runs": 13800
+      },
+      "aggregateMeasurementWallClockSeconds": {
+        "maximum": 18000,
+        "measurement": "Monotonic host elapsed time from the first scheduled container start through the last cleanup, excluding image preparation and independent scoring."
+      },
+      "preparation": {
+        "separateFrom460MeasurementRuns": true,
+        "maximumDockerBuilds": 24,
+        "maximumDockerInspectOrProbeRuns": 72,
+        "maximumFailedPreparationAttempts": 0,
+        "maximumElapsedSeconds": 7200,
+        "record": [
+          "build-count",
+          "inspect-count",
+          "probe-container-count",
+          "failure-count",
+          "cleanup-count",
+          "cleanup-failure-count",
+          "monotonic-elapsed-seconds"
+        ],
+        "rule": "Preparation limits are a bounded recommendation to cover clean plus up to 20 single-patch artifacts and three module-level evaluator variants with verification headroom. Any failure stops preparation; no retry is implied. Preparation counts never enter Phase 4 arm scores or the 460-run measurement cap."
+      }
+    },
+    "unavailableCounters": {
+      "internalModelCalls": {
+        "value": null,
+        "reason": "The environment does not expose a reliable internal inference-call counter.",
+        "usedForScoring": false
+      },
+      "inputTokens": {
+        "value": null,
+        "reason": "The environment does not expose a reliable per-task input-token counter for this workflow.",
+        "usedForScoring": false
+      },
+      "outputTokens": {
+        "value": null,
+        "reason": "The environment does not expose a reliable per-task output-token counter for this workflow.",
+        "usedForScoring": false
+      }
+    },
+    "fairness": [
+      "G and P use the same model, reasoning effort, fresh-session count, task-turn count, per-module seed cap, accepted-seed cap, and evaluation protocol.",
+      "Equal visible task turns do not establish model-call, token, compute, or search-effort parity; no such claim is scored.",
+      "P, A, B, and C share the exact frozen P seed bytes.",
+      "D and E share the exact ordered retention rows and artifact definitions.",
+      "All Docker evaluations run serially in pre-registered arm, module, seed-or-row, defect, and repeat order.",
+      "No arm receives a replacement seed, request, row, or run after consuming its registered opportunity."
+    ]
+  },
+  "metrics": {
+    "zeroDenominator": "not-applicable",
+    "developmentRowsContributeToAdoption": false,
+    "observationLevels": {
+      "rawTwoSidedCandidate": "One initial defect candidate-failure with the registered violation identity plus a passing paired clean evaluation and a passing known single-patch F-to-P check. It is not replay-confirmed, confirmed, public, or an adopt result.",
+      "replayConfirmedCatch": "A raw two-sided candidate followed by five separate matching defect replays under the registered replay path. Only this level may enter confirmed-catch metrics in Phase 4; it is still not a public candidate confirmation or Phase 5 independent reproduction."
+    },
+    "definitions": {
+      "rawTwoSidedCandidateRate": "unique raw two-sided canonical truth IDs / metric-eligible canonical truth IDs",
+      "replayConfirmedCatchRate": "unique replay-confirmed canonical truth IDs / metric-eligible canonical truth IDs",
+      "validBugYieldPerAcceptedSeed": "user-accepted unique replay-confirmed truth IDs / accepted seeds entering evaluation",
+      "falseOracleRate": "wrong-expectation user verdicts / user-reviewed candidate failures",
+      "fiveOfFiveRate": "replay-confirmed candidates / candidates whose registered replay began",
+      "operatorIncrementalYield": "set of replay-confirmed canonical truth IDs in A union B union C minus the complete raw two-sided canonical truth-ID set observed by P",
+      "operatorApplicabilityRate": "accepted applicable transformed specs / recorded operator requests",
+      "interpreterRetention": "frozen denominator rows with a valid D anchor, an initial E raw two-sided candidate, and the registered identity in all five separate E replays / all statically registered retentionDenominator.rowIds",
+      "unrunnableRate": "unrunnable started evaluations / started evaluations",
+      "budgetUtilization": "consumed observable units / registered observable-unit limit"
+    },
+    "operatorBaselineGuard": "If any registered P initial pair is missing, not-run, or incomplete, operator incremental yield is blocked rather than treating an unobserved P truth ID as an operator-only discovery.",
+    "oracleAndHumanReview": {
+      "status": "recommended-protocol-not-approved",
+      "independentReview": "Before Checkpoint A, a reviewer other than the measured seed author records source-based eligibility recommendations without seeing arm identities or measured results. The reviewer does not issue the final human verdict.",
+      "userReview": "The user owns final human judgment. After measurement, present a review sheet with arm labels masked and rows ordered by the pre-registered canonical truth-ID order. Reveal arm identity only after the user records real-bug-worth-fixing, real-bug-not-worth-fixing, wrong-expectation, or undecided.",
+      "undecided": "Keep the row and mark every dependent metric or verdict blocked; never coerce undecided to correct or incorrect.",
+      "interimRule": "A metric requiring an independent oracle or user verdict is not-applicable until its fixed denominator has the required review. Raw observations never become adopt evidence."
+    }
+  },
+  "truthTables": {
+    "catch": [
+      {
+        "defect": "matching-candidate-failure",
+        "clean": "pass",
+        "patchFtoP": "pass-when-known",
+        "score": "raw-two-sided-candidate-only"
+      },
+      {
+        "defect": "pass",
+        "clean": "any-valid-terminal",
+        "score": "miss"
+      },
+      {
+        "defect": "candidate-failure",
+        "clean": "candidate-failure",
+        "score": "two-sided-failure-not-caught"
+      },
+      {
+        "defect": "different-violation-identity",
+        "clean": "pass",
+        "score": "nonmatching-violation-not-caught"
+      },
+      {
+        "defect": "matching-candidate-failure",
+        "clean": "pass",
+        "patchFtoP": "fail",
+        "score": "invalid-known-defect-catch"
+      }
+    ],
+    "replay": [
+      {
+        "initial": "raw-two-sided-candidate",
+        "separateMatchingRuns": 5,
+        "score": "replay-confirmed-catch"
+      },
+      {
+        "initial": "raw-two-sided-candidate",
+        "separateMatchingRuns": "zero-to-four",
+        "score": "incomplete-not-confirmed"
+      },
+      {
+        "initial": "raw-two-sided-candidate",
+        "separateRuns": "different-identity-pass-unrunnable-or-not-run",
+        "score": "not-confirmed"
+      }
+    ],
+    "nonExecutionAndReview": [
+      {
+        "state": "rejected-schema-or-catalog",
+        "score": "authored-invalid-not-caught"
+      },
+      {
+        "state": "rejected-policy",
+        "score": "inapplicable-not-caught"
+      },
+      {
+        "state": "evaluator-error-or-unrunnable",
+        "score": "unrunnable-not-caught-and-charge-started-evaluation"
+      },
+      {
+        "state": "one-to-four-matching-runs",
+        "score": "incomplete"
+      },
+      {
+        "state": "missing-or-disputed-oracle",
+        "score": "review-blocked-not-valid-bug"
+      },
+      {
+        "state": "duplicate-truth",
+        "score": "retain-row-count-canonical-group-once"
+      },
+      {
+        "state": "budget-exhausted-before-start",
+        "score": "not-run-recorded-not-omitted"
+      }
+    ],
+    "retention": [
+      "preserved-same-violation-identity",
+      "different-violation",
+      "clean-side-regression",
+      "pass-loss",
+      "structural-rejection",
+      "unrunnable",
+      "not-run"
+    ],
+    "retentionDenominatorRule": "Every frozen retentionDenominator.rowIds entry remains in the denominator regardless of D or E result. D anchor failure blocks adopt. Only E with five separate matching replays enters the numerator."
+  },
+  "proposedVerdicts": {
+    "status": "recommended-not-approved",
+    "firstMatchOrder": [
+      "epoch-abort-before-strategy-verdict",
+      "non-repairable-trust-failure-retire",
+      "incomplete-zero-denominator-coverage-gap-normal-budget-exhaustion-high-infra-clean-regression-or-repairable-issue-revise",
+      "strategy-specific-adopt",
+      "strategy-specific-sufficient-counterevidence-retire",
+      "otherwise-revise"
+    ],
+    "commonRules": {
+      "epochAbort": "Registration or checkpoint integrity failure, author contamination, or an unregistered extra resource unit aborts the epoch and is never a strategy success or strategy verdict.",
+      "retire": "A non-repairable trusted-verdict boundary failure retires every strategy that depends on that boundary.",
+      "revise": "Any incomplete registered pair or replay, zero required denominator, coverage gap, normal registered budget exhaustion, unrunnable rate above 0.05, clean regression, or registered repairable issue yields revise before adopt is considered.",
+      "rawObservationLimit": "A raw two-sided observation can select a registered replay but can never satisfy an adopt condition by itself.",
+      "catchAll": "Any combination not matched by an earlier branch yields revise."
+    },
+    "generationProcedure": {
+      "orderedRulesAfterCommon": [
+        {
+          "outcome": "adopt-invariant-first",
+          "when": "P replay-confirmed catch set is a superset of G, P false-oracle rate is no greater than G, both reviewed denominators are nonzero, every registered G/P pair and replay is complete, and every budget is respected."
+        },
+        {
+          "outcome": "retire-invariant-first",
+          "when": "With nonzero complete reviewed denominators and adequate registered module coverage, P has fewer replay-confirmed truth IDs than G and a higher false-oracle rate than G."
+        },
+        {
+          "outcome": "revise",
+          "when": "Any remaining combination."
+        }
+      ]
+    },
+    "interpreterPipeline": {
+      "orderedRulesAfterCommon": [
+        {
+          "outcome": "adopt",
+          "when": "The frozen denominator contains at least six rows with at least one per module, every D anchor is valid, E preserves the registered identity in all five separate replays for every denominator row, no trust failure exists, and all budgets are respected."
+        },
+        {
+          "outcome": "retire",
+          "when": "With at least six frozen rows and all modules represented, all D anchors valid, and complete E replay evidence, interpreter retention is below 0.8."
+        },
+        {
+          "outcome": "revise",
+          "when": "Any remaining combination."
+        }
+      ]
+    },
+    "operatorStrategy": {
+      "orderedRulesAfterCommon": [
+        {
+          "outcome": "adopt",
+          "when": "A union B union C has at least two replay-confirmed canonical truth IDs outside P's complete raw two-sided observation set, every P baseline pair is complete, no incremental result has a clean-side failure, and all operator budgets are respected."
+        },
+        {
+          "outcome": "retire",
+          "when": "With at least six complete applicable transformed specs spanning every module that has a frozen eligible operator row and a complete P baseline, operators add zero replay-confirmed truth IDs beyond P's complete raw two-sided observation set."
+        },
+        {
+          "outcome": "revise",
+          "when": "Any remaining combination, including exactly one incremental replay-confirmed truth ID."
+        }
+      ]
+    },
+    "fastCheckStrategy": {
+      "status": "not-an-approved-experiment",
+      "verdict": "not-run"
+    },
+    "rationale": "The ordered branches prevent integrity failures or raw observations from becoming successes, demand perfect paired retention for adoption, require more than one incremental operator observation, and classify insufficient oracle, replay, budget, or module coverage as revise rather than unsupported adopt or retire."
+  },
+  "revisableReasonCodes": [
+    {
+      "code": "infrastructure-fault",
+      "epochEffect": "survives-only-if-the-pre-registered-retry-rule-applies"
+    },
+    {
+      "code": "oracle-dispute",
+      "epochEffect": "retain-row-and-block-dependent-verdict"
+    },
+    {
+      "code": "truth-item-duplicate",
+      "epochEffect": "retain-row-and-count-canonical-group-once"
+    },
+    {
+      "code": "public-boundary-invalid",
+      "epochEffect": "retain-row-as-ineligible"
+    },
+    {
+      "code": "registration-integrity-error",
+      "epochEffect": "abort-new-epoch-required"
+    },
+    {
+      "code": "author-contamination",
+      "epochEffect": "abort-new-epoch-required"
+    },
+    {
+      "code": "budget-specification-error",
+      "epochEffect": "abort-new-epoch-required"
+    },
+    {
+      "code": "scorer-defect",
+      "epochEffect": "abort-new-epoch-required"
+    }
+  ],
+  "checkpoints": {
+    "design": "non-self-referential-three-commit-seal",
+    "checkpointA": {
+      "value": null,
+      "meaning": "Full object ID of the user-created commit containing approved policy, implementation, synthetic validation, and sealed evaluator identities before measured authoring.",
+      "selfRecorded": false
+    },
+    "authorBundle": {
+      "manifestDigest": null,
+      "sessionRecordDigest": null,
+      "createdAfter": "checkpointA",
+      "createdBefore": "checkpointB"
+    },
+    "checkpointB": {
+      "value": null,
+      "meaning": "Full object ID of the user-created commit containing the complete author bundle and ordered execution manifest before measurement.",
+      "selfRecorded": false
+    },
+    "seal": {
+      "sealedRef": null,
+      "requiredTarget": "checkpointB",
+      "movableBranchAllowed": false,
+      "receiptCommittedAfterCheckpointB": true
+    },
+    "benchmarkEpochId": {
+      "value": null,
+      "domain": "bug-dreamer/v03-benchmark-epoch/v1",
+      "includes": [
+        "checkpointA-full-oid",
+        "checkpointB-full-oid",
+        "sealed-ref-name-and-resolved-oid",
+        "approved-registration-bytes",
+        "inventory-and-truth-commitment-digests",
+        "author-bundle-digests",
+        "phase3-spike-and-reduction-registration-and-evidence-digests",
+        "evaluator-contract-keys-and-image-ids",
+        "platform",
+        "scorer-version",
+        "ordered-execution-manifest"
+      ],
+      "excludes": [
+        "benchmarkEpochId-itself",
+        "measured-output",
+        "scorer-output",
+        "roadmap-verdict"
+      ]
+    },
+    "requiredOrder": [
+      "approved-contract-and-implementation",
+      "checkpointA",
+      "fresh-authoring-and-author-bundle",
+      "checkpointB-and-seal",
+      "serial-measurement",
+      "independent-review-and-scorer-recomputation",
+      "roadmap-verdict"
+    ]
+  },
+  "epochAbortPolicy": {
+    "abortOn": [
+      "checkpoint-or-sealed-ref-mismatch",
+      "registration-or-truth-commitment-mismatch",
+      "author-bundle-contamination-or-digest-mismatch",
+      "evaluator-image-or-contract-key-mismatch",
+      "arm-row-or-repeat-order-mismatch",
+      "unregistered-retry-or-extra-resource-unit",
+      "policy-or-implementation-change-after-results-are-visible",
+      "unapproved-fast-check-code-or-dependency",
+      "unaccounted-audit-row-or-budget-unit",
+      "phase4-crosses-into-phase5-real-application-or-independent-reproduction"
+    ],
+    "onAbort": "Preserve every partial row and consumed budget with an abort reason. Never resume after a policy or implementation change and never claim completion.",
+    "replacement": "Create a new registration closure, checkpoints, seal, and benchmark epoch ID."
+  },
+  "openDecisionsBeforeRegistration": [
+    "recompute-and-reconcile-the-independent-inventory-digest",
+    "complete-adapters-and-independent-oracle-review-then-freeze-metric-and-retention-row-ids",
+    "resolve-duplicate-groups-before-results",
+    "secure-held-out-temporal-rows-or-keep-temporal-metrics-not-applicable",
+    "approve-or-replace-the-single-policy-bundle-of-arm-budget-truth-table-verdict-user-review-and-checkpoint-rules"
+  ],
+  "nextApprovalRequest": "After row IDs and adapter registrations are concrete, request one approval for the complete premeasurement policy bundle. Do not reopen the approved Phase 4 scope or the disabled fast-check status in that request."
+}

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "bug-dreamer/v03-benchmark-authoring-policy/v1",
+  "status": "prepared-before-checkpoint-a",
+  "registrationStaticPolicyDigest": "4e1a92788ea6309d7075fafd20d636e479fcdd3d5352e787d80459375aa36701",
+  "targetRevision": "f624b09f148c3368a51807f48d3237db20cef9c6",
+  "generation": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "medium",
+    "freshSessions": { "G": 1, "P": 1 },
+    "submittedTaskTurnsPerSession": 1,
+    "seedMaximumPerModulePerArm": 2,
+    "seedMaximumPerArm": 6,
+    "replacementAfterRejection": false,
+    "unavailableCounters": { "internalModelCalls": null, "inputTokens": null, "outputTokens": null },
+    "unavailableCounterReason": "The environment exposes no reliable per-task internal inference-call or token counter; equal visible turns do not establish compute parity."
+  },
+  "bundleOutputPath": "benchmark/v0.3/authoring/bundle.json",
+  "bundlePolicy": {
+    "writeTiming": "after-both-fresh-sessions-only",
+    "unavailableCountersSource": "generation.unavailableCounters",
+    "unavailableCounterReasonSource": "generation.unavailableCounterReason"
+  },
+  "context": {
+    "mustBeOutsideRepository": true,
+    "sourceMode": "git-show-pinned-clean-revision",
+    "repoInputs": [
+      "registrations/v0.3/benchmark/tx.json",
+      "registrations/v0.3/benchmark/local-first.json",
+      "registrations/v0.3/benchmark/prepaint.json",
+      "harness-v0.3/benchmark/tx-schema.mjs",
+      "harness-v0.3/benchmark/local-first-schema.mjs",
+      "harness-v0.3/benchmark/prepaint-schema.mjs"
+    ],
+    "checkpointAInputs": [
+      "contracts/v0.3/benchmark-authoring-policy.json",
+      "src/v03-benchmark-authoring.mjs",
+      "scripts/prepare-v03-authoring.mjs",
+      "src/v03-benchmark-spec.mjs",
+      "registrations/v0.3/benchmark/tx.json",
+      "registrations/v0.3/benchmark/local-first.json",
+      "registrations/v0.3/benchmark/prepaint.json",
+      "harness-v0.3/benchmark/tx-schema.mjs",
+      "harness-v0.3/benchmark/local-first-schema.mjs",
+      "harness-v0.3/benchmark/prepaint-schema.mjs"
+    ],
+    "targetAllowlist": {
+      "tx": [
+        "packages/tx/package.json", "packages/tx/README.md", "packages/tx/src/index.ts", "packages/tx/src/types.ts", "packages/tx/src/errors.ts", "packages/tx/src/transaction.ts", "packages/tx/src/retry.ts", "packages/tx/tests/transaction.test.ts", "packages/tx/tests/retry.test.ts"
+      ],
+      "local-first": [
+        "packages/local-first/package.json", "packages/local-first/README.md", "packages/local-first/src/index.ts", "packages/local-first/src/types.ts", "packages/local-first/src/model.ts", "packages/local-first/src/storage.ts", "packages/local-first/src/storage-manager.ts", "packages/local-first/src/cache-manager.ts", "packages/local-first/src/broadcast.ts", "packages/local-first/src/sync-manager.ts", "packages/local-first/tests/model.test.ts", "packages/local-first/tests/model-ttl-optional.test.ts", "packages/local-first/tests/broadcast.test.ts"
+      ],
+      "prepaint": [
+        "packages/prepaint/package.json", "packages/prepaint/README.md", "packages/prepaint/src/index.ts", "packages/prepaint/src/types.ts", "packages/prepaint/src/boot.ts", "packages/prepaint/src/policy.ts", "packages/prepaint/src/plugin/vite.ts", "packages/prepaint/tests/policy.test.ts", "packages/prepaint/tests/vite-plugin.test.ts", "packages/prepaint/tests/public-surface.test.ts"
+      ]
+    },
+    "deniedPathFragments": [
+      ".env", "benchmark/v0.3/phase3", "benchmark/v0.3/phase4-inventory", "benchmark/v0.3/phase4-policy", "benchmark/manifest", "evidence/", "history/", "nightmares/", "digests/", "authoring/bundle.json"
+    ],
+    "deniedContentClasses": [
+      "defect-manifest", "historical-private-check", "defect-patch", "truth-table-with-item-answers", "historical-or-current-result", "phase3-truth", "earlier-arm-output", "task-conversation-or-summary"
+    ]
+  },
+  "prompts": {
+    "G": {
+      "method": "generic-data-only-seed-authoring",
+      "instruction": "Using only this clean context, author at most two valid NightmareSeed v1 JSON objects per module and at most six total. Explore rare but reachable public behavior generically. Use only registered actions, fixtures, bindings, and invariant IDs. Return exactly one JSON array, ordered by tx, local-first, then prepaint, containing only NightmareSeed v1 objects and no Markdown. Do not write executable code, assertions, commands, provenance claims, or resource policy. Do not execute or import any code and do not run the target. Do not infer benchmark defects or use knowledge outside the bundle. Rejected seeds are not replaced."
+    },
+    "P": {
+      "method": "invariant-first-data-only-seed-authoring",
+      "instruction": "Using only this clean context, first choose a registered independent public invariant and reason backward to a rare but reachable public action sequence, then author at most two valid NightmareSeed v1 JSON objects per module and at most six total. Use only registered actions, fixtures, bindings, and invariant IDs. Return exactly one JSON array, ordered by tx, local-first, then prepaint, containing only NightmareSeed v1 objects and no Markdown. Do not write executable code, assertions, commands, provenance claims, or resource policy. Do not execute or import any code and do not run the target. Do not infer benchmark defects or use knowledge outside the bundle. Rejected seeds are not replaced."
+    }
+  },
+  "operatorSelection": {
+    "inputArm": "P",
+    "requestsPerSeedPerArm": 1,
+    "armOrder": ["A", "B", "C"],
+    "A": { "operatorId": "time.advance/v1", "rule": "For tx only, choose the first tx.start whose binding is consumed by a later tx.run-scripted; advance after that producer by timeoutMs plus one." },
+    "B": { "operatorId": "schedule.release-order/v1", "rule": "For tx only, choose the first two gated tx.run-scripted actions in seed order and request their reverse release order." },
+    "C": { "operatorId": "fault.step-outcome/v1", "rule": "For tx only, choose the final tx.run-scripted; replace a return with fixed Error data, or replace a throw with a null return." },
+    "resultDependentSelectionForbidden": true
+  }
+}
